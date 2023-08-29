@@ -8,7 +8,7 @@
  * int string_decode(const char *es, const char *s); true if decoding worked, false if not
  * int string_encode(const char *s, const char *es); true if encoding worked, false if not
  *
- *	strings/identifiers can be max 255 chars long (not including null terminator)
+ *	strings/identifiers can be max 255 chars long decoded (not including null terminator)
  *	for strings and chars they must fall in between 32 and 126
  *
  * decode:
@@ -68,6 +68,8 @@
 #include <stdio.h>
 // system calls
 #include <stdlib.h>
+// NULL
+#include <unistd.h>
 // error messages
 #include <errno.h>
 // strcmp and error messages
@@ -107,12 +109,11 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	// declare the buffer string will be placed into, it is 256 for 255 chars plus the null terminator
-	char stringBUF[256];
-	// the string we decode
+	// declare the buffer string will be placed into
+	uint8_t *stringBUF = NULL;
+	// the string we decode, it is 256 for 255 chars plus the null terminator
 	char s[256];
 	// the string that holds our attempt at re encoding
-	char es[256];
 	struct stat s;
 	int fd = -1;
 
@@ -132,25 +133,21 @@ int main(int argc, char *argv[])
 		ret = 1;
 		goto failure;
 	}
+	
+	// now that we know the size of the encoded string let's malloc buff and make es
+	buffer = malloc(sizeof(char) * s.st_size);
+	char es[s.st_size];
 
-	// get the number of bytes read from the read system call
-	bytes_read = read(fd, stringBUF, 256 * sizeof(char));
-	// check if the system call failed
-	if (bytes_read < 0)
+	// read the file and check if the system call failed
+	if (read(fd, stringBUF, s.st_size * sizeof(char)) != s.st_size * sizeof(char));
 	{
 		fprintf(stderr, "read(%s): %s\n", argv[2], strerror(errno));
 		ret = 1;
 		goto failure;
 	}
-	// check if the string is too long
-	if (bytes_read != s.st_size * sizeof(char))
-	{
-		fprintf(stderr, "The string in %s is too long and does not meet bminor string restrictions\n", argv[2]);
-		ret = 1;
-		goto failure;
-	}
 
 	// decode and if it fails print an appropiate error message
+	// 	inside decode check if it surpasses the 255 char length
 	if (!(string_decode(stringBUF, s)))
 	{
 		fprintf(stderr, "decode(%s): the string was unable to be decoded\n", stringBUF);
@@ -198,7 +195,7 @@ failure:
 
 int string_decode(const char *es, char *s)
 {
-
+	
 }
 
 int string_encode(const char *s, char *es)
