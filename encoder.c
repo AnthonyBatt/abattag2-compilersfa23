@@ -62,3 +62,146 @@
  *				11 not escaping \ as needed
  *				12 improper use of the byte thing
  * 	use run_test.sh to ensure exit codes are all good
+ */
+
+// printing
+#include <stdio.h>
+// system calls
+#include <stdlib.h>
+// error messages
+#include <errno.h>
+// strcmp and error messages
+#include <string.h>
+
+// for the the stat command
+#include <sys/stat.h>
+
+int string_decode(const char *es, char *s);
+int string_encode(const char *s, char *es);
+
+int main(int argc, char *argv[])
+{
+
+	/*
+	 *
+	 * TODO maybe make all the file checking stuff its own function to unclutter main 
+	 *
+	 */
+
+	// set the default to success
+	int ret = 0;
+
+	// if the call isn't to perform encoding let the user know nothing else is supported right now
+	if ((strcmp(argv[1], "--encode")))
+	{
+		fprintf(stderr, "Currently no functionality other than --encode is supported\n");
+		ret = 1;
+		return EXIT_FAILURE;
+	}
+
+	// if the call is trying to encode and there was no file specified
+	if (!(strcmp(argv[1], "--encode")) && (argc < 3))
+	{
+		fprintf(stderr, "Not enough command line arguments given, a file name must follow --encode\n");
+		ret = 1;
+		return EXIT_FAILURE;
+	}
+
+	// declare the buffer string will be placed into, it is 256 for 255 chars plus the null terminator
+	char stringBUF[256];
+	// the string we decode
+	char s[256];
+	// the string that holds our attempt at re encoding
+	char es[256];
+	struct stat s;
+	int fd = -1;
+
+	// open the file and check if it failed
+	fd = open(argv[2], O_RDONLY);
+	if (fd < 0)
+	{
+		fprintf(stderr, "open(%s): %s\n", argv[2], strerror(errno));
+		ret = 1;
+		goto failure;
+	}
+
+	// stat the file and check if it failed
+	if (stat(argv[2], &s) < 0)
+	{
+		fprintf(stderr, "stat(%s): %s\n", argv[2], strerror(errno));
+		ret = 1;
+		goto failure;
+	}
+
+	// get the number of bytes read from the read system call
+	bytes_read = read(fd, stringBUF, 256 * sizeof(char));
+	// check if the system call failed
+	if (bytes_read < 0)
+	{
+		fprintf(stderr, "read(%s): %s\n", argv[2], strerror(errno));
+		ret = 1;
+		goto failure;
+	}
+	// check if the string is too long
+	if (bytes_read != s.st_size * sizeof(char))
+	{
+		fprintf(stderr, "The string in %s is too long and does not meet bminor string restrictions\n", argv[2]);
+		ret = 1;
+		goto failure;
+	}
+
+	// decode and if it fails print an appropiate error message
+	if (!(string_decode(stringBUF, s)))
+	{
+		fprintf(stderr, "decode(%s): the string was unable to be decoded\n", stringBUF);
+		ret = 1;
+		goto failure;
+	}
+	
+	// if decoding succeeded then re encode it and check if it fails
+	if (!(string_encode(s, es)))
+	{
+		fprintf(stderr, "re encoding the decoded string failed\n");
+		ret = 1;
+		goto failure;
+	}
+
+	// if re encoding didn't fail, check that it was re encoded properly
+	if (strcmp(stringBUF, es))
+	{
+		fprintf(stderr, "The re encoded string \n%s\n does not match the original \n%s\n", es, stringBUF);
+		ret = 1;
+		goto failure;
+	}
+
+	// if they are the same string then print out the re encoded string
+	fprintf(stdout, "%s\n", es);
+
+// goto label for failure so that files aren't left open
+failure:
+	// if a file was opened
+	if (fd > -1)
+	{
+		// close the file and if that fails do the proper error procdeures
+		if (close(fd) < 0)
+		{
+			fprintf(stderr, "close(%s): %s\n", argv[2], strerror(errno));
+			ret = 1;
+		}
+	}
+
+	// if at any point something failed ret will exit as non zero which will indicate failure
+	// otherwise it will exit as zero which will indicate success
+	return ret;
+	
+}
+
+int string_decode(const char *es, char *s)
+{
+
+}
+
+int string_encode(const char *s, char *es)
+{
+
+}
