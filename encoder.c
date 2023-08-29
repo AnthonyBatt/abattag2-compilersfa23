@@ -37,30 +37,29 @@
  * testing:
  * 	make test/encode/good[0-9].bminor and bad[0-9].bminor
  * 		good:
- * 			1 basic hello world
- * 			2 have a string of only numbers
- * 			3 have a string that mixes the nums and lets
- *				4 have an empty string
- *				5 have a string that is 255 chars long (not including the null)
- *				6 have a string with every printable char in it from 32 to 126
- *				7 have a string with all the non reserved escape chars
- *				8 have one with the reserved escape chars
- *				9 have one that proeperly does the byte thing
+ * 			1  basic hello world
+ * 			2  have a string of only numbers
+ * 			3  have a string that mixes the nums and lets
+ *				4  have an empty string
+ *				5  have a string that is 255 chars long (not including the null)
+ *				6  have a string with every printable char in it from 32 to 126
+ *				7  have a string with all the non reserved escape chars
+ *				8  have one with the reserved escape chars
+ *				9  have one that proeperly does the byte thing (multiple)
  *				10 write a couple sentences and use some numbers and escape characters
  * 			
  * 		bad:
- * 			1 no starting "
- * 			2 no ending "
- * 			3 doesn't terminate
- * 			4 char less than 32
- * 			5 char greater than 126
- *				6 invaid escape character
- *				7 string is more than 255 chars long
- *				8 chars before the starting "
- *				9 chars after the ending quote
- *				10 not escaping " as needed
- *				11 not escaping \ as needed
- *				12 improper use of the byte thing
+ * 			1  no starting "
+ * 			2  no ending "
+ * 			3  char less than 32
+ * 			4  char greater than 126
+ *				5  invaid escape character
+ *				6  string is more than 255 chars long
+ *				7  chars before the starting "
+ *				8  chars after the ending quote
+ *				9  not escaping " as needed
+ *				10 not escaping \ as needed
+ *				11 improper use of the byte thing
  * 	use run_test.sh to ensure exit codes are all good
  */
 
@@ -77,6 +76,9 @@
 
 // for the the stat command
 #include <sys/stat.h>
+//
+#include <fcntl.h>
+
 
 int string_decode(const char *es, char *s);
 int string_encode(const char *s, char *es);
@@ -110,10 +112,11 @@ int main(int argc, char *argv[])
 	}
 
 	// declare the buffer string will be placed into
-	uint8_t *stringBUF = NULL;
+	char *stringBUF = NULL;
 	// the string we decode, it is 256 for 255 chars plus the null terminator
-	char s[256];
+	char ds[256];
 	// the string that holds our attempt at re encoding
+	char es[BUFSIZ];
 	struct stat s;
 	int fd = -1;
 
@@ -135,11 +138,10 @@ int main(int argc, char *argv[])
 	}
 	
 	// now that we know the size of the encoded string let's malloc buff and make es
-	buffer = malloc(sizeof(char) * s.st_size);
-	char es[s.st_size];
+	stringBUF = malloc(sizeof(char) * s.st_size);
 
 	// read the file and check if the system call failed
-	if (read(fd, stringBUF, s.st_size * sizeof(char)) != s.st_size * sizeof(char));
+	if (read(fd, stringBUF, s.st_size * sizeof(char)) != s.st_size * sizeof(char))
 	{
 		fprintf(stderr, "read(%s): %s\n", argv[2], strerror(errno));
 		ret = 1;
@@ -148,15 +150,15 @@ int main(int argc, char *argv[])
 
 	// decode and if it fails print an appropiate error message
 	// 	inside decode check if it surpasses the 255 char length
-	if (!(string_decode(stringBUF, s)))
+	if (!(string_decode(stringBUF, ds)))
 	{
 		fprintf(stderr, "decode(%s): the string was unable to be decoded\n", stringBUF);
 		ret = 1;
 		goto failure;
 	}
 	
-	// if decoding succeeded then re encode it and check if it fails
-	if (!(string_encode(s, es)))
+	// if decoding succeeded then re encode it and check if it fails (even thought it cant fail)
+	if (!(string_encode(ds, es)))
 	{
 		fprintf(stderr, "re encoding the decoded string failed\n");
 		ret = 1;
@@ -187,18 +189,26 @@ failure:
 		}
 	}
 
+	if (stringBUF) free(stringBUF);
+
 	// if at any point something failed ret will exit as non zero which will indicate failure
 	// otherwise it will exit as zero which will indicate success
 	return ret;
-	
 }
 
 int string_decode(const char *es, char *s)
 {
-	
+	int i = 0;
+	char c = es[i];
+	while (c)
+	{
+		printf("%c", c);
+	}
+
+	return 1;
 }
 
 int string_encode(const char *s, char *es)
 {
-
+	return 1;
 }
