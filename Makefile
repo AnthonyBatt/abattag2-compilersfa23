@@ -14,3 +14,4 @@ main.o: main.c
 clean:
 	rm *.o
 	rm bminor
+	rm tests/encode/*.out
