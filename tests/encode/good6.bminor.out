@@ -1,0 +1,6 @@
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >
+	<
+encoded string >"\a\b\e\f\n\t\v"<

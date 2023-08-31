@@ -1,0 +1,1 @@
+"G isnt a hex value, so this will error: \0xgG"

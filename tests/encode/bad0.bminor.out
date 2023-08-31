@@ -1,0 +1,2 @@
+Strings must begin with a ", this one began with H
+decode(Hello world\n"): the string was unable to be decoded

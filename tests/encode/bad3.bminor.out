@@ -1,0 +1,2 @@
+The character with value 195 is not an allowable character for printing (must be <= 126)
+decode("ä"): the string was unable to be decoded

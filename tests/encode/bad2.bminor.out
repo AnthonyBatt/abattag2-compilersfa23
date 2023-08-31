@@ -1,0 +1,2 @@
+invalid hexdigits given, valid hexdigits are 0-9, a-f, and A-F, given digits were: g and G
+decode("G isnt a hex value, so this will error: \0xgG"): the string was unable to be decoded

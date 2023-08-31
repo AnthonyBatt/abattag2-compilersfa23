@@ -1,0 +1,2 @@
+Strings must end with ASCII codes 34 0, this one ended with 110 0
+decode("Hello world\n): the string was unable to be decoded

@@ -1,0 +1,2 @@
+An " must be at the start or end of the string, if you meant to print one then please escape it: \"
+decode("This is a nonescaped quote: " see how it causes an error?"): the string was unable to be decoded

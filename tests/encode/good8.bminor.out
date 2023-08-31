@@ -1,0 +1,7 @@
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >I'm writing sentences that will hopefully test if regular english does things properly.
+	I like the numbers 7, 4, and 0; that was a semicolon. :)
+<
+encoded string >"I\'m writing sentences that will hopefully test if regular english does things properly.\n\tI like the numbers 7, 4, and 0; that was a semicolon. :)\n"<
