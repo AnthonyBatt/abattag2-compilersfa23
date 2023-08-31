@@ -336,12 +336,18 @@ int string_decode(const char *es, char *s)
 				if (	 ((digit1 >= 48 && digit1 <= 57) || (digit1 >= 65 && digit1 <= 70) || (digit1 >= 97 && digit1 <= 102))
 					 && ((digit2 >= 48 && digit2 <= 57) || (digit2 >= 65 && digit2 <= 70) || (digit2 >= 97 && digit2 <= 102))	 )
 				{
-					//check if the hex correspondence is out of range, hex range is 0x00 - 0x7F (0x20 - 0x7E for printable chars)
+					// convert to decimal, these can be outside the printable range
+					char hex[3] = {es[i+3], es[i+4], 0};
+					s[j] = strtol(hex, NULL, 16);
 				}
 				else
 				{
 					fprintf(stderr, "invalid hexdigits given, valid hexdigits are 0-9, a-f, and A-F, given digits were: %c and %c\n", digit1, digit2);
+					return 0;
 				}
+				
+				// end with adding three extra to i for the two hex digits and x
+				i += 3;
 			}
 			// invalid escape char 
 			else
