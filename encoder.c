@@ -80,8 +80,8 @@
 #include <fcntl.h>
 
 
-int string_decode(const char *es, char *s);
-int string_encode(const char *s, char *es);
+int string_decode(const unsigned char *es, unsigned char *s);
+int string_encode(const unsigned char *s, unsigned char *es);
 
 int main(int argc, char *argv[])
 {
@@ -116,11 +116,11 @@ int main(int argc, char *argv[])
 	int ret = 0;
 
 	// declare the buffer string will be placed into
-	char *stringBUF = NULL;
+	unsigned char *stringBUF = NULL;
 	// the string we decode, it is 256 for 255 chars plus the null terminator
-	char ds[256];
+	unsigned char ds[256];
 	// the string that holds our attempt at re encoding
-	char es[BUFSIZ];
+	unsigned char es[BUFSIZ];
 	struct stat s;
 	int fd = -1;
 
@@ -142,10 +142,10 @@ int main(int argc, char *argv[])
 	}
 	
 	// now that we know the size of the encoded string let's calloc buff and make es
-	stringBUF = calloc(s.st_size + 1, sizeof(char));
+	stringBUF = calloc(s.st_size + 1, sizeof(unsigned char));
 
 	// read the file and check if the system call failed
-	if (read(fd, stringBUF, s.st_size * sizeof(char)) != s.st_size * sizeof(char))
+	if (read(fd, stringBUF, s.st_size * sizeof(unsigned char)) != s.st_size * sizeof(unsigned char))
 	{
 		fprintf(stderr, "read(%s): %s\n", argv[2], strerror(errno));
 		ret = 1;
@@ -213,11 +213,18 @@ failure:
 	return ret;
 }
 
-int string_decode(const char *es, char *s)
+int string_decode(const unsigned char *es, unsigned char *s)
 {
 	int i = 0;
 	int j = 0;
-	char c = es[0];
+	unsigned char c = es[0];
+
+	/*	
+	 *
+	 *	TODO
+	 *	may need to account for invalid ' placement
+	 *
+	 */
 
 
 	// go until you reach a null terminator or you exceed the char limit
@@ -239,7 +246,7 @@ int string_decode(const char *es, char *s)
 			fprintf(stderr, "Strings must begin with a \", this one began with %c\n", c);
 			return 0;
 		}
-		// check for invalid apostrophe (unescaped) 
+		// check for invalid quote (unescaped) 
 		// 	if it has gotten this far it isnt at the start and this checks if it is at the end
 		else if (c == 34 && (i != 0 && es[i+1] != 0))
 		{
@@ -261,7 +268,7 @@ int string_decode(const char *es, char *s)
 		// escape characters sub if chain
 		else if (c == 92)
 		{
-			char c2 = es[i+1];
+			unsigned char c2 = es[i+1];
 			// if chain for c2
 			// \a
 			if (c2 == 97)
@@ -301,7 +308,7 @@ int string_decode(const char *es, char *s)
 			// \v
 			else if (c2 == 118)
 			{
-				s[j] = 8;
+				s[j] = 11;
 			}
 			// /* \\ */
 			else if (c2 == 92)
@@ -318,8 +325,6 @@ int string_decode(const char *es, char *s)
 			{
 				s[j] = 34;
 			}
-			// TODO
-			// whatever the hex thing is
 			// \0
 			else if (c2 == 48)
 			{
@@ -331,14 +336,21 @@ int string_decode(const char *es, char *s)
 					return 0;
 				}
 				// valid hexdigits are 48-57, 65-70, and 97-102
-				char digit1 = es[i+3];
-				char digit2 = es[i+4];
+				unsigned char digit1 = es[i+3];
+				unsigned char digit2 = es[i+4];
 				if (	 ((digit1 >= 48 && digit1 <= 57) || (digit1 >= 65 && digit1 <= 70) || (digit1 >= 97 && digit1 <= 102))
 					 && ((digit2 >= 48 && digit2 <= 57) || (digit2 >= 65 && digit2 <= 70) || (digit2 >= 97 && digit2 <= 102))	 )
 				{
 					// convert to decimal, these can be outside the printable range
-					char hex[3] = {es[i+3], es[i+4], 0};
-					s[j] = strtol(hex, NULL, 16);
+					unsigned char hex[3] = {es[i+3], es[i+4], 0};
+					//printf("%s\n", hex);
+					int dec = strtol((char *)hex, NULL, 16) & 0x000000ff;
+					//printf("%x\n", dec);
+					//printf("%d\n", dec);
+					s[j] = dec;
+					//printf("%x\n", s[j]);
+					//printf("%d\n", s[j]);
+
 				}
 				else
 				{
@@ -355,7 +367,7 @@ int string_decode(const char *es, char *s)
 				fprintf(stderr, "invalid escape character: %c, if you meant to just print \\ type \\\\\n", c2);
 				return 0;
 			}
-			// end with adding one extra to i
+			// end with moving forward in string positions
 			i++;
 			j++;
 		}
@@ -384,16 +396,143 @@ int string_decode(const char *es, char *s)
 		return 0;
 	}
 	// is it less than 255 (not including \0)
-	if (strlen(s) > 255)
+	if (strlen((char *)s) > 255)
 	{
-		fprintf(stderr, "Strings must not exceed 255 chars (not including the null terminator, this string was %ld chars\n", strlen(s));
+		fprintf(stderr, "Strings must not exceed 255 chars (not including the null terminator, this string was %ld chars\n", strlen((char *)s));
 		return 0;
 	}
 
+	// if it made it all the way down here then everything should be all good
 	return 1;
 }
 
-int string_encode(const char *s, char *es)
+int string_encode(const unsigned char *s, unsigned char *es)
 {
-	return 0;
+	// now that everything that comes through is data we already produced, errors shouldn't be possible
+	int i = 0;
+	int j = 0;
+	unsigned char c = s[0];
+
+	es[j] = 34;
+	j++;
+	
+	while(c)
+	{
+		c = s[i];
+
+		//printf("Now processing >%c< (%d)\n", c, c);
+		// need to check for backslash coded values: 7,8,27,12,10,13,9,11,92,39?,34
+		//		any other non printable codes need to be hexvalued
+		
+		// the end of the string
+		if (c == 0)
+		{
+			es[j] = 34;
+			j++;
+			es[j] = 0;
+			j++;
+		}
+		// \\    //
+		else if (c == 92)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 92;
+		}
+		// \"
+		else if (c == 34)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 34;
+		}
+		// \'
+		else if (c == 39)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 39;
+		}
+		// \a
+		else if (c == 7)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 97;
+		}
+		// \b
+		else if (c == 8)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 98;
+		}
+		// \e
+		else if (c == 27)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 101;
+		}
+		// \f
+		else if (c == 12)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 102;
+		}
+		// \n
+		else if (c == 10)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 110;
+		}
+		// \r
+		else if (c == 13)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 114;
+		}
+		// \t
+		else if (c == 9)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 116;
+		}
+		// \v
+		else if (c == 11)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 118;
+		}
+		// \0xHH
+		else if (c > 126 || c < 32)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 48; // 0
+			j++;
+			es[j] = 120;// x
+			j++;
+			// we need to make two hexdigits out of the value 
+			unsigned char hex[3];
+			sprintf((char *)hex, "%.2x", c);
+			//printf("%s\n", hex);
+			es[j] = hex[0];
+			j++;
+			es[j] = hex[1];
+		}
+		// it is a printable non special character
+		else es[j] = c;
+
+		// increment place in the strings
+		i++;
+		j++;
+	}
+
+	return 1;
 }
