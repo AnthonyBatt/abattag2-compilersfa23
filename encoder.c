@@ -76,7 +76,7 @@
 
 // for the the stat command
 #include <sys/stat.h>
-//
+// for system calls as well
 #include <fcntl.h>
 
 
@@ -92,14 +92,16 @@ int main(int argc, char *argv[])
 	 *
 	 */
 
-	// set the default to success
-	int ret = 0;
+	if (argc < 2)
+	{
+		fprintf(stderr, "Not enough command line arguments\n");
+		return EXIT_FAILURE;
+	}
 
 	// if the call isn't to perform encoding let the user know nothing else is supported right now
 	if ((strcmp(argv[1], "--encode")))
 	{
 		fprintf(stderr, "Currently no functionality other than --encode is supported\n");
-		ret = 1;
 		return EXIT_FAILURE;
 	}
 
@@ -107,9 +109,11 @@ int main(int argc, char *argv[])
 	if (!(strcmp(argv[1], "--encode")) && (argc < 3))
 	{
 		fprintf(stderr, "Not enough command line arguments given, a file name must follow --encode\n");
-		ret = 1;
 		return EXIT_FAILURE;
 	}
+
+	// set the default to success
+	int ret = 0;
 
 	// declare the buffer string will be placed into
 	char *stringBUF = NULL;
@@ -137,8 +141,8 @@ int main(int argc, char *argv[])
 		goto failure;
 	}
 	
-	// now that we know the size of the encoded string let's malloc buff and make es
-	stringBUF = malloc(sizeof(char) * s.st_size);
+	// now that we know the size of the encoded string let's calloc buff and make es
+	stringBUF = calloc(s.st_size + 1, sizeof(char));
 
 	// read the file and check if the system call failed
 	if (read(fd, stringBUF, s.st_size * sizeof(char)) != s.st_size * sizeof(char))
@@ -148,8 +152,11 @@ int main(int argc, char *argv[])
 		goto failure;
 	}
 
+	// TODO ask about this at OH
+	// for some reason whenever I read in the string from the file it keeps putting in a newline before the null
+	stringBUF[s.st_size-1] = 0;
+
 	// decode and if it fails print an appropiate error message
-	// 	inside decode check if it surpasses the 255 char length
 	if (!(string_decode(stringBUF, ds)))
 	{
 		fprintf(stderr, "decode(%s): the string was unable to be decoded\n", stringBUF);
@@ -157,6 +164,9 @@ int main(int argc, char *argv[])
 		goto failure;
 	}
 	
+	//print out the decoded string
+	fprintf(stdout, "decoded string: >%s<\n", ds);
+
 	// if decoding succeeded then re encode it and check if it fails (even thought it cant fail)
 	if (!(string_encode(ds, es)))
 	{
@@ -165,6 +175,8 @@ int main(int argc, char *argv[])
 		goto failure;
 	}
 
+
+/* NOT NEEDED ANYMORE
 	// if re encoding didn't fail, check that it was re encoded properly
 	if (strcmp(stringBUF, es))
 	{
@@ -175,6 +187,11 @@ int main(int argc, char *argv[])
 
 	// if they are the same string then print out the re encoded string
 	fprintf(stdout, "%s\n", es);
+*/
+
+
+	//print out the encoded string
+	fprintf(stdout, "encoded string >%s<\n", es);
 
 // goto label for failure so that files aren't left open
 failure:
@@ -199,10 +216,161 @@ failure:
 int string_decode(const char *es, char *s)
 {
 	int i = 0;
-	char c = es[i];
-	while (c)
+	int j = 0;
+	char c = es[0];
+
+
+	// go until you reach a null terminator or you exceed the char limit
+	while(c && j < 256)
 	{
-		printf("%c", c);
+		c = es[i];
+		//printf("Now processing >%c< (%d)\n", c, c);
+
+		// WOULDN'T HAPPEN, THE WHILE LOOP ENDS WHEN THIS HAPPENS
+		// if it is the null terminator
+		if (c == 0)
+		{
+			s[j] = 0;
+			j++;
+		}
+		// check for if there is a starting quote
+		else if (i == 0 && c != 34)
+		{
+			fprintf(stderr, "Strings must begin with a \", this one began with %c\n", c);
+			return 0;
+		}
+		// check for invalid apostrophe (unescaped) 
+		// 	if it has gotten this far it isnt at the start and this checks if it is at the end
+		else if (c == 34 && (i != 0 && es[i+1] != 0))
+		{
+			fprintf(stderr, "An \" must be at the start or end of the string, if you meant to print one then please escape it: \\\"\n");
+			return 0;
+		}
+		// if char is less than 32
+		else if (c < 32)
+		{
+			fprintf(stderr, "The character with value %d is not an allowable character for printing (must be >= 32)\n", c);
+			return 0;
+		}
+		// if char is greater than 126
+		else if (c > 126)
+		{
+			fprintf(stderr, "The character with value %d is not an allowable character for printing (must be <= 126)\n", c);
+			return 0;
+		}
+		// escape characters sub if chain
+		else if (c == 92)
+		{
+			char c2 = es[i+1];
+			// if chain for c2
+			// \a
+			if (c2 == 97)
+			{
+				s[j] = 7;
+			}
+			// \b
+			else if (c2 == 98)
+			{
+				s[j] = 8;
+			}
+			// \e
+			else if (c2 == 101)
+			{
+				s[j] = 27;
+			}
+			// \f
+			else if (c2 == 102)
+			{
+				s[j] = 12;
+			}
+			// \n
+			else if (c2 == 110)
+			{
+				s[j] = 10;
+			}
+			// \r
+			else if (c2 == 114)
+			{
+				s[j] = 13;
+			}
+			// \t
+			else if (c2 == 116)
+			{
+				s[j] = 9;
+			}
+			// \v
+			else if (c2 == 118)
+			{
+				s[j] = 8;
+			}
+			// /* \\ */
+			else if (c2 == 92)
+			{
+				s[j] = 92;
+			}
+			// \'
+			else if (c2 == 39)
+			{
+				s[j] = 39;
+			}
+			// \"
+			else if (c2 == 34)
+			{
+				s[j] = 34;
+			}
+			// TODO
+			// whatever the hex thing is
+			// \0
+			else if (c2 == 48)
+			{
+				// this could be hex digit stuff
+				// \0x
+				if (es[i+2] != 120)
+				{
+					fprintf(stderr, "invalid attempt at using hexadecimal replacement, please format as such:\n\t\\0xHH where HH is a valid hexdigit combo (0-9a-fA-F)\n");
+					return 0;
+				}
+				// valid hexdigits are 48-57, 65-70, and 97-102
+			}
+			// invalid escape char 
+			else
+			{
+				fprintf(stderr, "invalid escape character: %c, if you meant to just print \\ type \\\\\n", c2);
+				return 0;
+			}
+			// end with adding one extra to i
+			i++;
+			j++;
+		}
+		// it is a valid non escaped char
+		else
+		{
+			if (c == 34) ;
+			else
+			{
+				s[j] = c;
+				j++;
+			}
+		}
+
+		//printf("%2d: %c (%d) || %2d: %c (%d)\n", i, c, c, j, s[j], s[j]);
+		i++;
+	}
+
+	//printf("%d %d\nlen: %ld\n", es[i-2], es[i-1], strlen(s));
+
+	// after decode checks
+	// does it end with " \0
+	if (es[i-2] != 34 || es[i-1] != 0)
+	{
+		fprintf(stderr, "Strings must end with ASCII codes 34 0, this one ended with %d %d\n", es[i-2], es[i-1]);
+		return 0;
+	}
+	// is it less than 255 (not including \0)
+	if (strlen(s) > 255)
+	{
+		fprintf(stderr, "Strings must not exceed 255 chars (not including the null terminator, this string was %ld chars\n", strlen(s));
+		return 0;
 	}
 
 	return 1;
@@ -210,5 +378,5 @@ int string_decode(const char *es, char *s)
 
 int string_encode(const char *s, char *es)
 {
-	return 1;
+	return 0;
 }
