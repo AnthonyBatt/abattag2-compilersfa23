@@ -331,6 +331,17 @@ int string_decode(const char *es, char *s)
 					return 0;
 				}
 				// valid hexdigits are 48-57, 65-70, and 97-102
+				char digit1 = es[i+3];
+				char digit2 = es[i+4];
+				if (	 (digit1 >= 48 && digit1 <= 57) || (digit1 >= 65 && digit1 <= 70) || (digit1 >= 97 && digit1 <= 102)
+					 && (digit2 >= 48 && digit2 <= 57) || (digit2 >= 65 && digit2 <= 70) || (digit2 >= 97 && digit2 <= 102)	 )
+				{
+					//check if the hex correspondence is out of range, hex range is 0x00 - 0x7F (0x20 - 0x7E for printable chars)
+				}
+				else
+				{
+					fprintf(stderr, "invalid hexdigits given, valid hexdigits are 0-9, a-f, and A-F, given digits were: %c and %c\n", digit1, digit2);
+				}
 			}
 			// invalid escape char 
 			else
