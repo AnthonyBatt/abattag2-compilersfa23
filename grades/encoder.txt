@@ -1,0 +1,752 @@
+=====STUDENT TESTS=====
+====Good Tests====
+===[good0.bminor Input]===
+"Hello world\n"
+
+===[good0.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good0.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >Hello world
+<
+encoded string >"Hello world\n"<
+
+
+
+
+===[good10.bminor Input]===
+"\0x36"
+
+===[good10.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good10.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >6<
+encoded string >"6"<
+
+
+
+
+===[good11.bminor Input]===
+"0xba"
+
+===[good11.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good11.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >0xba<
+encoded string >"0xba"<
+
+
+
+
+===[good12.bminor Input]===
+"\0x25\n0x25\n%\n"
+
+===[good12.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good12.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >%
+0x25
+%
+<
+encoded string >"%\n0x25\n%\n"<
+
+
+
+
+===[good1.bminor Input]===
+"1234567890"
+
+===[good1.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good1.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >1234567890<
+encoded string >"1234567890"<
+
+
+
+
+===[good2.bminor Input]===
+"my netid is abattag2"
+
+===[good2.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good2.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >my netid is abattag2<
+encoded string >"my netid is abattag2"<
+
+
+
+
+===[good3.bminor Input]===
+""
+
+===[good3.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good3.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: ><
+encoded string >""<
+
+
+
+
+===[good4.bminor Input]===
+"\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a"
+
+===[good4.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good4.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: ><
+encoded string >"\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a"<
+
+
+
+
+===[good5.bminor Input]===
+" !\"#$%&'()*+`-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_,abcdefghijklmnopqrstuvwxyz{|}~"
+
+===[good5.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good5.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: > !"#$%&'()*+`-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_,abcdefghijklmnopqrstuvwxyz{|}~<
+encoded string >" !\"#$%&\'()*+`-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_,abcdefghijklmnopqrstuvwxyz{|}~"<
+
+
+
+
+===[good6.bminor Input]===
+"\a\b\e\f\n\t\v"
+
+===[good6.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good6.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >
+	<
+encoded string >"\a\b\e\f\n\t\v"<
+
+
+
+
+===[good7.bminor Input]===
+"\\\'\""
+
+===[good7.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good7.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >\'"<
+encoded string >"\\\'\""<
+
+
+
+
+===[good8.bminor Input]===
+"I'm writing sentences that will hopefully test if regular english does things properly.\n\tI like the numbers 7, 4, and 0; that was a semicolon. :)\n"
+
+===[good8.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good8.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >I'm writing sentences that will hopefully test if regular english does things properly.
+	I like the numbers 7, 4, and 0; that was a semicolon. :)
+<
+encoded string >"I\'m writing sentences that will hopefully test if regular english does things properly.\n\tI like the numbers 7, 4, and 0; that was a semicolon. :)\n"<
+
+
+
+
+===[good9.bminor Input]===
+"\0x05"
+
+===[good9.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good9.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: ><
+encoded string >"\0x05"<
+
+
+
+
+====Bad Tests====
+===[bad0.bminor Input]===
+Hello world\n"
+
+===[bad0.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad0.bminor Output]===
+
+Strings must begin with a ", this one began with H
+decode(Hello world\n"): the string was unable to be decoded
+
+
+
+===[bad1.bminor Input]===
+"Hello world\n
+
+===[bad1.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad1.bminor Output]===
+
+Strings must end with ASCII codes 34 0, this one ended with 110 0
+decode("Hello world\n): the string was unable to be decoded
+
+
+
+===[bad2.bminor Input]===
+"G isnt a hex value, so this will error: \0xgG"
+
+===[bad2.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad2.bminor Output]===
+
+invalid hexdigits given, valid hexdigits are 0-9, a-f, and A-F, given digits were: g and G
+decode("G isnt a hex value, so this will error: \0xgG"): the string was unable to be decoded
+
+
+
+===[bad3.bminor Input]===
+"ä"
+
+===[bad3.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad3.bminor Output]===
+
+The character with value 195 is not an allowable character for printing (must be <= 126)
+decode("ä"): the string was unable to be decoded
+
+
+
+===[bad4.bminor Input]===
+"\p"
+
+===[bad4.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad4.bminor Output]===
+
+invalid escape character: p, if you meant to just print \ type \\
+decode("\p"): the string was unable to be decoded
+
+
+
+===[bad5.bminor Input]===
+"\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a"
+
+===[bad5.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad5.bminor Output]===
+
+Strings must not exceed 255 chars (not including the null terminator), this string was 256 chars
+decode("\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a"): the string was unable to be decoded
+
+
+
+===[bad6.bminor Input]===
+Hello "world\n"
+
+===[bad6.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad6.bminor Output]===
+
+Strings must begin with a ", this one began with H
+decode(Hello "world\n"): the string was unable to be decoded
+
+
+
+===[bad7.bminor Input]===
+"Hello" world\n
+
+===[bad7.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad7.bminor Output]===
+
+An " must be at the start or end of the string, if you meant to print one then please escape it: \"
+decode("Hello" world\n): the string was unable to be decoded
+
+
+
+===[bad8.bminor Input]===
+"This is a nonescaped quote: " see how it causes an error?"
+
+===[bad8.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad8.bminor Output]===
+
+An " must be at the start or end of the string, if you meant to print one then please escape it: \"
+decode("This is a nonescaped quote: " see how it causes an error?"): the string was unable to be decoded
+
+
+
+===[bad9.bminor Input]===
+"This is a nonescaped backslash: \ see how it causes an error?"
+
+===[bad9.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad9.bminor Output]===
+
+invalid escape character:  , if you meant to just print \ type \\
+decode("This is a nonescaped backslash: \ see how it causes an error?"): the string was unable to be decoded
+
+
+
+=====HIDDEN TESTS=====
+====Good Tests====
+===[good1.bminor Input]===
+"Whan that Aprill with his shoures soote"
+
+===[good1.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good1.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >Whan that Aprill with his shoures soote<
+encoded string >"Whan that Aprill with his shoures soote"<
+
+
+
+
+===[good10.bminor Input]===
+"That slepen al the nyght with open ye\n(So priketh hem Nature in hir corages),\nThanne longen folk to goon on pilgrimages,\nAnd palmeres for to seken straunge strondes,\n To ferne halwes, kowthe in sondry londes;\t And specially from every shires ende."
+
+===[good10.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good10.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >That slepen al the nyght with open ye
+(So priketh hem Nature in hir corages),
+Thanne longen folk to goon on pilgrimages,
+And palmeres for to seken straunge strondes,
+ To ferne halwes, kowthe in sondry londes;	 And specially from every shires ende.<
+encoded string >"That slepen al the nyght with open ye\n(So priketh hem Nature in hir corages),\nThanne longen folk to goon on pilgrimages,\nAnd palmeres for to seken straunge strondes,\n To ferne halwes, kowthe in sondry londes;\t And specially from every shires ende."<
+
+
+
+
+===[good3.bminor Input]===
+"And bathed  \bevery veyne in swich licour"
+
+===[good3.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good3.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >And bathed  every veyne in swich licour<
+encoded string >"And bathed  \bevery veyne in swich licour"<
+
+
+
+
+===[good4.bminor Input]===
+"Of which vertu engendred is the flour\e"
+
+===[good4.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good4.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >Of which vertu engendred is the flour<
+encoded string >"Of which vertu engendred is the flour\e"<
+
+
+
+
+===[good5.bminor Input]===
+"\fWhan Zephirus eek with his sweete breeth"
+
+===[good5.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good5.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >Whan Zephirus eek with his sweete breeth<
+encoded string >"\fWhan Zephirus eek with his sweete breeth"<
+
+
+
+
+===[good6.bminor Input]===
+"Inspired hath in \nevery\nholt\nand\nheeth\rheeth"
+
+===[good6.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good6.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >Inspired hath in 
+every
+holt
+and
+heeth
+heeth<
+encoded string >"Inspired hath in \nevery\nholt\nand\nheeth\rheeth"<
+
+
+
+
+===[good7.bminor Input]===
+"The tendre croppes, \t and the yonge sonne"
+
+===[good7.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good7.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >The tendre croppes, 	 and the yonge sonne<
+encoded string >"The tendre croppes, \t and the yonge sonne"<
+
+
+
+
+===[good8.bminor Input]===
+"Hath in the Ram his half \\ \'cours\' yronne,"
+
+===[good8.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good8.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >Hath in the Ram his half \ 'cours' yronne,<
+encoded string >"Hath in the Ram his half \\ \'cours\' yronne,"<
+
+
+
+
+===[good9.bminor Input]===
+"And smale \"foweles\" maken melodye,\v"
+
+===[good9.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good9.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >And smale "foweles" maken melodye,<
+encoded string >"And smale \"foweles\" maken melodye,\v"<
+
+
+
+
+===[good2.bminor Input]===
+"The droghte \a of March hath per\0x5Ed to \0x22 the roote\n"
+
+===[good2.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[good2.bminor Output]===
+
+For the purpose of being able to see tabs, spaces, etc. printed I'm delimitng the start and end of the printed strings with ><
+
+decoded string: >The droghte  of March hath per^d to " the roote
+<
+encoded string >"The droghte \a of March hath per^d to \" the roote\n"<
+
+
+
+
+====Bad Tests====
+===[bad1.bminor Input]===
+Bifil that seson on a day
+
+===[bad1.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad1.bminor Output]===
+
+Strings must begin with a ", this one began with B
+decode(Bifil that seson on a day): the string was unable to be decoded
+
+
+
+===[bad10.bminor Input]===
+"The chambres and the stables weren wyde, And wel we weren esed atte beste. And shortly, whan the sonne was to reste, So hadde I spoken with hem everichon That I was of hir felaweshipe anon, And made forward erly for to ryse, To take oure wey ther as I yow devyse. This is over 255 bytes" 
+
+===[bad10.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad10.bminor Output]===
+
+Strings must not exceed 255 chars (not including the null terminator), this string was 256 chars
+decode("The chambres and the stables weren wyde, And wel we weren esed atte beste. And shortly, whan the sonne was to reste, So hadde I spoken with hem everichon That I was of hir felaweshipe anon, And made forward erly for to ryse, To take oure wey ther as I yow devyse. This is over 255 bytes" ): the string was unable to be decoded
+
+
+
+===[bad4.bminor Input]===
+"To Caunterbury with ful devout corage \c \d \g \h \i \j \k \l \m \o \p \q \s \u \w \x \y \z"
+
+===[bad4.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad4.bminor Output]===
+
+invalid escape character: c, if you meant to just print \ type \\
+decode("To Caunterbury with ful devout corage \c \d \g \h \i \j \k \l \m \o \p \q \s \u \w \x \y \z"): the string was unable to be decoded
+
+
+
+===[bad5.bminor Input]===
+"At nyght was come "into that hostelrye"
+
+===[bad5.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad5.bminor Output]===
+
+An " must be at the start or end of the string, if you meant to print one then please escape it: \"
+decode("At nyght was come "into that hostelrye"): the string was unable to be decoded
+
+
+
+===[bad6.bminor Input]===
+"Wel nyne and twenty \~in a compaignye"
+
+===[bad6.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad6.bminor Output]===
+
+invalid escape character: ~, if you meant to just print \ type \\
+decode("Wel nyne and twenty \~in a compaignye"): the string was unable to be decoded
+
+
+
+===[bad7.bminor Input]===
+"Of sondry folk, by aventure yfalle" \n\n
+
+===[bad7.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad7.bminor Output]===
+
+An " must be at the start or end of the string, if you meant to print one then please escape it: \"
+decode("Of sondry folk, by aventure yfalle" \n\n): the string was unable to be decoded
+
+
+
+===[bad8.bminor Input]===
+\n "In felaweshipe, and pilgrimes were they alle,"
+
+===[bad8.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad8.bminor Output]===
+
+Strings must begin with a ", this one began with \
+decode(\n "In felaweshipe, and pilgrimes were they alle,"): the string was unable to be decoded
+
+
+
+===[bad9.bminor Input]===
+"That toward Caunterbuty \" wolden "" ryde."
+
+===[bad9.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad9.bminor Output]===
+
+An " must be at the start or end of the string, if you meant to print one then please escape it: \"
+decode("That toward Caunterbuty \" wolden "" ryde."): the string was unable to be decoded
+
+
+
+===[bad2.bminor Input]===
+"In \0xfg Southwerk at the tabard as I lay"
+
+===[bad2.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad2.bminor Output]===
+
+invalid hexdigits given, valid hexdigits are 0-9, a-f, and A-F, given digits were: f and g
+decode("In \0xfg Southwerk at the tabard as I lay"): the string was unable to be decoded
+
+
+
+===[bad3.bminor Input]===
+"
+===[bad3.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[bad3.bminor Output]===
+
+Strings must end with ASCII codes 34 0, this one ended with 0 0
+decode(): the string was unable to be decoded
+
+
+
+===== SUMMARIZED ENCODER RESULTS =====
+{
+  "student_tests": {
+    "Good": {
+      "correct": 13,
+      "incorrect": 0
+    },
+    "Bad": {
+      "correct": 10,
+      "incorrect": 0
+    }
+  },
+  "hidden_tests": {
+    "Good": {
+      "correct": 10,
+      "incorrect": 0
+    },
+    "Bad": {
+      "correct": 10,
+      "incorrect": 0
+    }
+  }
+}
+Encoder Project Grade
+---------------------------------
+
+GitHub Usage (1/2 points)
+----------------------------------------------
+Release was tagged as 'encode', please be sure to exactly match the specified tag (-1)
+
+Makefile (4/5 points)
+----------------------------------------------
+make test should run all the test cases (-1)
+
+Return Code (8/8 points)
+----------------------------------------------
+Main program returned the correct value
+
+General Structure (15/15 points)
+----------------------------------------------
+Looks great!
+
+Student Tests (20/20 points)
+------------------------------------------
+You included three extra tests, so good work putting in the extra effort to rigorously test your program.
+
+Hidden Tests (20/20 points)
+------------------------------------------
+Looks good!
+
+Coding Style (10/10 points)
+------------------------------------------
+I very much like the attention to detail included in the main function. 
+It made me happy to see rigorous checking of error codes and system call error handling.
+The comments were informative yet concise.
+The error message looked super informative. If only gcc had the same standards!
+
+Total (78/80 Points)
+------------------------------------------
