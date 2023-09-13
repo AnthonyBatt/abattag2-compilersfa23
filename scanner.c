@@ -11,13 +11,13 @@
  * 	tabs, spaces, newlines, and carriage returns (\r) are all white space and not significant
  *
  * 	regex: [ \t\n\r]
- * 	TOKEN_WHITESPACE
+ * 	TOKEN_WHITESPACE						TODO cna just skip this methinks
  *
  * Comments:
  * 	both C and C++ style comments are supported
  *
  * 	regex:
- * 	TOKEN_COMMENT
+ * 	TOKEN_COMMENT							TODO can also just skip this methinks
  * 
  * Identifiers:
  * 	must start with letter or underscore
@@ -53,7 +53,7 @@
  * 	can have leading - and +
  * 		ex: +123 and -12 are both valid
  *
- * 	regex: (+|-)?[1-9][0-9]*			TODO THERE ARE BOUNDARIES
+ * 	regex: (+|-)?[1-9][0-9]*			TODO THERE ARE BOUNDARIES: 64-bit integers
  * 	TOKEN_INTEGER_LITERAL
  *
  * Floats:
@@ -62,7 +62,6 @@
  * 	53 bits of significand (52 explicitly stored)
  *		12.34 and 1.234E1 and 123.4e-1 are all the same
  *		.11 is valid, but 11. is not
- *		TODO ask if the +- thing is for this too
  *
  * 	regex: 
  * 	TOKEN_FLOAT_LITERAL
@@ -75,9 +74,9 @@
  *
  * Chars:
  * 	8-bit ASCII characters
- * 	TODO ask if the empty char is allowed
+ *		empty char not allowed
  *
- * 	regex: '[ -~]' apostrophe 32 (space) through 126 (~) 		TODO make it ? if empty char allowed
+ * 	regex: '([ -~]|\[abefnrtv\'"]|\0x[A-Fa-f0-9][A-Fa-f0-9])' apostrophe 32 (space) through 126 (~)
  * 	TOKEN_CHARACTER_LITERAL
  *
  * Strings:
@@ -87,13 +86,11 @@
  * 	TOKEN_STRING_LITERAL
  *
  * Arrays:
+ * 	MADE UP OF SEPARATE TOKENS
  * 	global arrays of a fixed size
  * 	local arrays of a variable size
  * 	if declared with no value, initialize to zero
  * 	the entire array can also be given specific values
- *
- * 	regex:
- * 	TOKEN_ARRAY
  *
  * Expressions:
  * 	() 	-	grouping							regex:
