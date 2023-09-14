@@ -25,7 +25,8 @@ test: bminor runtest_encoder.sh
 	@echo "Scanner Tests:"
 	./runtest_scanner.sh
 
-clean:
-	rm *.o
-	rm bminor
-	rm tests/encode/*.out
+clean: 
+	rm -rf *.o
+	rm -rf bminor
+	rm -rf ./tests/encode/*.out
+	rm -rf ./tests/scan/*.out

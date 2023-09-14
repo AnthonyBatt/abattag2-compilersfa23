@@ -1,7 +1,0 @@
-TOKEN_ARRAY               array
-TOKEN_VOID                void
-TOKEN_INTEGER             integer
-TOKEN_FLOAT               float
-TOKEN_CHAR                char
-TOKEN_STRING              string
-TOKEN_BOOLEAN             boolean
