@@ -1,0 +1,10 @@
+TOKEN_SEMICOLON           ;
+TOKEN_COLON               :
+TOKEN_EXPO                ^
+TOKEN_MULTI               *
+TOKEN_DIVIDE              /
+TOKEN_MODULUS             %
+TOKEN_POST_INC            ++
+TOKEN_POST_DEC            --
+TOKEN_PLUS                +
+TOKEN_MINUS               -

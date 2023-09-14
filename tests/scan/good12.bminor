@@ -1,0 +1,3 @@
+"I passed strings to my encode stuff properly\n"
+"\t that was a tab\t so was that\n"
+"this is 6 this is also 6 but in hex \0x36\n"

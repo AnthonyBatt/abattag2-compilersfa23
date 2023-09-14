@@ -1,0 +1,3 @@
+// this is a comment and wont be read
+/* this is a * comment too * it also / won't be read / */
+"there were some unread comments at the top"

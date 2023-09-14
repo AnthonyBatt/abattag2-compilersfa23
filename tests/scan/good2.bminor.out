@@ -1,0 +1,4 @@
+TOKEN_IF                  if
+TOKEN_ELSE                else
+TOKEN_FOR                 for
+TOKEN_WHILE               while

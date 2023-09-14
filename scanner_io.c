@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "encoder.h"
 
@@ -69,6 +70,7 @@ int scan(FILE *fp)
 	{
 		t = yylex();
 		if (t < 0) break;
+		if (yytext[0] == 0) break;
 		// if it is a character check for backslash codes
 		else if (t == 46)
 		{
