@@ -1,0 +1,1560 @@
+=====STUDENT TESTS=====
+====Good Tests====
+===[STUDENT TESTS/good0.bminor Input]===
+array
+void
+integer
+float
+char
+string
+boolean
+
+===[STUDENT TESTS/good0.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good0.bminor Output]===
+TOKEN_ARRAY               array
+TOKEN_VOID                void
+TOKEN_INTEGER             integer
+TOKEN_FLOAT               float
+TOKEN_CHAR                char
+TOKEN_STRING              string
+TOKEN_BOOLEAN             boolean
+
+
+
+
+===[STUDENT TESTS/good1.bminor Input]===
+true
+false
+
+===[STUDENT TESTS/good1.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good1.bminor Output]===
+TOKEN_TRUE_LITERAL        true
+TOKEN_FALSE_LITERAL       false
+
+
+
+
+===[STUDENT TESTS/good10.bminor Input]===
+'a''\a''\0x41'
+
+===[STUDENT TESTS/good10.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good10.bminor Output]===
+TOKEN_CHAR_LITERAL        a
+TOKEN_CHAR_LITERAL        
+TOKEN_CHAR_LITERAL        A
+
+
+
+
+===[STUDENT TESTS/good11.bminor Input]===
+"The duck quail was a sentence said by the man next to me. ;lewkrjnkjnr.kriputlj, rsng;lgukbrheamgkr"
+
+===[STUDENT TESTS/good11.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good11.bminor Output]===
+TOKEN_STRING_LITERAL      The duck quail was a sentence said by the man next to me. ;lewkrjnkjnr.kriputlj, rsng;lgukbrheamgkr
+
+
+
+
+===[STUDENT TESTS/good12.bminor Input]===
+"I passed strings to my encode stuff properly\n"
+"\t that was a tab\t so was that\n"
+"this is 6 this is also 6 but in hex \0x36\n"
+
+===[STUDENT TESTS/good12.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good12.bminor Output]===
+TOKEN_STRING_LITERAL      I passed strings to my encode stuff properly
+
+TOKEN_STRING_LITERAL      	 that was a tab	 so was that
+
+TOKEN_STRING_LITERAL      this is 6 this is also 6 but in hex 6
+
+
+
+
+
+===[STUDENT TESTS/good13.bminor Input]===
+// this is a comment and wont be read
+/* this is a * comment too * it also / won't be read / */
+"there were some unread comments at the top"
+
+===[STUDENT TESTS/good13.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good13.bminor Output]===
+TOKEN_STRING_LITERAL      there were some unread comments at the top
+
+
+
+
+===[STUDENT TESTS/good14.bminor Input]===
+y = mx + b;
+
+return (f-32)*5/9
+
+if (yup)
+{
+	print "he he ha"
+}
+else 
+{
+	foo("he he ha")
+}
+for (integer i = 0; i < 100; i++)
+{
+	print "nope";
+}
+
+===[STUDENT TESTS/good14.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good14.bminor Output]===
+TOKEN_ID                  y
+TOKEN_ASSIGNMENT          =
+TOKEN_ID                  mx
+TOKEN_PLUS                +
+TOKEN_ID                  b
+TOKEN_SEMICOLON           ;
+TOKEN_RETURN              return
+TOKEN_PAREN_OPEN          (
+TOKEN_ID                  f
+TOKEN_INTEGER_LITERAL     -32
+TOKEN_PAREN_CLOSE         )
+TOKEN_MULTI               *
+TOKEN_INTEGER_LITERAL     5
+TOKEN_DIVIDE              /
+TOKEN_INTEGER_LITERAL     9
+TOKEN_IF                  if
+TOKEN_PAREN_OPEN          (
+TOKEN_ID                  yup
+TOKEN_PAREN_CLOSE         )
+TOKEN_BRACE_OPEN          {
+TOKEN_PRINT               print
+TOKEN_STRING_LITERAL      he he ha
+TOKEN_BRACE_CLOSE         }
+TOKEN_ELSE                else
+TOKEN_BRACE_OPEN          {
+TOKEN_ID                  foo
+TOKEN_PAREN_OPEN          (
+TOKEN_STRING_LITERAL      he he ha
+TOKEN_PAREN_CLOSE         )
+TOKEN_BRACE_CLOSE         }
+TOKEN_FOR                 for
+TOKEN_PAREN_OPEN          (
+TOKEN_INTEGER             integer
+TOKEN_ID                  i
+TOKEN_ASSIGNMENT          =
+TOKEN_INTEGER_LITERAL     0
+TOKEN_SEMICOLON           ;
+TOKEN_ID                  i
+TOKEN_LT                  <
+TOKEN_INTEGER_LITERAL     100
+TOKEN_SEMICOLON           ;
+TOKEN_ID                  i
+TOKEN_POST_INC            ++
+TOKEN_PAREN_CLOSE         )
+TOKEN_BRACE_OPEN          {
+TOKEN_PRINT               print
+TOKEN_STRING_LITERAL      nope
+TOKEN_SEMICOLON           ;
+TOKEN_BRACE_CLOSE         }
+
+
+
+
+===[STUDENT TESTS/good2.bminor Input]===
+if
+else
+for
+while
+
+===[STUDENT TESTS/good2.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good2.bminor Output]===
+TOKEN_IF                  if
+TOKEN_ELSE                else
+TOKEN_FOR                 for
+TOKEN_WHILE               while
+
+
+
+
+===[STUDENT TESTS/good3.bminor Input]===
+print function return auto
+
+===[STUDENT TESTS/good3.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good3.bminor Output]===
+TOKEN_PRINT               print
+TOKEN_FUNCTION            function
+TOKEN_RETURN              return
+TOKEN_AUTO                auto
+
+
+
+
+===[STUDENT TESTS/good4.bminor Input]===
+; : ^ * / 
+% ++ -- + -
+
+===[STUDENT TESTS/good4.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good4.bminor Output]===
+TOKEN_SEMICOLON           ;
+TOKEN_COLON               :
+TOKEN_EXPO                ^
+TOKEN_MULTI               *
+TOKEN_DIVIDE              /
+TOKEN_MODULUS             %
+TOKEN_POST_INC            ++
+TOKEN_POST_DEC            --
+TOKEN_PLUS                +
+TOKEN_MINUS               -
+
+
+
+
+===[STUDENT TESTS/good5.bminor Input]===
+()
+[]
+{}
+
+
+===[STUDENT TESTS/good5.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good5.bminor Output]===
+TOKEN_PAREN_OPEN          (
+TOKEN_PAREN_CLOSE         )
+TOKEN_BRACK_OPEN          [
+TOKEN_BRACK_CLOSE         ]
+TOKEN_BRACE_OPEN          {
+TOKEN_BRACE_CLOSE         }
+
+
+
+
+===[STUDENT TESTS/good6.bminor Input]===
+<=
+<
+>= >
+==
+!=
+! =
+||
+&&
+
+===[STUDENT TESTS/good6.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good6.bminor Output]===
+TOKEN_LE                  <=
+TOKEN_LT                  <
+TOKEN_GE                  >=
+TOKEN_GT                  >
+TOKEN_EQ                  ==
+TOKEN_NE                  !=
+TOKEN_NOT                 !
+TOKEN_ASSIGNMENT          =
+TOKEN_LOG_OR              ||
+TOKEN_LOG_AND             &&
+
+
+
+
+===[STUDENT TESTS/good7.bminor Input]===
+These will all read as Identifiers
+
+===[STUDENT TESTS/good7.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good7.bminor Output]===
+TOKEN_ID                  These
+TOKEN_ID                  will
+TOKEN_ID                  all
+TOKEN_ID                  read
+TOKEN_ID                  as
+TOKEN_ID                  Identifiers
+
+
+
+
+===[STUDENT TESTS/good8.bminor Input]===
+.11
+11.11
++11.11
+-11.11
++.11
+-.11
+11.11e11
+-11.11e+11
+
+
+===[STUDENT TESTS/good8.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good8.bminor Output]===
+TOKEN_FLOAT_LITERAL       .11
+TOKEN_FLOAT_LITERAL       11.11
+TOKEN_FLOAT_LITERAL       +11.11
+TOKEN_FLOAT_LITERAL       -11.11
+TOKEN_FLOAT_LITERAL       +.11
+TOKEN_FLOAT_LITERAL       -.11
+TOKEN_FLOAT_LITERAL       11.11e11
+TOKEN_FLOAT_LITERAL       -11.11e+11
+
+
+
+
+===[STUDENT TESTS/good9.bminor Input]===
+234
++123
+-1234
+
+
+===[STUDENT TESTS/good9.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[STUDENT TESTS/good9.bminor Output]===
+TOKEN_INTEGER_LITERAL     234
+TOKEN_INTEGER_LITERAL     +123
+TOKEN_INTEGER_LITERAL     -1234
+
+
+
+
+====Bad Tests====
+===[STUDENT TESTS/bad0.bminor Input]===
+"The following string ain't right"
+"Hello World
+
+===[STUDENT TESTS/bad0.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[STUDENT TESTS/bad0.bminor Output]===
+TOKEN_STRING_LITERAL      The following string ain't right
+There was a scan error on "
+
+Program exiting, there was a scanning error
+
+
+
+===[STUDENT TESTS/bad1.bminor Input]===
+hi squidward
+@
+
+===[STUDENT TESTS/bad1.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[STUDENT TESTS/bad1.bminor Output]===
+TOKEN_ID                  hi
+TOKEN_ID                  squidward
+There was a scan error on @
+
+Program exiting, there was a scanning error
+
+
+
+===[STUDENT TESTS/bad2.bminor Input]===
+jokes
+"this backslash will error methinks"
+\
+
+===[STUDENT TESTS/bad2.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[STUDENT TESTS/bad2.bminor Output]===
+TOKEN_ID                  jokes
+TOKEN_STRING_LITERAL      this backslash will error methinks
+There was a scan error on \
+
+Program exiting, there was a scanning error
+
+
+
+===[STUDENT TESTS/bad3.bminor Input]===
+111.111.111.111.111.111.111.111.111.111.111.
+
+===[STUDENT TESTS/bad3.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[STUDENT TESTS/bad3.bminor Output]===
+TOKEN_FLOAT_LITERAL       111.111
+TOKEN_FLOAT_LITERAL       .111
+TOKEN_FLOAT_LITERAL       .111
+TOKEN_FLOAT_LITERAL       .111
+TOKEN_FLOAT_LITERAL       .111
+TOKEN_FLOAT_LITERAL       .111
+TOKEN_FLOAT_LITERAL       .111
+TOKEN_FLOAT_LITERAL       .111
+TOKEN_FLOAT_LITERAL       .111
+TOKEN_FLOAT_LITERAL       .111
+There was a scan error on .
+
+Program exiting, there was a scanning error
+
+
+
+===[STUDENT TESTS/bad4.bminor Input]===
+"Cash money ain't gonna process"
+$$$
+Bling Bling
+
+===[STUDENT TESTS/bad4.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[STUDENT TESTS/bad4.bminor Output]===
+TOKEN_STRING_LITERAL      Cash money ain't gonna process
+There was a scan error on $
+
+Program exiting, there was a scanning error
+
+
+
+===[STUDENT TESTS/bad5.bminor Input]===
+'\0xg8'
+
+===[STUDENT TESTS/bad5.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[STUDENT TESTS/bad5.bminor Output]===
+There was a scan error on '
+
+Program exiting, there was a scanning error
+
+
+
+===[STUDENT TESTS/bad6.bminor Input]===
+"Boolean logic isnt suppoerted"
+&
+
+===[STUDENT TESTS/bad6.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[STUDENT TESTS/bad6.bminor Output]===
+TOKEN_STRING_LITERAL      Boolean logic isnt suppoerted
+There was a scan error on &
+
+Program exiting, there was a scanning error
+
+
+
+===[STUDENT TESTS/bad7.bminor Input]===
+"Boolean logic still isn't supported"
+|
+
+===[STUDENT TESTS/bad7.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[STUDENT TESTS/bad7.bminor Output]===
+TOKEN_STRING_LITERAL      Boolean logic still isn't supported
+There was a scan error on |
+
+Program exiting, there was a scanning error
+
+
+
+===[STUDENT TESTS/bad8.bminor Input]===
+"This character isnt closed"
+a'
+
+===[STUDENT TESTS/bad8.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[STUDENT TESTS/bad8.bminor Output]===
+TOKEN_STRING_LITERAL      This character isnt closed
+TOKEN_ID                  a
+There was a scan error on '
+
+Program exiting, there was a scanning error
+
+
+
+===[STUDENT TESTS/bad9.bminor Input]===
+"this is a backtick it'll prolly fail"
+`
+
+===[STUDENT TESTS/bad9.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[STUDENT TESTS/bad9.bminor Output]===
+TOKEN_STRING_LITERAL      this is a backtick it'll prolly fail
+There was a scan error on `
+
+Program exiting, there was a scanning error
+
+
+
+=====HIDDEN TESTS=====
+====Good Tests====
+===[HIDDEN TESTS/good11.bminor Input]===
+// some more complicated corner cases
+z = -(5 * 4);
+z = 15 + 5 - 4*3/7;
+z = x + (y * 5 - (4 + 20/v) - 15) % 6 + z; //long integer expr
+z+++; // these will cause parsing errors
+w---;
+
+
+===[HIDDEN TESTS/good11.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[HIDDEN TESTS/good11.bminor Output]===
+TOKEN_ID                  z
+TOKEN_ASSIGNMENT          =
+TOKEN_MINUS               -
+TOKEN_PAREN_OPEN          (
+TOKEN_INTEGER_LITERAL     5
+TOKEN_MULTI               *
+TOKEN_INTEGER_LITERAL     4
+TOKEN_PAREN_CLOSE         )
+TOKEN_SEMICOLON           ;
+TOKEN_ID                  z
+TOKEN_ASSIGNMENT          =
+TOKEN_INTEGER_LITERAL     15
+TOKEN_PLUS                +
+TOKEN_INTEGER_LITERAL     5
+TOKEN_MINUS               -
+TOKEN_INTEGER_LITERAL     4
+TOKEN_MULTI               *
+TOKEN_INTEGER_LITERAL     3
+TOKEN_DIVIDE              /
+TOKEN_INTEGER_LITERAL     7
+TOKEN_SEMICOLON           ;
+TOKEN_ID                  z
+TOKEN_ASSIGNMENT          =
+TOKEN_ID                  x
+TOKEN_PLUS                +
+TOKEN_PAREN_OPEN          (
+TOKEN_ID                  y
+TOKEN_MULTI               *
+TOKEN_INTEGER_LITERAL     5
+TOKEN_MINUS               -
+TOKEN_PAREN_OPEN          (
+TOKEN_INTEGER_LITERAL     4
+TOKEN_PLUS                +
+TOKEN_INTEGER_LITERAL     20
+TOKEN_DIVIDE              /
+TOKEN_ID                  v
+TOKEN_PAREN_CLOSE         )
+TOKEN_MINUS               -
+TOKEN_INTEGER_LITERAL     15
+TOKEN_PAREN_CLOSE         )
+TOKEN_MODULUS             %
+TOKEN_INTEGER_LITERAL     6
+TOKEN_PLUS                +
+TOKEN_ID                  z
+TOKEN_SEMICOLON           ;
+TOKEN_ID                  z
+TOKEN_POST_INC            ++
+TOKEN_PLUS                +
+TOKEN_SEMICOLON           ;
+TOKEN_ID                  w
+TOKEN_POST_DEC            --
+TOKEN_MINUS               -
+TOKEN_SEMICOLON           ;
+
+
+
+
+===[HIDDEN TESTS/good12.bminor Input]===
+//tests the for/print keyword and while keyword
+x:integer;
+for(x = 0; x < 5; x++)
+{
+	print "counting: ", x;
+}
+a:integer = 0;
+while(a > 0)
+{
+	a--;
+}
+
+
+
+===[HIDDEN TESTS/good12.bminor Status]===
+return code: 1
+TEST NOT PASSED
+
+===[HIDDEN TESTS/good12.bminor Output]===
+TOKEN_ID                  x
+TOKEN_COLON               :
+TOKEN_INTEGER             integer
+TOKEN_SEMICOLON           ;
+TOKEN_FOR                 for
+TOKEN_PAREN_OPEN          (
+TOKEN_ID                  x
+TOKEN_ASSIGNMENT          =
+TOKEN_INTEGER_LITERAL     0
+TOKEN_SEMICOLON           ;
+TOKEN_ID                  x
+TOKEN_LT                  <
+TOKEN_INTEGER_LITERAL     5
+TOKEN_SEMICOLON           ;
+TOKEN_ID                  x
+TOKEN_POST_INC            ++
+TOKEN_PAREN_CLOSE         )
+TOKEN_BRACE_OPEN          {
+TOKEN_PRINT               print
+TOKEN_STRING_LITERAL      counting: 
+There was a scan error on ,
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/good13.bminor Input]===
+//test some odd identifier names
+ident55
+ident55_
+ident__55__
+thisIsAReallyReallyLongIdentifierNameThatHasTonsOfLettersInIt = 7
+variable_names_may_contain_underscores_
+_variables_can_start_with_an_underscore_67
+7minus5 
+
+===[HIDDEN TESTS/good13.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[HIDDEN TESTS/good13.bminor Output]===
+TOKEN_ID                  ident55
+TOKEN_ID                  ident55_
+TOKEN_ID                  ident__55__
+TOKEN_ID                  thisIsAReallyReallyLongIdentifierNameThatHasTonsOfLettersInIt
+TOKEN_ASSIGNMENT          =
+TOKEN_INTEGER_LITERAL     7
+TOKEN_ID                  variable_names_may_contain_underscores_
+TOKEN_ID                  _variables_can_start_with_an_underscore_67
+TOKEN_INTEGER_LITERAL     7
+TOKEN_ID                  minus5
+
+
+
+
+===[HIDDEN TESTS/good14.bminor Input]===
+main: function integer ( argc: integer, argv: array [] string ) =
+{
+}
+boolFunction: function boolean(intVar:integer) =
+{
+	return intVar > 5;
+}
+intFunction: function integer(integer n) =
+{
+	total:integer = 0;
+	int count;
+	for(count = 0; count < n+1; count++)
+	{
+		total = total + count;
+	
+}
+
+
+===[HIDDEN TESTS/good14.bminor Status]===
+return code: 1
+TEST NOT PASSED
+
+===[HIDDEN TESTS/good14.bminor Output]===
+TOKEN_ID                  main
+TOKEN_COLON               :
+TOKEN_FUNCTION            function
+TOKEN_INTEGER             integer
+TOKEN_PAREN_OPEN          (
+TOKEN_ID                  argc
+TOKEN_COLON               :
+TOKEN_INTEGER             integer
+There was a scan error on ,
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/good15.bminor Input]===
+intFunction: function integer(intVar:integer, boolVar: boolean)
+{
+	if(boolVar)
+	{
+		intVar = intVar * 2;
+	}
+	return intVar;
+}
+// finds the largest value in the array
+getLargest: function integer(intArrVar:array [] integer, int len) =
+{
+	largest:integer = 0;
+	x:integer;
+	for(x = 0; x < len; x++)
+	{
+		if(intArrVar[x] > largest)
+		{
+			largest = intArrVar[x];
+		}
+	}
+	return largest;
+		
+}
+
+main: function integer ( argc: integer, argv: array [] string ) =
+{
+	b:array [10] integer = {0,1,2,3,4,5};
+	b[4] = 6;
+	i:integer;
+	z:integer = intFunction(i, true);
+	print intArrFunction(v, z);
+}
+
+===[HIDDEN TESTS/good15.bminor Status]===
+return code: 1
+TEST NOT PASSED
+
+===[HIDDEN TESTS/good15.bminor Output]===
+TOKEN_ID                  intFunction
+TOKEN_COLON               :
+TOKEN_FUNCTION            function
+TOKEN_INTEGER             integer
+TOKEN_PAREN_OPEN          (
+TOKEN_ID                  intVar
+TOKEN_COLON               :
+TOKEN_INTEGER             integer
+There was a scan error on ,
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/good1.bminor Input]===
+// Easy comment
+/* Easy comment */
+
+===[HIDDEN TESTS/good1.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[HIDDEN TESTS/good1.bminor Output]===
+
+
+
+
+===[HIDDEN TESTS/good10.bminor Input]===
+// Modulus operator
+15%3
+
+// Exponentiation operator
+2^6
+
+// Negation
+-value
+
+// Postincrement and postdecrement
+number++;
+
+number--;
+
+===[HIDDEN TESTS/good10.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[HIDDEN TESTS/good10.bminor Output]===
+TOKEN_INTEGER_LITERAL     15
+TOKEN_MODULUS             %
+TOKEN_INTEGER_LITERAL     3
+TOKEN_INTEGER_LITERAL     2
+TOKEN_EXPO                ^
+TOKEN_INTEGER_LITERAL     6
+TOKEN_MINUS               -
+TOKEN_ID                  value
+TOKEN_ID                  number
+TOKEN_POST_INC            ++
+TOKEN_SEMICOLON           ;
+TOKEN_ID                  number
+TOKEN_POST_DEC            --
+TOKEN_SEMICOLON           ;
+
+
+
+
+===[HIDDEN TESTS/good2.bminor Input]===
+////* Harder comment ***/
+/******************/
+/*
+This one works too.
+*/
+/***************
+Also a good comment.
+****************/
+// comment // comment // comment
+
+
+===[HIDDEN TESTS/good2.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[HIDDEN TESTS/good2.bminor Output]===
+
+
+
+
+===[HIDDEN TESTS/good3.bminor Input]===
+// Identifiers
+CamelCase
+lower_case
+skiddo23
+B4UFLY
+i
+x15
+
+
+===[HIDDEN TESTS/good3.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[HIDDEN TESTS/good3.bminor Output]===
+TOKEN_ID                  CamelCase
+TOKEN_ID                  lower_case
+TOKEN_ID                  skiddo23
+TOKEN_ID                  B4UFLY
+TOKEN_ID                  i
+TOKEN_ID                  x15
+
+
+
+
+===[HIDDEN TESTS/good4.bminor Input]===
+// Equality Operators
+== != <= < > >=
+
+===[HIDDEN TESTS/good4.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[HIDDEN TESTS/good4.bminor Output]===
+TOKEN_EQ                  ==
+TOKEN_NE                  !=
+TOKEN_LE                  <=
+TOKEN_LT                  <
+TOKEN_GT                  >
+TOKEN_GE                  >=
+
+
+
+
+===[HIDDEN TESTS/good5.bminor Input]===
+// Various bits of punctuation
+, : ; ( ) [ ] { }
+
+
+===[HIDDEN TESTS/good5.bminor Status]===
+return code: 1
+TEST NOT PASSED
+
+===[HIDDEN TESTS/good5.bminor Output]===
+There was a scan error on ,
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/good6.bminor Input]===
+// Complete function prototype
+main: function integer ( argc: integer, argv: array [] string );
+
+
+===[HIDDEN TESTS/good6.bminor Status]===
+return code: 1
+TEST NOT PASSED
+
+===[HIDDEN TESTS/good6.bminor Output]===
+TOKEN_ID                  main
+TOKEN_COLON               :
+TOKEN_FUNCTION            function
+TOKEN_INTEGER             integer
+TOKEN_PAREN_OPEN          (
+TOKEN_ID                  argc
+TOKEN_COLON               :
+TOKEN_INTEGER             integer
+There was a scan error on ,
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/good7.bminor Input]===
+// Nested statements
+if( x<15 ) {
+    print "small";
+} else {
+    print "large!";
+}
+
+
+===[HIDDEN TESTS/good7.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[HIDDEN TESTS/good7.bminor Output]===
+TOKEN_IF                  if
+TOKEN_PAREN_OPEN          (
+TOKEN_ID                  x
+TOKEN_LT                  <
+TOKEN_INTEGER_LITERAL     15
+TOKEN_PAREN_CLOSE         )
+TOKEN_BRACE_OPEN          {
+TOKEN_PRINT               print
+TOKEN_STRING_LITERAL      small
+TOKEN_SEMICOLON           ;
+TOKEN_BRACE_CLOSE         }
+TOKEN_ELSE                else
+TOKEN_BRACE_OPEN          {
+TOKEN_PRINT               print
+TOKEN_STRING_LITERAL      large!
+TOKEN_SEMICOLON           ;
+TOKEN_BRACE_CLOSE         }
+
+
+
+
+===[HIDDEN TESTS/good8.bminor Input]===
+// Valid integers
+0
+1024
+-512
++256
+// valid floats
+1.2
+0.45
+.67
+12e10
++1.2
+-1.2
+1.2e+1
+1.2e-1
++1.2e+1
++1.2e-1
+-1.2e+1
+-1.2e-1
+
+===[HIDDEN TESTS/good8.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[HIDDEN TESTS/good8.bminor Output]===
+TOKEN_INTEGER_LITERAL     0
+TOKEN_INTEGER_LITERAL     1024
+TOKEN_INTEGER_LITERAL     -512
+TOKEN_INTEGER_LITERAL     +256
+TOKEN_FLOAT_LITERAL       1.2
+TOKEN_FLOAT_LITERAL       0.45
+TOKEN_FLOAT_LITERAL       .67
+TOKEN_INTEGER_LITERAL     12
+TOKEN_ID                  e10
+TOKEN_FLOAT_LITERAL       +1.2
+TOKEN_FLOAT_LITERAL       -1.2
+TOKEN_FLOAT_LITERAL       1.2e+1
+TOKEN_FLOAT_LITERAL       1.2e-1
+TOKEN_FLOAT_LITERAL       +1.2e+1
+TOKEN_FLOAT_LITERAL       +1.2e-1
+TOKEN_FLOAT_LITERAL       -1.2e+1
+TOKEN_FLOAT_LITERAL       -1.2e-1
+
+
+
+
+===[HIDDEN TESTS/good9.bminor Input]===
+// Type Keywords
+array
+boolean
+char
+string
+void
+integer
+float
+
+===[HIDDEN TESTS/good9.bminor Status]===
+return code: 0
+Test passed successfully!
+
+===[HIDDEN TESTS/good9.bminor Output]===
+TOKEN_ARRAY               array
+TOKEN_BOOLEAN             boolean
+TOKEN_CHAR                char
+TOKEN_STRING              string
+TOKEN_VOID                void
+TOKEN_INTEGER             integer
+TOKEN_FLOAT               float
+
+
+
+
+====Bad Tests====
+===[HIDDEN TESTS/bad11.bminor Input]===
+/*
+A string should not contain a literal newline,
+but use backslash-n instead.
+*/
+
+"invalid
+
+string"
+
+===[HIDDEN TESTS/bad11.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad11.bminor Output]===
+There was a scan error on "
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad12.bminor Input]===
+'ca'
+
+===[HIDDEN TESTS/bad12.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad12.bminor Output]===
+There was a scan error on '
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad13.bminor Input]===
+''
+
+===[HIDDEN TESTS/bad13.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad13.bminor Output]===
+There was a scan error on '
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad14.bminor Input]===
+'\ac'
+
+===[HIDDEN TESTS/bad14.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad14.bminor Output]===
+There was a scan error on '
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad15.bminor Input]===
+'
+
+===[HIDDEN TESTS/bad15.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad15.bminor Output]===
+There was a scan error on '
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad1.bminor Input]===
+"unmatched string""
+
+===[HIDDEN TESTS/bad1.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad1.bminor Output]===
+
+An " must be at the start or end of the string, if you meant to print one then please escape it: \"
+decode("unmatched string""): the string was unable to be decoded
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad10.bminor Input]===
+#compilers // No hashtags in B-minor
+
+===[HIDDEN TESTS/bad10.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad10.bminor Output]===
+There was a scan error on #
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad2.bminor Input]===
+"unterminated \"
+
+
+===[HIDDEN TESTS/bad2.bminor Status]===
+return code: 0
+TEST NOT PASSED
+
+===[HIDDEN TESTS/bad2.bminor Output]===
+TOKEN_STRING_LITERAL      unterminated "
+
+
+
+
+===[HIDDEN TESTS/bad3.bminor Input]===
+never started"
+
+
+
+
+
+
+===[HIDDEN TESTS/bad3.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad3.bminor Output]===
+TOKEN_ID                  never
+TOKEN_ID                  started
+There was a scan error on "
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad4.bminor Input]===
+'character?' // Character too long.
+
+===[HIDDEN TESTS/bad4.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad4.bminor Output]===
+There was a scan error on '
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad5.bminor Input]===
+'' // Empty character not allowed.
+
+===[HIDDEN TESTS/bad5.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad5.bminor Output]===
+There was a scan error on '
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad6.bminor Input]===
+~tilde // Invalid symbol
+
+===[HIDDEN TESTS/bad6.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad6.bminor Output]===
+There was a scan error on ~
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad7.bminor Input]===
+/* Is this a valid comment */ @ */
+
+
+===[HIDDEN TESTS/bad7.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad7.bminor Output]===
+There was a scan error on @
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad8.bminor Input]===
+"\0xGG" // invalid escape sequence
+
+===[HIDDEN TESTS/bad8.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad8.bminor Output]===
+
+invalid hexdigits given, valid hexdigits are 0-9, a-f, and A-F, given digits were: G and G
+decode("\0xGG"): the string was unable to be decoded
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad9.bminor Input]===
+minus#44
+
+===[HIDDEN TESTS/bad9.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad9.bminor Output]===
+TOKEN_ID                  minus
+There was a scan error on #
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad16.bminor Input]===
+@
+#
+&
+|
+\
+
+===[HIDDEN TESTS/bad16.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad16.bminor Output]===
+There was a scan error on @
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad17.bminor Input]===
+// unmatched comment throws error 
+/* This is a comment.
+
+
+
+
+
+
+
+
+===[HIDDEN TESTS/bad17.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad17.bminor Output]===
+TOKEN_DIVIDE              /
+TOKEN_MULTI               *
+TOKEN_ID                  This
+TOKEN_ID                  is
+TOKEN_ID                  a
+TOKEN_ID                  comment
+There was a scan error on .
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad18.bminor Input]===
+// basic data types
+" the quote is unmatched
+
+
+
+
+
+
+
+===[HIDDEN TESTS/bad18.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad18.bminor Output]===
+There was a scan error on "
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad19.bminor Input]===
+// floating point mistake
+5..6..0..5..0;
+
+===[HIDDEN TESTS/bad19.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad19.bminor Output]===
+TOKEN_INTEGER_LITERAL     5
+There was a scan error on .
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad20.bminor Input]===
+// test comparotors and boolean logic
+if (a | b)
+{
+	print " a || b is true";
+}
+if (a & b)// must had 2 &&
+{
+	print " a || b is true";
+}
+
+===[HIDDEN TESTS/bad20.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad20.bminor Output]===
+TOKEN_IF                  if
+TOKEN_PAREN_OPEN          (
+TOKEN_ID                  a
+There was a scan error on |
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad21.bminor Input]===
+
+"""
+
+
+===[HIDDEN TESTS/bad21.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad21.bminor Output]===
+
+An " must be at the start or end of the string, if you meant to print one then please escape it: \"
+decode("""): the string was unable to be decoded
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad22.bminor Input]===
+"012345678901234567890101234567890123456789010123456789012345678901012345678901234567890101234567890123456789010123456789012345678901012345678901234567890101234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
+
+
+===[HIDDEN TESTS/bad22.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad22.bminor Output]===
+
+Strings must not exceed 255 chars (not including the null terminator), this string was 256 chars
+decode("012345678901234567890101234567890123456789010123456789012345678901012345678901234567890101234567890123456789010123456789012345678901012345678901234567890101234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"): the string was unable to be decoded
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad23.bminor Input]===
+$minus
+
+===[HIDDEN TESTS/bad23.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad23.bminor Output]===
+There was a scan error on $
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad25.bminor Input]===
+// invalid character
+'😋'
+
+===[HIDDEN TESTS/bad25.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad25.bminor Output]===
+There was a scan error on '
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad26.bminor Input]===
+/*
+A string should not contain a literal newline,
+but use backslash-n instead.
+*/
+
+"invalid
+
+string"
+
+===[HIDDEN TESTS/bad26.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad26.bminor Output]===
+There was a scan error on "
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad27.bminor Input]===
+'''
+
+===[HIDDEN TESTS/bad27.bminor Status]===
+return code: 0
+TEST NOT PASSED
+
+===[HIDDEN TESTS/bad27.bminor Output]===
+TOKEN_CHAR_LITERAL        '
+
+
+
+
+===[HIDDEN TESTS/bad28.bminor Input]===
+"'"'"
+
+===[HIDDEN TESTS/bad28.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad28.bminor Output]===
+
+An " must be at the start or end of the string, if you meant to print one then please escape it: \"
+decode("'"'"): the string was unable to be decoded
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad29.bminor Input]===
+'\t\e\s\t\ \s\t\r\i\n\g'
+
+===[HIDDEN TESTS/bad29.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad29.bminor Output]===
+There was a scan error on '
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad30.bminor Input]===
+'\0x12\0x34'
+
+===[HIDDEN TESTS/bad30.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad30.bminor Output]===
+There was a scan error on '
+
+Program exiting, there was a scanning error
+
+
+
+===[HIDDEN TESTS/bad0.bminor Input]===
+!@#$*(!&%!@)#(@!+)!@*!@)*$!@_)(%!@_%(*!
+
+===[HIDDEN TESTS/bad0.bminor Status]===
+return code: 1
+Test passed successfully!
+
+===[HIDDEN TESTS/bad0.bminor Output]===
+TOKEN_NOT                 !
+There was a scan error on @
+
+Program exiting, there was a scanning error
+
+
+
+===== SUMMARIZED SCANNER RESULTS =====
+{
+  "student_tests": {
+    "Good": {
+      "correct": 15,
+      "incorrect": 0
+    },
+    "Bad": {
+      "correct": 10,
+      "incorrect": 0
+    }
+  },
+  "hidden_tests": {
+    "Good": {
+      "correct": 10,
+      "incorrect": 5
+    },
+    "Bad": {
+      "correct": 28,
+      "incorrect": 2
+    }
+  }
+}
+Scanner Project Grade
+    ---------------------------------
+
+    General Structure (35/35 points)
+    ----------------------------------------------
+    I like how you seperated out the sections of your main function with comments. Really helped with readability.
+
+    Student Tests (20/20 points)
+    ------------------------------------------
+    Good work here
+
+    Hidden Tests (42/45 points)
+    ------------------------------------------
+    Missed a couple of tests because your scanner didn't recgonize the comma, will only take off one point for that. 
+    Missed some other edge cases where there was unescaped or inproperly escaped things.
+
+    Coding Style (10/10 points)
+    ------------------------------------------
+    I would have another pass at the flex file formatting. There seems to be rogue tabs all over the place making it hard to read.
