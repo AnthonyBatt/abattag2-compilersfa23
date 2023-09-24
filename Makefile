@@ -19,7 +19,7 @@ scanner.o: scanner.c
 scanner_io.o: scanner_io.c
 	$(CC) -c $(CFLAGS) scanner_io.c -o scanner_io.o
 
-test: bminor runtest_encoder.sh
+test: bminor runtest_encoder.sh runtest_scanner.sh
 	@echo "Encoder Tests:"
 	./runtest_encoder.sh
 	@echo "Scanner Tests:"

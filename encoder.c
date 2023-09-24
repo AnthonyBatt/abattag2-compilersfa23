@@ -164,8 +164,8 @@ int string_decode(const unsigned char *es, unsigned char *s)
 		fprintf(stderr, "Strings must not exceed 255 chars (not including the null terminator), this string was %ld chars\n", strlen((char *)s));
 		return 0;
 	}
-	// does it end with " \0
-	if (es[i-2] != 34 || es[i-1] != 0)
+	// does the string end with a " followed by null, but the end can't look like \" this
+	if (es[i-2] != 34 || es[i-1] != 0 || es[i-3] == 92)
 	{
 		fprintf(stderr, "Strings must end with ASCII codes 34 0, this one ended with %d %d\n", es[i-2], es[i-1]);
 		return 0;

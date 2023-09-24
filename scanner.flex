@@ -26,6 +26,7 @@
 "void"																							{ return TOKEN_VOID; }   
 "while"																							{ return TOKEN_WHILE; }  
 
+,																									{ return TOKEN_COMMA; }
 ;																									{ return TOKEN_SEMICOLON; }
 :																									{ return TOKEN_COLON; }  
 \(																									{ return TOKEN_PAREN_OPEN; }
@@ -56,7 +57,7 @@
 \+																									{ return TOKEN_PLUS; }    
 \-\-																								{ return TOKEN_POST_DEC; }
 \-																									{ return TOKEN_MINUS; }
-\'([ -~]|\\[abefnrtv\\\'\"]|\\0x[A-Fa-f0-9]{2})\'									{ return TOKEN_CHAR_LITERAL; }
+\'([ !#-&\(\)*-\[\]-~]|\\[abefnrtv\\\'\"]|\\0x[A-Fa-f0-9]{2})\'									{ return TOKEN_CHAR_LITERAL; }
 \"[ -~]*\"																						{ return TOKEN_STRING_LITERAL; }
 
 .																									{ return -2; }

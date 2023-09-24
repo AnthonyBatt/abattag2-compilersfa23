@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "scanner.h"
 #include "encoder.h"
 
 extern FILE *yyin;
@@ -11,7 +12,7 @@ int scan(FILE *fp)
 {
 	yyin = fp;
 
-	char token_arr[48][255] =
+	char token_arr[49][255] =
 	{
 		"TOKEN_ARRAY",
 		"TOKEN_VOID",
@@ -31,6 +32,7 @@ int scan(FILE *fp)
 		"TOKEN_RETURN",
 		"TOKEN_AUTO",
 
+		"TOKEN_COMMA",
 		"TOKEN_SEMICOLON",
 		"TOKEN_COLON",
 		"TOKEN_PAREN_OPEN",
@@ -72,7 +74,7 @@ int scan(FILE *fp)
 		if (t < 0) break;
 		if (yytext[0] == 0) break;
 		// if it is a character check for backslash codes
-		else if (t == 46)
+		else if (t == TOKEN_CHAR_LITERAL)
 		{
 			char c = yytext[1];
 			// escape characters sub if chain
@@ -172,7 +174,7 @@ int scan(FILE *fp)
 			printf("%-25s %c\n", token_arr[t], c);
 		}
 		// it is a string literal
-		else if (t == 47)
+		else if (t == TOKEN_STRING_LITERAL)
 		{
 			unsigned char ds[256];
 			// decode and if it fails print an appropiate error message
