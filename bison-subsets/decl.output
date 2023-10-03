@@ -1,0 +1,390 @@
+Terminals unused in grammar
+
+   TOKEN_ARRAY
+   TOKEN_VOID
+   TOKEN_IF
+   TOKEN_ELSE
+   TOKEN_FOR
+   TOKEN_WHILE
+   TOKEN_PRINT
+   TOKEN_FUNCTION
+   TOKEN_RETURN
+   TOKEN_AUTO
+   TOKEN_COMMA
+   TOKEN_PAREN_OPEN
+   TOKEN_PAREN_CLOSE
+   TOKEN_BRACK_OPEN
+   TOKEN_BRACK_CLOSE
+   TOKEN_BRACE_OPEN
+   TOKEN_BRACE_CLOSE
+   TOKEN_EXPO
+   TOKEN_MULTI
+   TOKEN_DIVIDE
+   TOKEN_MODULUS
+   TOKEN_LE
+   TOKEN_LT
+   TOKEN_GE
+   TOKEN_GT
+   TOKEN_EQ
+   TOKEN_NE
+   TOKEN_NOT
+   TOKEN_LOG_OR
+   TOKEN_LOG_AND
+   TOKEN_POST_INC
+   TOKEN_POST_DEC
+   TOKEN_PLUS
+   TOKEN_MINUS
+
+
+Grammar
+
+    0 $accept: prog $end
+
+    1 prog: TOKEN_ID TOKEN_COLON decl TOKEN_SEMICOLON
+
+    2 decl: type
+
+    3 type: inte
+    4     | floa
+    5     | char
+    6     | stri
+    7     | bool
+
+    8 inte: TOKEN_INTEGER TOKEN_ASSIGNMENT TOKEN_INTEGER_LITERAL
+    9     | TOKEN_INTEGER
+
+   10 floa: TOKEN_FLOAT TOKEN_ASSIGNMENT TOKEN_FLOAT_LITERAL
+   11     | TOKEN_FLOAT
+
+   12 char: TOKEN_CHAR TOKEN_ASSIGNMENT TOKEN_CHAR_LITERAL
+   13     | TOKEN_CHAR
+
+   14 stri: TOKEN_STRING TOKEN_ASSIGNMENT TOKEN_STRING_LITERAL
+   15     | TOKEN_STRING
+
+   16 bool: TOKEN_BOOLEAN TOKEN_ASSIGNMENT torf
+   17     | TOKEN_BOOLEAN
+
+   18 torf: TOKEN_TRUE_LITERAL
+   19     | TOKEN_FALSE_LITERAL
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+TOKEN_ARRAY (258)
+TOKEN_VOID (259)
+TOKEN_INTEGER (260) 8 9
+TOKEN_FLOAT (261) 10 11
+TOKEN_CHAR (262) 12 13
+TOKEN_STRING (263) 14 15
+TOKEN_BOOLEAN (264) 16 17
+TOKEN_TRUE_LITERAL (265) 18
+TOKEN_FALSE_LITERAL (266) 19
+TOKEN_IF (267)
+TOKEN_ELSE (268)
+TOKEN_FOR (269)
+TOKEN_WHILE (270)
+TOKEN_PRINT (271)
+TOKEN_FUNCTION (272)
+TOKEN_RETURN (273)
+TOKEN_AUTO (274)
+TOKEN_COMMA (275)
+TOKEN_SEMICOLON (276) 1
+TOKEN_COLON (277) 1
+TOKEN_PAREN_OPEN (278)
+TOKEN_PAREN_CLOSE (279)
+TOKEN_BRACK_OPEN (280)
+TOKEN_BRACK_CLOSE (281)
+TOKEN_BRACE_OPEN (282)
+TOKEN_BRACE_CLOSE (283)
+TOKEN_EXPO (284)
+TOKEN_MULTI (285)
+TOKEN_DIVIDE (286)
+TOKEN_MODULUS (287)
+TOKEN_LE (288)
+TOKEN_LT (289)
+TOKEN_GE (290)
+TOKEN_GT (291)
+TOKEN_EQ (292)
+TOKEN_NE (293)
+TOKEN_NOT (294)
+TOKEN_ASSIGNMENT (295) 8 10 12 14 16
+TOKEN_LOG_OR (296)
+TOKEN_LOG_AND (297)
+TOKEN_POST_INC (298)
+TOKEN_POST_DEC (299)
+TOKEN_PLUS (300)
+TOKEN_MINUS (301)
+TOKEN_ID (302) 1
+TOKEN_FLOAT_LITERAL (303) 10
+TOKEN_INTEGER_LITERAL (304) 8
+TOKEN_CHAR_LITERAL (305) 12
+TOKEN_STRING_LITERAL (306) 14
+
+
+Nonterminals, with rules where they appear
+
+$accept (52)
+    on left: 0
+prog (53)
+    on left: 1, on right: 0
+decl (54)
+    on left: 2, on right: 1
+type (55)
+    on left: 3 4 5 6 7, on right: 2
+inte (56)
+    on left: 8 9, on right: 3
+floa (57)
+    on left: 10 11, on right: 4
+char (58)
+    on left: 12 13, on right: 5
+stri (59)
+    on left: 14 15, on right: 6
+bool (60)
+    on left: 16 17, on right: 7
+torf (61)
+    on left: 18 19, on right: 16
+
+
+State 0
+
+    0 $accept: . prog $end
+
+    TOKEN_ID  shift, and go to state 1
+
+    prog  go to state 2
+
+
+State 1
+
+    1 prog: TOKEN_ID . TOKEN_COLON decl TOKEN_SEMICOLON
+
+    TOKEN_COLON  shift, and go to state 3
+
+
+State 2
+
+    0 $accept: prog . $end
+
+    $end  shift, and go to state 4
+
+
+State 3
+
+    1 prog: TOKEN_ID TOKEN_COLON . decl TOKEN_SEMICOLON
+
+    TOKEN_INTEGER  shift, and go to state 5
+    TOKEN_FLOAT    shift, and go to state 6
+    TOKEN_CHAR     shift, and go to state 7
+    TOKEN_STRING   shift, and go to state 8
+    TOKEN_BOOLEAN  shift, and go to state 9
+
+    decl  go to state 10
+    type  go to state 11
+    inte  go to state 12
+    floa  go to state 13
+    char  go to state 14
+    stri  go to state 15
+    bool  go to state 16
+
+
+State 4
+
+    0 $accept: prog $end .
+
+    $default  accept
+
+
+State 5
+
+    8 inte: TOKEN_INTEGER . TOKEN_ASSIGNMENT TOKEN_INTEGER_LITERAL
+    9     | TOKEN_INTEGER .
+
+    TOKEN_ASSIGNMENT  shift, and go to state 17
+
+    $default  reduce using rule 9 (inte)
+
+
+State 6
+
+   10 floa: TOKEN_FLOAT . TOKEN_ASSIGNMENT TOKEN_FLOAT_LITERAL
+   11     | TOKEN_FLOAT .
+
+    TOKEN_ASSIGNMENT  shift, and go to state 18
+
+    $default  reduce using rule 11 (floa)
+
+
+State 7
+
+   12 char: TOKEN_CHAR . TOKEN_ASSIGNMENT TOKEN_CHAR_LITERAL
+   13     | TOKEN_CHAR .
+
+    TOKEN_ASSIGNMENT  shift, and go to state 19
+
+    $default  reduce using rule 13 (char)
+
+
+State 8
+
+   14 stri: TOKEN_STRING . TOKEN_ASSIGNMENT TOKEN_STRING_LITERAL
+   15     | TOKEN_STRING .
+
+    TOKEN_ASSIGNMENT  shift, and go to state 20
+
+    $default  reduce using rule 15 (stri)
+
+
+State 9
+
+   16 bool: TOKEN_BOOLEAN . TOKEN_ASSIGNMENT torf
+   17     | TOKEN_BOOLEAN .
+
+    TOKEN_ASSIGNMENT  shift, and go to state 21
+
+    $default  reduce using rule 17 (bool)
+
+
+State 10
+
+    1 prog: TOKEN_ID TOKEN_COLON decl . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  shift, and go to state 22
+
+
+State 11
+
+    2 decl: type .
+
+    $default  reduce using rule 2 (decl)
+
+
+State 12
+
+    3 type: inte .
+
+    $default  reduce using rule 3 (type)
+
+
+State 13
+
+    4 type: floa .
+
+    $default  reduce using rule 4 (type)
+
+
+State 14
+
+    5 type: char .
+
+    $default  reduce using rule 5 (type)
+
+
+State 15
+
+    6 type: stri .
+
+    $default  reduce using rule 6 (type)
+
+
+State 16
+
+    7 type: bool .
+
+    $default  reduce using rule 7 (type)
+
+
+State 17
+
+    8 inte: TOKEN_INTEGER TOKEN_ASSIGNMENT . TOKEN_INTEGER_LITERAL
+
+    TOKEN_INTEGER_LITERAL  shift, and go to state 23
+
+
+State 18
+
+   10 floa: TOKEN_FLOAT TOKEN_ASSIGNMENT . TOKEN_FLOAT_LITERAL
+
+    TOKEN_FLOAT_LITERAL  shift, and go to state 24
+
+
+State 19
+
+   12 char: TOKEN_CHAR TOKEN_ASSIGNMENT . TOKEN_CHAR_LITERAL
+
+    TOKEN_CHAR_LITERAL  shift, and go to state 25
+
+
+State 20
+
+   14 stri: TOKEN_STRING TOKEN_ASSIGNMENT . TOKEN_STRING_LITERAL
+
+    TOKEN_STRING_LITERAL  shift, and go to state 26
+
+
+State 21
+
+   16 bool: TOKEN_BOOLEAN TOKEN_ASSIGNMENT . torf
+
+    TOKEN_TRUE_LITERAL   shift, and go to state 27
+    TOKEN_FALSE_LITERAL  shift, and go to state 28
+
+    torf  go to state 29
+
+
+State 22
+
+    1 prog: TOKEN_ID TOKEN_COLON decl TOKEN_SEMICOLON .
+
+    $default  reduce using rule 1 (prog)
+
+
+State 23
+
+    8 inte: TOKEN_INTEGER TOKEN_ASSIGNMENT TOKEN_INTEGER_LITERAL .
+
+    $default  reduce using rule 8 (inte)
+
+
+State 24
+
+   10 floa: TOKEN_FLOAT TOKEN_ASSIGNMENT TOKEN_FLOAT_LITERAL .
+
+    $default  reduce using rule 10 (floa)
+
+
+State 25
+
+   12 char: TOKEN_CHAR TOKEN_ASSIGNMENT TOKEN_CHAR_LITERAL .
+
+    $default  reduce using rule 12 (char)
+
+
+State 26
+
+   14 stri: TOKEN_STRING TOKEN_ASSIGNMENT TOKEN_STRING_LITERAL .
+
+    $default  reduce using rule 14 (stri)
+
+
+State 27
+
+   18 torf: TOKEN_TRUE_LITERAL .
+
+    $default  reduce using rule 18 (torf)
+
+
+State 28
+
+   19 torf: TOKEN_FALSE_LITERAL .
+
+    $default  reduce using rule 19 (torf)
+
+
+State 29
+
+   16 bool: TOKEN_BOOLEAN TOKEN_ASSIGNMENT torf .
+
+    $default  reduce using rule 16 (bool)
