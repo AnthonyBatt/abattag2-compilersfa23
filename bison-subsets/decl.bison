@@ -1,6 +1,12 @@
 %{
 
+#include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+extern char *yytext;
+extern int yylex();
+extern int yyerror(char *s);
 
 %}
 
@@ -60,41 +66,43 @@
 
 //grammar rules
 
-prog  : 	TOKEN_ID TOKEN_COLON decl TOKEN_SEMICOLON												{ }
+prog  : 	TOKEN_ID TOKEN_COLON decl TOKEN_SEMICOLON												{ printf("prog\n"); }
+		|	TOKEN_COMMA																									{ printf("test\n"); }
 		;
 
-decl	:	type																								{ }
+decl	:	type																								{ printf("decl\n"); }
 		;
 
-type	: 	inte																								{ }
-		|	floa																								{ }
-		|	char																								{ }
-		|	stri																								{ }
-		|	bool																								{ }
+type	: 	inte																								{ printf("inte\n"); }
+		|	floa																								{ printf("floa\n"); }
+		|	char																								{ printf("char\n"); }
+		|	stri																								{ printf("stri\n"); }
+		|	bool																								{ printf("bool\n"); }
+		|																										{ printf("no inst\n"); }
 		;
 
-inte	:	TOKEN_INTEGER TOKEN_ASSIGNMENT TOKEN_INTEGER_LITERAL								{ }
-		|	TOKEN_INTEGER																					{ }
+inte	:	TOKEN_INTEGER TOKEN_ASSIGNMENT TOKEN_INTEGER_LITERAL								{ printf("int literal\n"); }
+		|	TOKEN_INTEGER																					{ printf("int\n"); }
 		;
 
-floa	: 	TOKEN_FLOAT TOKEN_ASSIGNMENT TOKEN_FLOAT_LITERAL									{ }
-		|	TOKEN_FLOAT																						{ }
+floa	: 	TOKEN_FLOAT TOKEN_ASSIGNMENT TOKEN_FLOAT_LITERAL									{ printf("float literal\n"); }
+		|	TOKEN_FLOAT																						{ printf("float\n"); }
 		;
 
-char	:	TOKEN_CHAR TOKEN_ASSIGNMENT TOKEN_CHAR_LITERAL										{ }		
-		|	TOKEN_CHAR																						{ }
+char	:	TOKEN_CHAR TOKEN_ASSIGNMENT TOKEN_CHAR_LITERAL										{ printf("char literal\n"); }
+		|	TOKEN_CHAR																						{ printf("char;\n"); }
 		;
 
-stri	:	TOKEN_STRING TOKEN_ASSIGNMENT TOKEN_STRING_LITERAL									{ }		
-		|	TOKEN_STRING																					{ }
+stri	:	TOKEN_STRING TOKEN_ASSIGNMENT TOKEN_STRING_LITERAL									{ printf("str literal\n"); }
+		|	TOKEN_STRING																					{ printf("str\n"); }
 		;
 
-bool	:	TOKEN_BOOLEAN TOKEN_ASSIGNMENT torf														{ }
-		| 	TOKEN_BOOLEAN																					{ }
+bool	:	TOKEN_BOOLEAN TOKEN_ASSIGNMENT torf														{ printf("bool choice\n"); }
+		| 	TOKEN_BOOLEAN																					{ printf("boolean\n"); }
 		;
 
-torf	:	TOKEN_TRUE_LITERAL																			{ }
-		|	TOKEN_FALSE_LITERAL																			{ }
+torf	:	TOKEN_TRUE_LITERAL																			{ printf("true\n"); }
+		|	TOKEN_FALSE_LITERAL																			{ printf("false\n"); }
 		;
 
 %%
