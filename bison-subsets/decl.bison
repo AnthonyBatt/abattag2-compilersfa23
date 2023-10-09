@@ -66,8 +66,58 @@ extern int yyerror(char *s);
 
 //grammar rules
 
-prog  : 	TOKEN_ID TOKEN_COLON decl TOKEN_SEMICOLON												{ printf("prog\n"); }
-		|	TOKEN_COMMA																									{ printf("test\n"); }
+begi	:	lgor TOKEN_SEMICOLON																			{ printf("result = %d\n", $1); return 0; }
+		|	prog																								{ return 0; }
+		;
+
+lgor	:	lgor TOKEN_LOG_OR	lgan																		{ $$ = $1 || $3; }
+		|	lgan																								{ $$ = $1; }
+		;
+
+lgan	:	lgan TOKEN_LOG_AND comp																		{ $$ = $1 && $3; }
+		|	comp																								{ $$ = $1; }
+		;
+
+comp	:	comp TOKEN_LT expr																			{ $$ = $1 <  $3; }
+		|	comp TOKEN_LE expr																			{ $$ = $1 <= $3; }
+		|	comp TOKEN_GT expr																			{ $$ = $1 >  $3; }
+		|	comp TOKEN_GE expr																			{ $$ = $1 >= $3; }
+		|	comp TOKEN_EQ expr																			{ $$ = $1 == $3; }
+		|	comp TOKEN_NE expr																			{ $$ = $1 != $3; }
+		|	expr																								{ $$ = $1; }
+		;
+
+expr	:	expr TOKEN_PLUS term																			{ $$ = $1 + $3; }
+		|	expr TOKEN_MINUS term																		{ $$ = $1 - $3; }
+		|	term																								{ $$ = $1; }
+		;
+
+term	:	term TOKEN_MULTI expo																		{ $$ = $1 * $3; }
+		|	term TOKEN_DIVIDE expo																		{ if ($3) {$$ = $1 / $3;} else {printf("cannot divide by zero\n"); return 1;} }
+		|	term TOKEN_MODULUS expo																		{ if ($3) {$$ = $1 % $3;} else {printf("cannot divide by zero\n"); return 1;} }
+		|	expo																								{ $$ = $1; }
+		;
+
+expo	:	expo TOKEN_EXPO ngtn																			{ $$ = pow($1, $3); }
+		|	ngtn																								{ $$ = $1; }
+		;
+
+ngtn	:	TOKEN_MINUS post																				{ $$ = -$2; }
+		|	TOKEN_NOT post																					{ $$ = !$2; }
+		|	post																								{ $$ =  $1; }
+		;
+
+post	:	fact TOKEN_POST_INC																			{ $$ = $1++; }
+		|	fact TOKEN_POST_DEC																			{ $$ = $1--; }
+		|	fact																								{ $$ = $1;   }
+		;
+
+fact	:	TOKEN_PAREN_OPEN lgor TOKEN_PAREN_CLOSE												{ $$ = $2; }
+		|	TOKEN_INTEGER_LITERAL																		{ $$ = atoi(yytext); }
+		|	TOKEN_ID																							{ $$ = 42; }
+		;
+
+prog  : 	TOKEN_ID TOKEN_COLON decl TOKEN_SEMICOLON												{ return 0; }
 		;
 
 decl	:	type																								{ printf("decl\n"); }
@@ -78,7 +128,7 @@ type	: 	inte																								{ printf("inte\n"); }
 		|	char																								{ printf("char\n"); }
 		|	stri																								{ printf("stri\n"); }
 		|	bool																								{ printf("bool\n"); }
-		|																										{ printf("no inst\n"); }
+		|	/* epsilon */																					{ printf("no inst\n"); }
 		;
 
 inte	:	TOKEN_INTEGER TOKEN_ASSIGNMENT TOKEN_INTEGER_LITERAL								{ printf("int literal\n"); }
