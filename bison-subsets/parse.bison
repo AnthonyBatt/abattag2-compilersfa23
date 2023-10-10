@@ -66,8 +66,7 @@ extern int yyerror(char *s);
 
 //grammar rules
 
-begi	:	asin TOKEN_SEMICOLON																			{ printf("result = %d\n", $1); return 0; }
-		|	prog																								{ return 0; }
+begi	:	stmt																								{ printf("result = %d\n", $1); return 0; }
 		;
 
 asin	:	lgor TOKEN_ASSIGNMENT asin																	{ $$ = $3; }
@@ -117,10 +116,6 @@ post	:	atom TOKEN_POST_INC																			{ $$ = $1++; }
 		|	atom																								{ $$ = $1;   }
 		;
 
-fact	:	TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE												{ $$ = $2; }
-		|	atom																								{ $$ = $1; }
-		;
-
 atom	:	TOKEN_FLOAT_LITERAL
 		|	TOKEN_INTEGER_LITERAL																		{ $$ = atoi(yytext); }
 		|	TOKEN_CHAR_LITERAL																			{ $$ = 4; }
@@ -133,7 +128,24 @@ atom	:	TOKEN_FLOAT_LITERAL
 		|	TOKEN_ID TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE									{ $$ = 3; }
 		;
 
-oxpl	: xpls
+/*bpal	:	TOKEN_BRACE_OPEN opal TOKEN_BRACE_CLOSE
+		;*/
+
+opal	:	pals
+		|	/* epsilon */
+		;
+
+pals	:	parm																								{ }
+		|	parm TOKEN_COMMA pals																		{ }
+		;
+
+parm	:	TOKEN_ID TOKEN_COLON type
+		;
+
+bxpl	:	TOKEN_BRACE_OPEN oxpl TOKEN_BRACE_CLOSE
+		;
+
+oxpl	:	xpls
 		|	/* epsilon */
 		;
 
@@ -141,10 +153,50 @@ xpls	:	asin																								{ }
 		|	asin TOKEN_COMMA xpls																		{ }
 		;
 
-prog  : 	TOKEN_ID TOKEN_COLON decl TOKEN_SEMICOLON												{ return 0; }
+bstl	:	TOKEN_BRACE_OPEN ostl TOKEN_BRACE_CLOSE
 		;
 
-decl	:	type																								{ printf("decl\n"); }
+ostl	:	stls
+		|	/* epsilon */
+		;
+
+stls	:	stmt																				{ }
+		|	stmt stls																		{ }
+		;
+
+stmt	:	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE stmt
+		|	bstl
+		|	decl
+		|	TOKEN_RETURN oasi TOKEN_SEMICOLON
+		|	TOKEN_PRINT oxpl TOKEN_SEMICOLON
+		|	asin TOKEN_SEMICOLON
+		;
+
+oasi	:	asin
+		|	/* epsilon */
+		;
+
+decl  : 	TOKEN_ID TOKEN_COLON type init TOKEN_SEMICOLON										{  }
+		|	TOKEN_ID TOKEN_COLON arty arii TOKEN_SEMICOLON
+		|	TOKEN_ID TOKEN_COLON fxty fxii
+		;
+
+fxii	:	TOKEN_ASSIGNMENT bstl
+		|	/* epsilon */
+		;
+
+arty	:	TOKEN_ARRAY TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE type							{ if (!$3) {printf("array length cant be 0\n"); return 1;} }
+		;
+
+fxty	:	TOKEN_FUNCTION type TOKEN_PAREN_OPEN opal TOKEN_PAREN_CLOSE
+		;
+
+arii	:	TOKEN_ASSIGNMENT bxpl 
+		|	/* epsilon */
+		;
+
+init	:	TOKEN_ASSIGNMENT asin
+		|	/* epsilon */
 		;
 
 type	:	TOKEN_INTEGER
@@ -153,40 +205,6 @@ type	:	TOKEN_INTEGER
 		|	TOKEN_STRING
 		|	TOKEN_BOOLEAN
 		|	TOKEN_VOID	/* checks this one TODO */
-		|	TOKEN_ARRAY TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE type							{ if (!$3) {printf("array length cant be 0\n"); return 1;} }
-		|	TOKEN_FUNCTION type TOKEN_PAREN_OPEN opls TOKEN_PAREN_CLOSE
-		;
-
-oldtype	: 	inte																								{ printf("inte\n"); }
-		|	floa																								{ printf("floa\n"); }
-		|	char																								{ printf("char\n"); }
-		|	stri																								{ printf("stri\n"); }
-		|	bool																								{ printf("bool\n"); }
-		|	/* epsilon */																					{ printf("no inst\n"); }
-		;
-
-inte	:	TOKEN_INTEGER TOKEN_ASSIGNMENT TOKEN_INTEGER_LITERAL								{ printf("int literal\n"); }
-		|	TOKEN_INTEGER																					{ printf("int\n"); }
-		;
-
-floa	: 	TOKEN_FLOAT TOKEN_ASSIGNMENT TOKEN_FLOAT_LITERAL									{ printf("float literal\n"); }
-		|	TOKEN_FLOAT																						{ printf("float\n"); }
-		;
-
-char	:	TOKEN_CHAR TOKEN_ASSIGNMENT TOKEN_CHAR_LITERAL										{ printf("char literal\n"); }
-		|	TOKEN_CHAR																						{ printf("char;\n"); }
-		;
-
-stri	:	TOKEN_STRING TOKEN_ASSIGNMENT TOKEN_STRING_LITERAL									{ printf("str literal\n"); }
-		|	TOKEN_STRING																					{ printf("str\n"); }
-		;
-
-bool	:	TOKEN_BOOLEAN TOKEN_ASSIGNMENT torf														{ printf("bool choice\n"); }
-		| 	TOKEN_BOOLEAN																					{ printf("boolean\n"); }
-		;
-
-torf	:	TOKEN_TRUE_LITERAL																			{ printf("true\n"); }
-		|	TOKEN_FALSE_LITERAL																			{ printf("false\n"); }
 		;
 
 %%
