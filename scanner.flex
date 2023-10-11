@@ -26,6 +26,7 @@
 "void"																							{ return TOKEN_VOID; }   
 "while"																							{ return TOKEN_WHILE; }  
 
+<<EOF>>																							{ return TOKEN_EOF; }
 ,																									{ return TOKEN_COMMA; }
 ;																									{ return TOKEN_SEMICOLON; }
 :																									{ return TOKEN_COLON; }  

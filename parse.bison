@@ -28,6 +28,7 @@ extern int yyerror(char *s);
 %token	TOKEN_RETURN
 %token	TOKEN_AUTO
 
+%token	TOKEN_EOF
 %token	TOKEN_COMMA
 %token	TOKEN_SEMICOLON
 %token	TOKEN_COLON
@@ -66,8 +67,7 @@ extern int yyerror(char *s);
 
 //grammar rules
 
-begi	:	stmt																								{ printf("result = %d\n", $1); return 0; }
-		|	/* epsilon */
+begi	:	dcls TOKEN_EOF															{ printf("result = %d\n", $1); return 0; }
 		;
 
 asin	:	lgor TOKEN_ASSIGNMENT asin																	{ $$ = $3; }
@@ -137,7 +137,11 @@ pals	:	parm
 		|	parm TOKEN_COMMA pals																
 		;
 
-parm	:	TOKEN_ID TOKEN_COLON type
+parm	:	TOKEN_ID TOKEN_COLON paty
+		;
+
+paty	:	type
+		|	TOKEN_ARRAY TOKEN_BRACK_OPEN TOKEN_BRACK_CLOSE paty
 		;
 
 bxpl	:	TOKEN_BRACE_OPEN oxpl TOKEN_BRACE_CLOSE
@@ -147,7 +151,7 @@ oxpl	:	xpls
 		|	/* epsilon */
 		;
 
-xpls	:	asin																								
+xpls	:	asin							{printf("xpls: asin\n");}														
 		|	asin TOKEN_COMMA xpls																		
 		|	bxpl
 		|	bxpl TOKEN_COMMA xpls
@@ -191,20 +195,28 @@ oasi	:	asin
 		|	/* epsilon */
 		;
 
-decl  : 	TOKEN_ID TOKEN_COLON type init TOKEN_SEMICOLON
-		|	TOKEN_ID TOKEN_COLON arty arii TOKEN_SEMICOLON
-		|	TOKEN_ID TOKEN_COLON fxty fxii
+dcls	:	decl dcls
+		|	/* epsilon */	{printf("empty program\n");}
+		;
+
+decl  : 	TOKEN_ID TOKEN_COLON type init TOKEN_SEMICOLON	{printf("decl: regular type\n");}
+		|	TOKEN_ID TOKEN_COLON arty arii TOKEN_SEMICOLON	{printf("decl:	array type\n");}
+		|	TOKEN_ID TOKEN_COLON fxty fxii						{printf("decl: function type\n");}
 		;
 
 fxii	:	TOKEN_ASSIGNMENT bstl
-		|	/* epsilon */
+		|	TOKEN_SEMICOLON
 		;
 
 brcn	:	brcn TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE
 		|	/* epsilon */
 		;
 
-arty	:	TOKEN_ARRAY TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE type							{ if (!$3) {printf("array length cant be 0\n"); return 1;} }
+arty	:	TOKEN_ARRAY TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE fart							{ if (!$3) {printf("array length cant be 0\n"); return 1;} }
+		;
+
+fart	:	type
+		|	TOKEN_ARRAY TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE fart						{ if (!$3) {printf("array length cant be 0\n"); return 1;} }
 		;
 
 fxty	:	TOKEN_FUNCTION type TOKEN_PAREN_OPEN opal TOKEN_PAREN_CLOSE

@@ -1,0 +1,4 @@
+// float testing
+
+f: float;
+f2:float = +121.11e-5;

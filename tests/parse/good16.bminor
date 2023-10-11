@@ -1,0 +1,6 @@
+// array with length determined at runtime
+
+fx: function void (x: integer) = {
+	y: integer = x*2;
+	arr: array [y] boolean;
+}
