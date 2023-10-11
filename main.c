@@ -17,6 +17,8 @@
 #include "encoder.h"
 #include "scanner.h"
 
+extern int yyparse();
+extern FILE *yyin;
 
 int main(int argc, char *argv[])
 {
@@ -27,9 +29,9 @@ int main(int argc, char *argv[])
 	}
 
 	// if the call isn't to perform encoding let the user know nothing else is supported right now
-	if ((strcmp(argv[1], "--encode")) && (strcmp(argv[1], "--scan")))
+	if ((strcmp(argv[1], "--encode")) && (strcmp(argv[1], "--scan")) && (strcmp(argv[1], "--parse")))
 	{
-		fprintf(stderr, "Currently no functionality other than --encode or --scan is supported\n");
+		fprintf(stderr, "Currently no functionality other than --encode, --scan, or --parse is supported\n");
 		return EXIT_FAILURE;
 	}
 
@@ -40,15 +42,25 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	// if the call is trying to encode and there was no file specified
+	// if the call is trying to scan and there was no file specified
 	if (!(strcmp(argv[1], "--scan")) && (argc < 3))
 	{
 		fprintf(stderr, "Not enough command line arguments given, a file name must follow --scan\n");
 		return EXIT_FAILURE;
 	}
 
+	// if the call is trying to parse and there was no file specified
+	if (!(strcmp(argv[1], "--parse")) && (argc < 3))
+	{
+		fprintf(stderr, "Not enough command line arguments given, a file name must follow --parse\n");
+		return EXIT_FAILURE;
+	}
+
 	// set the default to success
 	int ret = 0;
+
+// ENCODER STUFF
+// ======================================================
 
 	// if we aren't encoding from a file we don't want to read it, just pass it to yy stuff
 	if (!(strcmp(argv[1], "--encode")))
@@ -60,8 +72,8 @@ int main(int argc, char *argv[])
 		// the string that holds our attempt at re encoding
 		unsigned char es[BUFSIZ];
 
-// READ THE FIRST LINE OF THE FILE
-// ======================================================
+	// READ THE FIRST LINE OF THE FILE
+	// ======================================================
 
 		struct stat s;
 		int fd = -1;
@@ -97,8 +109,8 @@ int main(int argc, char *argv[])
 		// this is just overwriting that random newline with a null
 		stringBUF[s.st_size-1] = 0;
 
-// ======================================================
-// END READING THE FIRST LINE OF THE FILE
+	// ======================================================
+	// END READING THE FIRST LINE OF THE FILE
 
 		// decode and if it fails print an appropiate error message
 		if (!(string_decode(stringBUF, ds)))
@@ -142,7 +154,12 @@ int main(int argc, char *argv[])
 
 		return ret;
 	}
+// ======================================================
+// END ENCODER STUFF
 
+
+// SCANNER STUFF
+// ======================================================
 	if (!(strcmp(argv[1], "--scan")))
 	{
 		FILE *fp = fopen(argv[2], "r");
@@ -161,6 +178,35 @@ int main(int argc, char *argv[])
 			goto end;
 		}
 	}
+// ======================================================
+// END SCANNER STUFF
+
+
+// PARSER STUFF
+// ======================================================
+	if (!(strcmp(argv[1], "--parse")))
+	{
+		FILE *fp = fopen(argv[2], "r");
+		if (!fp)
+		{
+			fprintf(stderr, "Attempting to open the file descriptor failed: (%s)\n", strerror(errno));
+			ret = 1;
+			goto end;
+		}
+
+		yyin = fp; 
+
+		if (yyparse())
+		{
+			fprintf(stderr, "parse error: there was an error parsing the given bminor program\n");
+			fclose(fp);
+			ret = 1;
+			goto end;
+		}
+		else	printf("Parse Successful\n");
+	}
+// ======================================================
+// END PARSER STUFF
 
 end:
 	// if at any point something failed ret will exit as non zero which will indicate failure

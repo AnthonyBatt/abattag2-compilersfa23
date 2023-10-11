@@ -1,5 +1,5 @@
 %{
-#include "scanner.h"
+#include "parse.h"
 %}
 
 
@@ -51,13 +51,13 @@
 \&\&																								{ return TOKEN_LOG_AND; }
 
 [a-zA-Z_][a-zA-Z0-9_]*																		{ return TOKEN_ID; }     
-[\+\-]?[0-9]*\.[0-9]+([eE][\+\-]?[0-9]+)?												{ return TOKEN_FLOAT_LITERAL; }
-[\+\-]?[0-9]+ 																					{ return TOKEN_INTEGER_LITERAL; }
+[0-9]*\.[0-9]+([eE][\+\-]?[0-9]+)?														{ return TOKEN_FLOAT_LITERAL; }
+[0-9]+ 																							{ return TOKEN_INTEGER_LITERAL; }
 \+\+																								{ return TOKEN_POST_INC; }
 \+																									{ return TOKEN_PLUS; }    
 \-\-																								{ return TOKEN_POST_DEC; }
 \-																									{ return TOKEN_MINUS; }
-\'([ !#-&\(\)*-\[\]-~]|\\[abefnrtv\\\'\"]|\\0x[A-Fa-f0-9]{2})\'									{ return TOKEN_CHAR_LITERAL; }
+\'([ !#-&\(\)*-\[\]-~]|\\[abefnrtv\\\'\"]|\\0x[A-Fa-f0-9]{2})\'				{ return TOKEN_CHAR_LITERAL; }
 \"[ -~]*\"																						{ return TOKEN_STRING_LITERAL; }
 
 .																									{ return -2; }

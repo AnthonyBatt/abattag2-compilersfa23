@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "scanner.h"
+#include "parse.h"
 #include "encoder.h"
+#include "scanner.h"
+
+#define ENUM_OFFSET 258
 
 extern FILE *yyin;
 extern int yylex();
@@ -72,7 +75,8 @@ int scan(FILE *fp)
 	{
 		t = yylex();
 		if (t < 0) break;
-		if (yytext[0] == 0) break;
+		if (!yytext[0]) break;
+		//if (yytext[0] == 0) break;
 		// if it is a character check for backslash codes
 		else if (t == TOKEN_CHAR_LITERAL)
 		{
@@ -171,7 +175,7 @@ int scan(FILE *fp)
 					return 1;
 				}
 			}
-			printf("%-25s %c\n", token_arr[t], c);
+			printf("%-25s %c\n", token_arr[t-ENUM_OFFSET], c);
 		}
 		// it is a string literal
 		else if (t == TOKEN_STRING_LITERAL)
@@ -185,10 +189,10 @@ int scan(FILE *fp)
 			}
 			else
 			{
-				printf("%-25s %s\n", token_arr[t], ds);
+				printf("%-25s %s\n", token_arr[t-ENUM_OFFSET], ds);
 			}
 		}
-		else printf("%-25s %s\n", token_arr[t], yytext);
+		else printf("%-25s %s\n", token_arr[t-ENUM_OFFSET], yytext);
 	}
 
 	if (t == -2)
