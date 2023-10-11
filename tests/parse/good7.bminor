@@ -3,7 +3,7 @@ main:function void() = {
 	if( 10 < 20 )
 		print "hi";
 	else
-		print "hello";
+		print "hello\t\n\0x00";
 	if( 10 < 20 )
 	{
 		print "hi";
