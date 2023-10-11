@@ -151,7 +151,7 @@ oxpl	:	xpls
 		|	/* epsilon */
 		;
 
-xpls	:	asin							{printf("xpls: asin\n");}														
+xpls	:	asin																					
 		|	asin TOKEN_COMMA xpls																		
 		|	bxpl
 		|	bxpl TOKEN_COMMA xpls
@@ -172,23 +172,23 @@ stmt	:	opst
 		|	clst
 		;
 
-opst	:	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst	{printf("opst: if clst\n");}
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE opst {printf("opst: if opst\n");}
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE opst {printf("opst: if clst else opst\n");}
-		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE opst {printf("opst: for opst\n");}
+opst	:	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst	
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE opst 
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE opst 
+		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE opst 
 		;
 
-clst	:	smst {printf("clst: smst\n");}
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE clst {printf("clst: if clst else clst\n");}
-		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE clst {printf("clst: for clst\n");}
+clst	:	smst 
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE clst 
+		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE clst 
 		;
 
 
-smst	:	bstl {printf("smst: bstl\n");}
-		|	decl {printf("smst: decl\n");}
-		|	TOKEN_RETURN oasi TOKEN_SEMICOLON {printf("smst: return\n");}
-		|	TOKEN_PRINT oxpl TOKEN_SEMICOLON {printf("smst: print\n");}
-		|	asin TOKEN_SEMICOLON {printf("smst:\n");}
+smst	:	bstl
+		|	decl 
+		|	TOKEN_RETURN oasi TOKEN_SEMICOLON 
+		|	TOKEN_PRINT oxpl TOKEN_SEMICOLON 
+		|	asin TOKEN_SEMICOLON 
 		;
 
 oasi	:	asin
@@ -196,12 +196,12 @@ oasi	:	asin
 		;
 
 dcls	:	decl dcls
-		|	/* epsilon */	{printf("empty program\n");}
+		|	/* epsilon */	
 		;
 
-decl  : 	TOKEN_ID TOKEN_COLON type init TOKEN_SEMICOLON	{printf("decl: regular type\n");}
-		|	TOKEN_ID TOKEN_COLON arty arii TOKEN_SEMICOLON	{printf("decl:	array type\n");}
-		|	TOKEN_ID TOKEN_COLON fxty fxii						{printf("decl: function type\n");}
+decl  : 	TOKEN_ID TOKEN_COLON type init TOKEN_SEMICOLON	
+		|	TOKEN_ID TOKEN_COLON arty arii TOKEN_SEMICOLON
+		|	TOKEN_ID TOKEN_COLON fxty fxii						
 		;
 
 fxii	:	TOKEN_ASSIGNMENT bstl
