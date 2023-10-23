@@ -168,18 +168,18 @@ stls	:	stmt
 		|	stmt stls																		
 		;
 
-stmt	:	opst
-		|	clst
+stmt	:	opst		{printf("stmt: opst\n");}
+		|	clst		{printf("stmt: clst\n");}
 		;
 
-opst	:	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst	
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE opst 
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE opst 
+opst	:	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst	 {printf("opst: if clst\n");}
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE opst  {printf("opst: if opst\n");}
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE opst {printf("opst: if clst else opst\n");}
 		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE opst 
 		;
 
-clst	:	smst 
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE clst 
+clst	:	smst {printf("clst: smst\n");}
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE clst {printf("clst: if clst else clst\n");}
 		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE clst 
 		;
 
@@ -212,17 +212,19 @@ brcn	:	brcn TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE
 		|	/* epsilon */
 		;
 
-arty	:	TOKEN_ARRAY TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE fart							{ if (!$3) {printf("array length cant be 0\n"); return 1;} }
+// TODO: double check that arrays can be decalred with a [], feels wrong but may be right
+
+arty	:	TOKEN_ARRAY TOKEN_BRACK_OPEN oasi TOKEN_BRACK_CLOSE fart							//{ if (!$3) {printf("array length cant be 0\n"); return 1;} }
 		;
 
 fart	:	type
-		|	TOKEN_ARRAY TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE fart						{ if (!$3) {printf("array length cant be 0\n"); return 1;} }
+		|	TOKEN_ARRAY TOKEN_BRACK_OPEN oasi TOKEN_BRACK_CLOSE fart						//{ if (!$3) {printf("array length cant be 0\n"); return 1;} }
 		;
 
 fxty	:	TOKEN_FUNCTION type TOKEN_PAREN_OPEN opal TOKEN_PAREN_CLOSE
 		;
 
-arii	:	TOKEN_ASSIGNMENT bxpl 
+arii	:	TOKEN_ASSIGNMENT TOKEN_BRACE_OPEN xpls TOKEN_BRACE_CLOSE 
 		|	/* epsilon */
 		;
 

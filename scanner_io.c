@@ -5,7 +5,7 @@
 #include "encoder.h"
 #include "scanner.h"
 
-#define ENUM_OFFSET 258
+#define ENUM_OFFSET 259
 
 extern FILE *yyin;
 extern int yylex();

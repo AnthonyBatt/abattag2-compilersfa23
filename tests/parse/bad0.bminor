@@ -1,3 +1,9 @@
+// replacement test: mispelling array
+
+arr: arra [0] void;
+
+/* REMOVED
 //array with length of zero
 
 arr: array [0] void;
+*/

@@ -52,7 +52,7 @@
 \&\&																								{ return TOKEN_LOG_AND; }
 
 [a-zA-Z_][a-zA-Z0-9_]*																		{ return TOKEN_ID; }     
-[0-9]*\.[0-9]+([eE][\+\-]?[0-9]+)?														{ return TOKEN_FLOAT_LITERAL; }
+([0-9]*\.[0-9]+([eE][\+\-]?[0-9]+)?|[0-9]+[eE][\+\-]?[0-9]+)					{ return TOKEN_FLOAT_LITERAL; }
 [0-9]+ 																							{ return TOKEN_INTEGER_LITERAL; }
 \+\+																								{ return TOKEN_POST_INC; }
 \+																									{ return TOKEN_PLUS; }    
