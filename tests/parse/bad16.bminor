@@ -1,3 +1,0 @@
-// cant divide by zero
-
-i: integer = 4 / (3-3);
