@@ -2,6 +2,9 @@
 #define TYPE_H
 
 #include "param_list.h"
+#include "expr.h"
+#include <stdlib.h>
+#include <string.h>
 
 typedef enum {
 	TYPE_VOID,
@@ -18,10 +21,10 @@ struct type {
 	type_t kind;
 	struct param_list *params;
 	struct type *subtype;
-	int length;
+	struct expr* length;
 };
 
-struct type * type_create( type_t kind, struct type *subtype, struct param_list *params, int length );
+struct type * type_create( type_t kind, struct type *subtype, struct param_list *params, struct expr *length );
 void          type_print( struct type *t );
 
 #endif

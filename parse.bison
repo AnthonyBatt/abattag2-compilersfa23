@@ -4,6 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "decl.h"
+#include "stmt.h"
+#include "expr.h"
+#include "type.h"
+#include "param_list.h"
+
 extern char *yytext;
 extern int yylex();
 extern int yyerror(char *s);
@@ -20,7 +26,7 @@ extern int yyerror(char *s);
 
 %type <decl> begi dcls decl 
 %type <stmt> arii fxii smst clst opst stmt stls ostl bstl xpls oxpl bxpl
-%type <expr> init brcn oasi atom post ngtn expo term expr comp lgan lgor asin
+%type <expr> init brcn oasi vari atom post ngtn expo term expr comp lgan lgor asin
 %type <type> type fxty fart arty paty
 %type <pals> opal pals parm
 
@@ -129,15 +135,15 @@ expo	:	expo TOKEN_EXPO ngtn										{ $$ = expr_create(EXPR_EXP, $1, $3); }
 		;
 
 // negation
-ngtn	:	TOKEN_MINUS post											{ $$ = expr_create(EXPR_NEG, $1, $3); }
-		|	TOKEN_PLUS post											{ $$ = expr_create(EXPR_PLS, $1, $3); }
-		|	TOKEN_NOT post												{ $$ = expr_create(EXPR_NOT, $1, $3); }
+ngtn	:	TOKEN_MINUS post											{ $$ = expr_create(EXPR_NEG, $2, 0); }
+		|	TOKEN_PLUS post											{ $$ = expr_create(EXPR_PLS, $2, 0); }
+		|	TOKEN_NOT post												{ $$ = expr_create(EXPR_NOT, $2, 0); }
 		|	post															{ $$ =  $1; }
 		;
 
 // post increment/decrement
-post	:	atom TOKEN_POST_INC										{ $$ = expr_create(EXPR_INC, $1, $3); }
-		|	atom TOKEN_POST_DEC										{ $$ = expr_create(EXPR_DEC, $1, $3); }
+post	:	atom TOKEN_POST_INC										{ $$ = expr_create(EXPR_INC, $1, 0); }
+		|	atom TOKEN_POST_DEC										{ $$ = expr_create(EXPR_DEC, $1, 0); }
 		|	atom															{ $$ = $1; }
 		;
 
@@ -149,10 +155,13 @@ atom	:	TOKEN_FLOAT_LITERAL										{ $$ = expr_create_float_literal(atof(yytext
 		|	TOKEN_TRUE_LITERAL										{ $$ = expr_create_boolean_literal(1); }
 		|	TOKEN_FALSE_LITERAL										{ $$ = expr_create_boolean_literal(0); }
 		|	TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE			{ $$ = $2; }
-		|	TOKEN_ID														{ $$ = expr_create_name(yytext); }
-		|	TOKEN_ID TOKEN_PAREN_OPEN oxpl TOKEN_PAREN_CLOSE			{ $$ = 3; }
-		|	TOKEN_ID TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE brcn		{ $$ = 3; }
+		|	vari															{ $$ = $1; }
+		|	vari TOKEN_PAREN_OPEN oxpl TOKEN_PAREN_CLOSE				{ $$ = expr_create_function_call($1->name, $3); }
+		|	vari TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE brcn		{ $$ = expr_create_array_access($1->name, $3, $5); }
 		;
+
+// variables
+vari	:	TOKEN_ID														{ $$ = expr_create_name(yytext); }
 
 // optional parameter list
 opal	:	pals															{ $$ = $1; }
@@ -165,7 +174,7 @@ pals	:	parm															{ $$ = $1; }
 		;
 
 // parameter															// # TODO how to isolate the ID
-parm	:	TOKEN_ID TOKEN_COLON paty								{ $$ = param_list_create($1, $3, 0); }
+parm	:	vari TOKEN_COLON paty									{ $$ = param_list_create((char *)$1->name, $3, 0); }
 		;
 
 // parameter types
@@ -183,8 +192,8 @@ oxpl	:	xpls															{ $$ = $1; }
 		;
 
 // expression list													
-xpls	:	asin															{ $$ = stmt_create(STMT_EXPR, 0, 0, $1, 0, 0, 0, 0);	
-		|	asin TOKEN_COMMA xpls									{ $1->next = $3; $$ = $1; }									
+xpls	:	asin															{ $$ = stmt_create(STMT_EXPR, 0, 0, $1, 0, 0, 0, 0); }	
+		|	asin TOKEN_COMMA xpls									{ $$ = stmt_create(STMT_EXPR, 0, 0, $1, 0, 0, 0, $3); }
 		|	bxpl															{ $$ = $1; }
 		|	bxpl TOKEN_COMMA xpls									{ $1->next = $3; $$ = $1; }
 		;
@@ -240,9 +249,9 @@ dcls	:	decl dcls													{ $1->next = $2; $$ = $1; }
 		;
 
 // declaration													// #TODO how to isolate ID
-decl  : 	TOKEN_ID TOKEN_COLON type init TOKEN_SEMICOLON	{ $$ = decl_create($1, $3, $4, 0, 0); }	
-		|	TOKEN_ID TOKEN_COLON arty arii TOKEN_SEMICOLON	{ $$ = decl_create($1, $3, 0, $4, 0); }
-		|	TOKEN_ID TOKEN_COLON fxty fxii						{ $$ = decl_create($1, $3, 0, $4, 0); }
+decl  : 	vari TOKEN_COLON type init TOKEN_SEMICOLON		{ $$ = decl_create((char *)$1->name, $3, $4, 0, 0); }	
+		|	vari TOKEN_COLON arty arii TOKEN_SEMICOLON		{ $$ = decl_create((char *)$1->name, $3, 0, $4, 0); }
+		|	vari TOKEN_COLON fxty fxii								{ $$ = decl_create((char *)$1->name, $3, 0, $4, 0); }
 		;
 
 // function initialization

@@ -1,6 +1,9 @@
+#include "expr.h"
+#include <string.h>
+
 struct expr *expr_create(expr_t kind, struct expr *left, struct expr *right)
 {
-	struct expr e* = malloc(sizeof(struct expr));
+	struct expr *e = malloc(sizeof(struct expr));
 
 	e->kind = kind;
 	e->left = left;
@@ -95,4 +98,21 @@ struct expr *expr_create_string_literal(const char *str)
 	string->string_literal = strdup(str);
 
 	return string;
+}
+
+struct expr *expr_create_function_call(const char *n, struct stmt *a)
+{
+	struct expr* fxn = expr_create(EXPR_FXN, 0, 0);
+	fxn->name = strdup(n);
+	fxn->args = a;
+
+	return fxn;
+}
+
+struct expr *expr_create_array_access(const char *n, struct expr *i, struct expr *j)
+{
+	struct expr* arr = expr_create(EXPR_ARR, i, j);
+	arr->name = strdup(n);
+
+	return arr;
 }

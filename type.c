@@ -1,4 +1,6 @@
-struct type *type_create(type_t kind, struct type *subtype, struct param_list *params, int length)
+#include "type.h"
+
+struct type *type_create(type_t kind, struct type *subtype, struct param_list *params, struct expr* length)
 {
 	struct type *t = malloc(sizeof(struct type));
 
