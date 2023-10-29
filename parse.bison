@@ -10,6 +10,20 @@ extern int yyerror(char *s);
 
 %}
 
+%union {
+	struct decl *decl;
+	struct stmt *stmt;
+	struct expr *expr;
+	struct type *type;
+	struct param_list *pals;
+};
+
+%type <decl> begi dcls decl 
+%type <stmt> arii fxii smst clst opst stmt stls ostl bstl xpls oxpl bxpl
+%type <expr> init brcn oasi atom post ngtn expo term expr comp lgan lgor asin
+%type <type> type fxty fart arty paty
+%type <pals> opal pals parm
+
 %token	TOKEN_ARRAY
 %token	TOKEN_VOID
 %token	TOKEN_INTEGER
@@ -68,7 +82,7 @@ extern int yyerror(char *s);
 //grammar rules
 
 // begin the program
-begi	:	dcls TOKEN_EOF												{ printf("result = %d\n", $1); return 0; }
+begi	:	dcls TOKEN_EOF												{ $$ = $1; return 0; }
 		;
 
 // assignment
@@ -150,13 +164,13 @@ pals	:	parm															{ $$ = $1; }
 		|	parm TOKEN_COMMA pals									{ $1->next = $3; $$ = $1; }			
 		;
 
-// parameter															// # TODO how to capture the ID
+// parameter															// # TODO how to isolate the ID
 parm	:	TOKEN_ID TOKEN_COLON paty								{ $$ = param_list_create($1, $3, 0); }
 		;
 
 // parameter types
 paty	:	type																	{ $$ = $1; }	
-		|	TOKEN_ARRAY TOKEN_BRACK_OPEN TOKEN_BRACK_CLOSE paty	{ $$ = type_create(TYPE_ARRAY, $4, 0); }
+		|	TOKEN_ARRAY TOKEN_BRACK_OPEN TOKEN_BRACK_CLOSE paty	{ $$ = type_create(TYPE_ARRAY, $4, 0, 0); }
 		;
 
 // braced expression list
@@ -195,83 +209,84 @@ stmt	:	opst															{ $$ = $1; }
 		;
 
 // open statement
-opst	:	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst	 					  { stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5,  0, 0); }
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE opst  					  { stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5,  0, 0); }
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE opst  { stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7, 0); }
-		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE opst 	{ stmt_create(STMT_FOR, 0, $3, $5, $7, $9, 0, 0);
+opst	:	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst	 					  { $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5,  0, 0); }
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE opst  					  { $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5,  0, 0); }
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE opst  { $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7, 0); }
+		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE opst 	{ $$ = stmt_create(STMT_FOR, 0, $3, $5, $7, $9, 0, 0); }
 		;
 
 // closed statement
-clst	:	smst {printf("clst: smst\n");}
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE clst {printf("clst: if clst else clst\n");}
-		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE clst 
+clst	:	smst 																																{ $$ = $1; }
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE clst  										{ $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7, 0); }
+		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE clst 	{ $$ = stmt_create(STMT_FOR, 0, $3, $5, $7, $9, 0, 0); } 
 		;
 
 // simple statement
-smst	:	bstl
-		|	decl 
-		|	TOKEN_RETURN oasi TOKEN_SEMICOLON 
-		|	TOKEN_PRINT oxpl TOKEN_SEMICOLON 
-		|	asin TOKEN_SEMICOLON 
+smst	:	bstl															{ $$ = $1; }
+		|	decl 															{ $$ = stmt_create(STMT_DECL, $1, 0, 0, 0, 0, 0, 0); }
+		|	TOKEN_RETURN oasi TOKEN_SEMICOLON 					{ $$ = stmt_create(STMT_RETURN, 0, 0, $2, 0, 0, 0, 0); }
+		|	TOKEN_PRINT oxpl TOKEN_SEMICOLON 					{ $$ = stmt_create(STMT_PRINT, 0, 0, 0, 0, $2, 0, 0);	}	
+		|	asin TOKEN_SEMICOLON										{ $$ = stmt_create(STMT_EXPR, 0, 0, $1, 0, 0, 0, 0); } 
 		;
 
 // optional assignment
-oasi	:	asin
-		|	/* epsilon */
+oasi	:	asin															{ $$ = $1; }
+		|	/* epsilon */												{ $$ =  0; }
 		;
 
 // declaration list
-dcls	:	decl dcls
-		|	/* epsilon */	
+dcls	:	decl dcls													{ $1->next = $2; $$ = $1; } 
+		|	/* epsilon */												{ $$ = 0; }
 		;
 
-// declaration
-decl  : 	TOKEN_ID TOKEN_COLON type init TOKEN_SEMICOLON	
-		|	TOKEN_ID TOKEN_COLON arty arii TOKEN_SEMICOLON
-		|	TOKEN_ID TOKEN_COLON fxty fxii						
+// declaration													// #TODO how to isolate ID
+decl  : 	TOKEN_ID TOKEN_COLON type init TOKEN_SEMICOLON	{ $$ = decl_create($1, $3, $4, 0, 0); }	
+		|	TOKEN_ID TOKEN_COLON arty arii TOKEN_SEMICOLON	{ $$ = decl_create($1, $3, 0, $4, 0); }
+		|	TOKEN_ID TOKEN_COLON fxty fxii						{ $$ = decl_create($1, $3, 0, $4, 0); }
 		;
 
 // function initialization
-fxii	:	TOKEN_ASSIGNMENT bstl
-		|	TOKEN_SEMICOLON
+fxii	:	TOKEN_ASSIGNMENT bstl									{ $$ = $2; }
+		|	TOKEN_SEMICOLON											{ $$ =  0; }
 		;
 
-// allows for multi dimensional arrays
-brcn	:	brcn TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE
-		|	/* epsilon */
+// allows for multi dimensional arrays					// #TODO make sure this works
+brcn	:	brcn TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE		{ $$ = expr_create(EXPR_ARR, $1, $3); }
+		|	/* epsilon */												{ $$ = 0; }
 		;
 
 // TODO: double check that arrays can be decalred with a [], feels wrong but may be right
 
-arty	:	TOKEN_ARRAY TOKEN_BRACK_OPEN oasi TOKEN_BRACK_CLOSE fart							//{ if (!$3) {printf("array length cant be 0\n"); return 1;} }
+// fart, lol												
+arty	:	TOKEN_ARRAY TOKEN_BRACK_OPEN oasi TOKEN_BRACK_CLOSE fart		{ $$ = type_create(TYPE_ARRAY, $5, 0, $3); }
 		;
 
-// array type
-fart	:	type
-		|	TOKEN_ARRAY TOKEN_BRACK_OPEN oasi TOKEN_BRACK_CLOSE fart						//{ if (!$3) {printf("array length cant be 0\n"); return 1;} }
+// array type												
+fart	:	type																			{ $$ = $1; }
+		|	TOKEN_ARRAY TOKEN_BRACK_OPEN oasi TOKEN_BRACK_CLOSE fart		{ $$ = type_create(TYPE_ARRAY, $5, 0, $3); }
 		;
 
 // function type
-fxty	:	TOKEN_FUNCTION type TOKEN_PAREN_OPEN opal TOKEN_PAREN_CLOSE
+fxty	:	TOKEN_FUNCTION type TOKEN_PAREN_OPEN opal TOKEN_PAREN_CLOSE	{ $$ = type_create(TYPE_FUNCTION, $2, $4, 0); }
 		;
 
 // array initialization
-arii	:	TOKEN_ASSIGNMENT TOKEN_BRACE_OPEN xpls TOKEN_BRACE_CLOSE 
-		|	/* epsilon */
+arii	:	TOKEN_ASSIGNMENT TOKEN_BRACE_OPEN xpls TOKEN_BRACE_CLOSE 	{ $$ = $3; }
+		|	/* epsilon */																{ $$ =  0; }
 		;
 
 // basic initialization
-init	:	TOKEN_ASSIGNMENT asin
-		|	/* epsilon */
+init	:	TOKEN_ASSIGNMENT asin													{ $$ = $2; }
+		|	/* epsilon */																{ $$ =  0; }
 		;
 
 // types
-type	:	TOKEN_INTEGER
-		|	TOKEN_FLOAT
-		|	TOKEN_CHAR
-		|	TOKEN_STRING
-		|	TOKEN_BOOLEAN
-		|	TOKEN_VOID
+type	:	TOKEN_INTEGER																{ $$ = type_create(TYPE_INTEGER, 0, 0, 0); } 
+		|	TOKEN_FLOAT																	{ $$ = type_create(TYPE_FLOAT, 0, 0, 0); }
+		|	TOKEN_CHAR																	{ $$ = type_create(TYPE_CHARACTER, 0, 0, 0); }
+		|	TOKEN_STRING																{ $$ = type_create(TYPE_STRING, 0, 0, 0); }
+		|	TOKEN_BOOLEAN																{ $$ = type_create(TYPE_BOOLEAN, 0, 0, 0); }
+		|	TOKEN_VOID																	{ $$ = type_create(TYPE_VOID, 0, 0, 0); }
 		;
 
 %%
