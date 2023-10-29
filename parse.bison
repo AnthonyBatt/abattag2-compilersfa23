@@ -67,123 +67,147 @@ extern int yyerror(char *s);
 
 //grammar rules
 
-begi	:	dcls TOKEN_EOF															{ printf("result = %d\n", $1); return 0; }
+// begin the program
+begi	:	dcls TOKEN_EOF												{ printf("result = %d\n", $1); return 0; }
 		;
 
-asin	:	lgor TOKEN_ASSIGNMENT asin																	{ $$ = $3; }
-		|	lgor																								{ $$ = $1; }
+// assignment
+asin	:	lgor TOKEN_ASSIGNMENT asin								{ $$ = expr_create(EXPR_ASN, $1, $3); }
+		|	lgor															{ $$ = $1; }
 		;
 
-lgor	:	lgor TOKEN_LOG_OR	lgan																		{ $$ = $1 || $3; }
-		|	lgan																								{ $$ = $1; }
+// logical or
+lgor	:	lgor TOKEN_LOG_OR	lgan									{ $$ = expr_create(EXPR_LGO, $1, $3); }
+		|	lgan															{ $$ = $1; }
 		;
 
-lgan	:	lgan TOKEN_LOG_AND comp																		{ $$ = $1 && $3; }
-		|	comp																								{ $$ = $1; }
+// logical and
+lgan	:	lgan TOKEN_LOG_AND comp									{ $$ = expr_create(EXPR_LGA, $1, $3); }
+		|	comp															{ $$ = $1; }
 		;
 
-comp	:	comp TOKEN_LT expr																			{ $$ = $1 <  $3; }
-		|	comp TOKEN_LE expr																			{ $$ = $1 <= $3; }
-		|	comp TOKEN_GT expr																			{ $$ = $1 >  $3; }
-		|	comp TOKEN_GE expr																			{ $$ = $1 >= $3; }
-		|	comp TOKEN_EQ expr																			{ $$ = $1 == $3; }
-		|	comp TOKEN_NE expr																			{ $$ = $1 != $3; }
-		|	expr																								{ $$ = $1; }
+// comparisons
+comp	:	comp TOKEN_LT expr										{ $$ = expr_create(EXPR_LT, $1, $3); }
+		|	comp TOKEN_LE expr										{ $$ = expr_create(EXPR_LE, $1, $3); }
+		|	comp TOKEN_GT expr										{ $$ = expr_create(EXPR_GT, $1, $3); }
+		|	comp TOKEN_GE expr										{ $$ = expr_create(EXPR_GE, $1, $3); }
+		|	comp TOKEN_EQ expr										{ $$ = expr_create(EXPR_EQ, $1, $3); }
+		|	comp TOKEN_NE expr										{ $$ = expr_create(EXPR_NE, $1, $3); }
+		|	expr															{ $$ = $1; }
 		;
 
-expr	:	expr TOKEN_PLUS term																			{ $$ = $1 + $3; }
-		|	expr TOKEN_MINUS term																		{ $$ = $1 - $3; }
-		|	term																								{ $$ = $1; }
+// addition and subtraction
+expr	:	expr TOKEN_PLUS term										{ $$ = expr_create(EXPR_ADD, $1, $3); }
+		|	expr TOKEN_MINUS term									{ $$ = expr_create(EXPR_SUB, $1, $3); }
+		|	term															{ $$ = $1; }
 		;
 
-term	:	term TOKEN_MULTI expo																		{ $$ = $1 * $3; }
-		|	term TOKEN_DIVIDE expo																		{ if ($3) {$$ = $1 / $3;} else {printf("cannot divide by zero\n"); return 1;} }
-		|	term TOKEN_MODULUS expo																		{ if ($3) {$$ = $1 % $3;} else {printf("cannot divide by zero\n"); return 1;} }
-		|	expo																								{ $$ = $1; }
+// multiplication, division, modulus
+term	:	term TOKEN_MULTI expo									{ $$ = expr_create(EXPR_MUL, $1, $3); }
+		|	term TOKEN_DIVIDE expo									{ $$ = expr_create(EXPR_DIV, $1, $3); } 
+		|	term TOKEN_MODULUS expo									{ $$ = expr_create(EXPR_MOD, $1, $3); }
+		|	expo															{ $$ = $1; }
 		;
 
-expo	:	expo TOKEN_EXPO ngtn																			{ $$ = pow($1, $3); }
-		|	ngtn																								{ $$ = $1; }
+// exponentiation
+expo	:	expo TOKEN_EXPO ngtn										{ $$ = expr_create(EXPR_EXP, $1, $3); }
+		|	ngtn															{ $$ = $1; }
 		;
 
-ngtn	:	TOKEN_MINUS post																				{ $$ = -$2; }
-		|	TOKEN_PLUS post																				{ $$ =  $2; }
-		|	TOKEN_NOT post																					{ $$ = !$2; }
-		|	post																								{ $$ =  $1; }
+// negation
+ngtn	:	TOKEN_MINUS post											{ $$ = expr_create(EXPR_NEG, $1, $3); }
+		|	TOKEN_PLUS post											{ $$ = expr_create(EXPR_PLS, $1, $3); }
+		|	TOKEN_NOT post												{ $$ = expr_create(EXPR_NOT, $1, $3); }
+		|	post															{ $$ =  $1; }
 		;
 
-post	:	atom TOKEN_POST_INC																			{ $$ = $1++; }
-		|	atom TOKEN_POST_DEC																			{ $$ = $1--; }
-		|	atom																								{ $$ = $1;   }
+// post increment/decrement
+post	:	atom TOKEN_POST_INC										{ $$ = expr_create(EXPR_INC, $1, $3); }
+		|	atom TOKEN_POST_DEC										{ $$ = expr_create(EXPR_DEC, $1, $3); }
+		|	atom															{ $$ = $1; }
 		;
 
-atom	:	TOKEN_FLOAT_LITERAL
-		|	TOKEN_INTEGER_LITERAL																		{ $$ = atoi(yytext); }
-		|	TOKEN_CHAR_LITERAL																			{ $$ = 4; }
-		|	TOKEN_STRING_LITERAL																			{ $$ = 5; }
-		|	TOKEN_TRUE_LITERAL																			{ $$ = 1; }
-		|	TOKEN_FALSE_LITERAL																			{ $$ = 0; }
-		|	TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE												{ $$ = $2; }
-		|	TOKEN_ID																							{ $$ = 42; }
-		|	TOKEN_ID TOKEN_PAREN_OPEN oxpl TOKEN_PAREN_CLOSE									{ $$ = 0; }
-		|	TOKEN_ID TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE brcn								{ $$ = 3; }
+// atomic thingies													// #TODO check these work and what do bout fx/arr
+atom	:	TOKEN_FLOAT_LITERAL										{ $$ = expr_create_float_literal(atof(yytext)); }
+		|	TOKEN_INTEGER_LITERAL									{ $$ = expr_create_integer_literal(atoi(yytext)); }
+		|	TOKEN_CHAR_LITERAL										{ $$ = expr_create_char_literal(yytext[0]); }
+		|	TOKEN_STRING_LITERAL										{ $$ = expr_create_string_literal(yytext); }
+		|	TOKEN_TRUE_LITERAL										{ $$ = expr_create_boolean_literal(1); }
+		|	TOKEN_FALSE_LITERAL										{ $$ = expr_create_boolean_literal(0); }
+		|	TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE			{ $$ = $2; }
+		|	TOKEN_ID														{ $$ = expr_create_name(yytext); }
+		|	TOKEN_ID TOKEN_PAREN_OPEN oxpl TOKEN_PAREN_CLOSE			{ $$ = 3; }
+		|	TOKEN_ID TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE brcn		{ $$ = 3; }
 		;
 
-opal	:	pals
-		|	/* epsilon */
+// optional parameter list
+opal	:	pals															{ $$ = $1; }
+		|	/* epsilon */												{ $$ =  0; }
 		;
 
-pals	:	parm																							
-		|	parm TOKEN_COMMA pals																
+// parameter list
+pals	:	parm															{ $$ = $1; }			
+		|	parm TOKEN_COMMA pals									{ $1->next = $3; $$ = $1; }			
 		;
 
-parm	:	TOKEN_ID TOKEN_COLON paty
+// parameter															// # TODO how to capture the ID
+parm	:	TOKEN_ID TOKEN_COLON paty								{ $$ = param_list_create($1, $3, 0); }
 		;
 
-paty	:	type
-		|	TOKEN_ARRAY TOKEN_BRACK_OPEN TOKEN_BRACK_CLOSE paty
+// parameter types
+paty	:	type																	{ $$ = $1; }	
+		|	TOKEN_ARRAY TOKEN_BRACK_OPEN TOKEN_BRACK_CLOSE paty	{ $$ = type_create(TYPE_ARRAY, $4, 0); }
 		;
 
-bxpl	:	TOKEN_BRACE_OPEN oxpl TOKEN_BRACE_CLOSE
+// braced expression list
+bxpl	:	TOKEN_BRACE_OPEN oxpl TOKEN_BRACE_CLOSE			{ $$ = $2; }
 		;
 
-oxpl	:	xpls
-		|	/* epsilon */
+// optional expression list
+oxpl	:	xpls															{ $$ = $1; }
+		|	/* epsilon */												{ $$ =  0; }
 		;
 
-xpls	:	asin																					
-		|	asin TOKEN_COMMA xpls																		
-		|	bxpl
-		|	bxpl TOKEN_COMMA xpls
+// expression list													
+xpls	:	asin															{ $$ = stmt_create(STMT_EXPR, 0, 0, $1, 0, 0, 0, 0);	
+		|	asin TOKEN_COMMA xpls									{ $1->next = $3; $$ = $1; }									
+		|	bxpl															{ $$ = $1; }
+		|	bxpl TOKEN_COMMA xpls									{ $1->next = $3; $$ = $1; }
 		;
 
-bstl	:	TOKEN_BRACE_OPEN ostl TOKEN_BRACE_CLOSE
+// braced statement list
+bstl	:	TOKEN_BRACE_OPEN ostl TOKEN_BRACE_CLOSE			{ $$ = $2; }
 		;
 
-ostl	:	stls
-		|	/* epsilon */
+// optional statement list
+ostl	:	stls															{ $$ = $1; }
+		|	/* epsilon */												{ $$ =  0; }
 		;
 
-stls	:	stmt																				
-		|	stmt stls																		
+// statement list
+stls	:	stmt															{ $$ = $1; }					
+		|	stmt stls													{ $1->next = $2; $$ = $1; }					
 		;
 
-stmt	:	opst		{printf("stmt: opst\n");}
-		|	clst		{printf("stmt: clst\n");}
+// statement
+stmt	:	opst															{ $$ = $1; }
+		|	clst															{ $$ = $1; }
 		;
 
-opst	:	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst	 {printf("opst: if clst\n");}
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE opst  {printf("opst: if opst\n");}
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE opst {printf("opst: if clst else opst\n");}
-		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE opst 
+// open statement
+opst	:	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst	 					  { stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5,  0, 0); }
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE opst  					  { stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5,  0, 0); }
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE opst  { stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7, 0); }
+		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE opst 	{ stmt_create(STMT_FOR, 0, $3, $5, $7, $9, 0, 0);
 		;
 
+// closed statement
 clst	:	smst {printf("clst: smst\n");}
 		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE clst {printf("clst: if clst else clst\n");}
 		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE clst 
 		;
 
-
+// simple statement
 smst	:	bstl
 		|	decl 
 		|	TOKEN_RETURN oasi TOKEN_SEMICOLON 
@@ -191,23 +215,28 @@ smst	:	bstl
 		|	asin TOKEN_SEMICOLON 
 		;
 
+// optional assignment
 oasi	:	asin
 		|	/* epsilon */
 		;
 
+// declaration list
 dcls	:	decl dcls
 		|	/* epsilon */	
 		;
 
+// declaration
 decl  : 	TOKEN_ID TOKEN_COLON type init TOKEN_SEMICOLON	
 		|	TOKEN_ID TOKEN_COLON arty arii TOKEN_SEMICOLON
 		|	TOKEN_ID TOKEN_COLON fxty fxii						
 		;
 
+// function initialization
 fxii	:	TOKEN_ASSIGNMENT bstl
 		|	TOKEN_SEMICOLON
 		;
 
+// allows for multi dimensional arrays
 brcn	:	brcn TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE
 		|	/* epsilon */
 		;
@@ -217,21 +246,26 @@ brcn	:	brcn TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE
 arty	:	TOKEN_ARRAY TOKEN_BRACK_OPEN oasi TOKEN_BRACK_CLOSE fart							//{ if (!$3) {printf("array length cant be 0\n"); return 1;} }
 		;
 
+// array type
 fart	:	type
 		|	TOKEN_ARRAY TOKEN_BRACK_OPEN oasi TOKEN_BRACK_CLOSE fart						//{ if (!$3) {printf("array length cant be 0\n"); return 1;} }
 		;
 
+// function type
 fxty	:	TOKEN_FUNCTION type TOKEN_PAREN_OPEN opal TOKEN_PAREN_CLOSE
 		;
 
+// array initialization
 arii	:	TOKEN_ASSIGNMENT TOKEN_BRACE_OPEN xpls TOKEN_BRACE_CLOSE 
 		|	/* epsilon */
 		;
 
+// basic initialization
 init	:	TOKEN_ASSIGNMENT asin
 		|	/* epsilon */
 		;
 
+// types
 type	:	TOKEN_INTEGER
 		|	TOKEN_FLOAT
 		|	TOKEN_CHAR
