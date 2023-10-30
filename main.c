@@ -19,6 +19,7 @@
 
 extern int yyparse();
 extern FILE *yyin;
+extern struct decl *prog;
 
 int main(int argc, char *argv[])
 {

@@ -116,3 +116,177 @@ struct expr *expr_create_array_access(const char *n, struct expr *i, struct expr
 
 	return arr;
 }
+
+void expr_print(struct expr *e)
+{
+	// some things depend on this I think
+	if (!e) return;
+
+
+	if (e->kind == EXPR_NAME)
+	{
+		fprintf(stdout, "%s", e->name);
+	}
+	else if (e->kind == EXPR_INTEGER_LITERAL)
+	{
+		frpintf(stdout, "%d", e->literal_value);
+	}
+	else if (e->kind == EXPR_CHAR_LITERAL)
+	{
+		fprintf(stdout, "%c", e->literal_value);
+	}
+	else if (e->kind == EXPR_BOOLEAN_LITERAL)
+	{
+		if (e->literal_value) 	fprintf(stdout, "true");
+		else							fprintf(stdout, "false");
+	}
+	else if (e->kind == EXPR_FLOAT_LITERAL)
+	{
+		frpintf(stdout, "%g", e->float_literal);
+	}
+	else if (e->kind == EXPR_INTEGER_LITERAL)
+	{
+		frpintf(stdout, "%s", e->string_literal);
+	}
+	else if (e->kind == EXPR_FXN)
+	{
+		fprintf(stdout, "%s(", e->name);
+		stmt_print(e->args);
+		fprintf(stdout, ")");
+	}
+	// TODO make sure array accesses like arr[x][y][z] work
+	else if (e->kind == EXPR_ARR)
+	{
+		fprintf(stdout, "%s[", e->name);
+		expr_print(e->left);
+		fprintf(stdout, "]");
+		// if it is a multi dimensional array access
+		if (e->right)
+		{
+			fprintf(stdout, "[");
+			expr_print(e->right);
+			fprintf(stdout, "]");
+		}
+	}
+	else if (e->kind == EXPR_ASN)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "=");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_LGO)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "||");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_LGA)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "&&");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_LT)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "<");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_LE)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "<=");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_GT)
+	{
+		expr_print(e->left);
+		fprintf(stdout, ">");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_GE)
+	{
+		expr_print(e->left);
+		fprintf(stdout, ">=");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_EQ)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "==");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_NE)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "!=");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_ADD)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "+");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_SUB)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "-");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_MUL)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "*");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_DIV)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "/");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_MOD)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "%");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_EXP)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "^");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_NEG)
+	{
+		fprintf(stdout, "-");
+		expr_print(e->left);
+	}
+	else if (e->kind == EXPR_PLS)
+	{
+		fprintf(stdout, "+");
+		expr_print(e->left);
+	}
+	else if (e->kind == EXPR_NOT)
+	{
+		fprintf(stdout, "!");
+		expr_print(e->left);
+	}
+	else if (e->kind == EXPR_INC)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "++");
+	}
+	else if (e->kind == EXPR_DEC)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "--");
+	}
+	else if (e->kind == EXPR_GRP)
+	{
+		fprintf(stdout, "(");
+		expr_print(e->left);
+		fprintf(stdout, ")");
+	}
+}

@@ -14,6 +14,8 @@ extern char *yytext;
 extern int yylex();
 extern int yyerror(char *s);
 
+struct decl *prog;
+
 %}
 
 %union {
@@ -88,7 +90,7 @@ extern int yyerror(char *s);
 //grammar rules
 
 // begin the program
-begi	:	dcls TOKEN_EOF												{ $$ = $1; return 0; }
+begi	:	dcls TOKEN_EOF												{ prog = $1; return 0; }
 		;
 
 // assignment
@@ -154,7 +156,7 @@ atom	:	TOKEN_FLOAT_LITERAL										{ $$ = expr_create_float_literal(atof(yytext
 		|	TOKEN_STRING_LITERAL										{ $$ = expr_create_string_literal(yytext); }
 		|	TOKEN_TRUE_LITERAL										{ $$ = expr_create_boolean_literal(1); }
 		|	TOKEN_FALSE_LITERAL										{ $$ = expr_create_boolean_literal(0); }
-		|	TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE			{ $$ = $2; }
+		|	TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE			{ $$ = expr_create(EXPR_GRP, $2, 0); }
 		|	vari															{ $$ = $1; }
 		|	vari TOKEN_PAREN_OPEN oxpl TOKEN_PAREN_CLOSE				{ $$ = expr_create_function_call($1->name, $3); }
 		|	vari TOKEN_BRACK_OPEN asin TOKEN_BRACK_CLOSE brcn		{ $$ = expr_create_array_access($1->name, $3, $5); }
