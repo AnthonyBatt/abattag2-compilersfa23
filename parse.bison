@@ -152,7 +152,7 @@ post	:	atom TOKEN_POST_INC										{ $$ = expr_create(EXPR_INC, $1, 0); }
 // atomic thingies													// #TODO check these work and what do bout fx/arr
 atom	:	TOKEN_FLOAT_LITERAL										{ $$ = expr_create_float_literal(atof(yytext)); }
 		|	TOKEN_INTEGER_LITERAL									{ $$ = expr_create_integer_literal(atoi(yytext)); }
-		|	TOKEN_CHAR_LITERAL										{ $$ = expr_create_char_literal(yytext[0]); }
+		|	TOKEN_CHAR_LITERAL										{ $$ = expr_create_char_literal(yytext[1]); }
 		|	TOKEN_STRING_LITERAL										{ $$ = expr_create_string_literal(yytext); }
 		|	TOKEN_TRUE_LITERAL										{ $$ = expr_create_boolean_literal(1); }
 		|	TOKEN_FALSE_LITERAL										{ $$ = expr_create_boolean_literal(0); }
@@ -194,8 +194,8 @@ oxpl	:	xpls															{ $$ = $1; }
 		;
 
 // expression list													
-xpls	:	asin															{ $$ = stmt_create(STMT_EXPR, 0, 0, $1, 0, 0, 0, 0); }	
-		|	asin TOKEN_COMMA xpls									{ $$ = stmt_create(STMT_EXPR, 0, 0, $1, 0, 0, 0, $3); }
+xpls	:	asin															{ $$ = stmt_create(STMT_EXPR_LS, 0, 0, $1, 0, 0, 0, 0); }
+		|	asin TOKEN_COMMA xpls									{ $$ = stmt_create(STMT_EXPR_LS, 0, 0, $1, 0, 0, 0, $3); }
 		|	bxpl															{ $$ = $1; }
 		|	bxpl TOKEN_COMMA xpls									{ $1->next = $3; $$ = $1; }
 		;

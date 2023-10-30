@@ -27,7 +27,11 @@ void decl_print(struct decl *d, int indent)
 	// functions and arrays
 	else if(d->code)
 	{
+		if 		(d->type->kind == TYPE_ARRAY)		fprintf(stdout, " = {");
+		else if 	(d->type->kind == TYPE_FUNCTION) fprintf(stdout, " =\n{\n");
 		stmt_print(d->code, indent);
+		if 		(d->type->kind == TYPE_ARRAY)		fprintf(stdout, "};\n");
+		else if 	(d->type->kind == TYPE_FUNCTION) fprintf(stdout, "}\n");
 	}
 	// no intialization
 	else

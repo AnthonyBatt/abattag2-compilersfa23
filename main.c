@@ -16,6 +16,8 @@
 
 #include "encoder.h"
 #include "scanner.h"
+#include "decl.h"
+
 
 extern int yyparse();
 extern FILE *yyin;
@@ -30,9 +32,9 @@ int main(int argc, char *argv[])
 	}
 
 	// if the call isn't to perform encoding let the user know nothing else is supported right now
-	if ((strcmp(argv[1], "--encode")) && (strcmp(argv[1], "--scan")) && (strcmp(argv[1], "--parse")))
+	if (strcmp(argv[1], "--encode") && strcmp(argv[1], "--scan") && strcmp(argv[1], "--parse") && strcmp(argv[1], "--print"))
 	{
-		fprintf(stderr, "Currently no functionality other than --encode, --scan, or --parse is supported\n");
+		fprintf(stderr, "Currently no functionality other than --encode, --scan, --parse, or --print is supported\n");
 		return EXIT_FAILURE;
 	}
 
@@ -54,6 +56,13 @@ int main(int argc, char *argv[])
 	if (!(strcmp(argv[1], "--parse")) && (argc < 3))
 	{
 		fprintf(stderr, "Not enough command line arguments given, a file name must follow --parse\n");
+		return EXIT_FAILURE;
+	}
+
+	// if the call is trying to print and there was no file specified
+	if (!(strcmp(argv[1], "--print")) && (argc < 3))
+	{
+		fprintf(stderr, "Not enough command line arguments given, a file name must follow --print\n");
 		return EXIT_FAILURE;
 	}
 
@@ -161,7 +170,7 @@ int main(int argc, char *argv[])
 
 // SCANNER STUFF
 // ======================================================
-	if (!(strcmp(argv[1], "--scan")))
+	if (!(strcmp(argv[1], "--scan")) /* || !(strcmp(argv[1], "--parse"))*/)
 	{
 		FILE *fp = fopen(argv[2], "r");
 		if (!fp)
@@ -208,6 +217,34 @@ int main(int argc, char *argv[])
 	}
 // ======================================================
 // END PARSER STUFF
+
+
+// PRINTER STUFF
+// ======================================================
+	if (!(strcmp(argv[1], "--print")))
+	{
+		FILE *fp = fopen(argv[2], "r");
+		if (!fp)
+		{
+			fprintf(stderr, "Attempting to open the file descriptor failed: (%s)\n", strerror(errno));
+			ret = 1;
+			goto end;
+		}
+
+		yyin = fp;
+
+		if (yyparse())
+		{
+			fprintf(stderr, "parse error: there was an error parsing the given bminor program\n");
+			fclose(fp);
+			ret = 1;
+			goto end;
+		}
+
+		decl_print(prog, 0);
+	}
+// ======================================================
+// END PRINTER STUFF
 
 end:
 	// if at any point something failed ret will exit as non zero which will indicate failure

@@ -9,6 +9,7 @@
 typedef enum {
 	STMT_DECL,
 	STMT_EXPR,
+	STMT_EXPR_LS,
 	STMT_IF_ELSE,
 	STMT_FOR,
 	STMT_PRINT,

@@ -1,7 +1,6 @@
 #include "type.h"
 
 struct type *type_create(type_t kind, struct type *subtype, struct param_list *params, struct expr* length)
-		type_print(t->subtype);
 {
 	struct type *t = malloc(sizeof(struct type));
 
@@ -17,27 +16,27 @@ void type_print(struct type *t)
 {
 	if (t->kind == TYPE_VOID)
 	{
-		fprintf(stdout, " void ");
+		fprintf(stdout, " void");
 	}
 	else if(t->kind == TYPE_BOOLEAN)
 	{
-		fprintf(stdout, " boolean ");
+		fprintf(stdout, " boolean");
 	}
 	else if(t->kind == TYPE_CHARACTER)
 	{
-		fprintf(stdout, " char ");
+		fprintf(stdout, " char");
 	}
 	else if(t->kind == TYPE_FLOAT)
 	{
-		fprintf(stdout, " float ");
+		fprintf(stdout, " float");
 	}
 	else if(t->kind == TYPE_INTEGER)
 	{
-		fprintf(stdout, " integer ");
+		fprintf(stdout, " integer");
 	}
 	else if(t->kind == TYPE_STRING)
 	{
-		fprintf(stdout, " string ");
+		fprintf(stdout, " string");
 	}
 	// TODO may need to add something to differentiate between array [0] and array []
 	else if(t->kind == TYPE_ARRAY)
@@ -50,10 +49,10 @@ void type_print(struct type *t)
 	}
 	else if(t->kind == TYPE_FUNCTION)
 	{
-		fprintf(stdout, " function ");
+		fprintf(stdout, " function");
 		type_print(t->subtype);
-		fprintf(stdout, "(");
-		parameter_list_print(t->params);
+		fprintf(stdout, " (");
+		param_list_print(t->params);
 		fprintf(stdout, ")");
 	}
 }

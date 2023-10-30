@@ -129,11 +129,11 @@ void expr_print(struct expr *e)
 	}
 	else if (e->kind == EXPR_INTEGER_LITERAL)
 	{
-		frpintf(stdout, "%d", e->literal_value);
+		fprintf(stdout, "%d", e->literal_value);
 	}
 	else if (e->kind == EXPR_CHAR_LITERAL)
 	{
-		fprintf(stdout, "%c", e->literal_value);
+		fprintf(stdout, "'%c'", e->literal_value);
 	}
 	else if (e->kind == EXPR_BOOLEAN_LITERAL)
 	{
@@ -142,16 +142,16 @@ void expr_print(struct expr *e)
 	}
 	else if (e->kind == EXPR_FLOAT_LITERAL)
 	{
-		frpintf(stdout, "%g", e->float_literal);
+		fprintf(stdout, "%g", e->float_literal);
 	}
-	else if (e->kind == EXPR_INTEGER_LITERAL)
+	else if (e->kind == EXPR_STRING_LITERAL)
 	{
-		frpintf(stdout, "%s", e->string_literal);
+		fprintf(stdout, "%s", e->string_literal);
 	}
 	else if (e->kind == EXPR_FXN)
 	{
 		fprintf(stdout, "%s(", e->name);
-		stmt_print(e->args);
+		stmt_print(e->args, 0);
 		fprintf(stdout, ")");
 	}
 	// TODO make sure array accesses like arr[x][y][z] work
@@ -249,7 +249,7 @@ void expr_print(struct expr *e)
 	else if (e->kind == EXPR_MOD)
 	{
 		expr_print(e->left);
-		fprintf(stdout, "%");
+		fprintf(stdout, "%%");
 		expr_print(e->right);
 	}
 	else if (e->kind == EXPR_EXP)
