@@ -38,7 +38,6 @@ void type_print(struct type *t)
 	{
 		fprintf(stdout, " string");
 	}
-	// TODO may need to add something to differentiate between array [0] and array []
 	else if(t->kind == TYPE_ARRAY)
 	{
 		fprintf(stdout, " array ");

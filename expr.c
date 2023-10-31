@@ -84,7 +84,7 @@ struct expr *expr_create_boolean_literal(int c)
 	return boolean;
 }
 
-struct expr *expr_create_char_literal(char c)
+struct expr *expr_create_char_literal(int c)
 {
 	struct expr *character = expr_create(EXPR_CHAR_LITERAL, 0, 0);
 	character->literal_value = c;
@@ -133,7 +133,77 @@ void expr_print(struct expr *e)
 	}
 	else if (e->kind == EXPR_CHAR_LITERAL)
 	{
-		fprintf(stdout, "'%c'", e->literal_value);
+		int c = e->literal_value;
+
+		// \\    //
+		if (c == 92)
+		{
+			fprintf(stdout, "'\\\\'");
+		}
+		// \"
+		else if (c == 34)
+		{
+			fprintf(stdout, "'\\\"'");
+		}
+		// \'
+		else if (c == 39)
+		{
+			fprintf(stdout, "'\\\''");
+		}
+		// \a
+		else if (c == 7)
+		{
+			fprintf(stdout, "'\\a'");
+		}
+		// \b
+		else if (c == 8)
+		{
+			fprintf(stdout, "'\\b'");
+		}
+		// \e
+		else if (c == 27)
+		{
+			fprintf(stdout, "'\\e'");
+		}
+		// \f
+		else if (c == 12)
+		{
+			fprintf(stdout, "'\\f'");
+		}
+		// \n
+		else if (c == 10)
+		{
+			fprintf(stdout, "'\\n'");
+		}
+		// \r
+		else if (c == 13)
+		{
+			fprintf(stdout, "'\\r'");
+		}
+		// \t
+		else if (c == 9)
+		{
+			fprintf(stdout, "'\\t'");
+		}
+		// \v
+		else if (c == 11)
+		{
+			fprintf(stdout, "'\\v'");
+		}
+		// \0xHH
+		else if ( /*c > 126 || */ c < 32)
+		{
+			// we need to make two hexdigits out of the value 
+			unsigned char hex[3];
+			sprintf((char *)hex, "%.2x", c);
+			//printf("%s\n", hex);
+			fprintf(stdout, "'\\0x%c%c'", hex[0], hex[1]);
+		}
+		// it is a printable non special character
+		else
+		{
+			fprintf(stdout, "'%c'", e->literal_value);
+		}
 	}
 	else if (e->kind == EXPR_BOOLEAN_LITERAL)
 	{
@@ -150,6 +220,7 @@ void expr_print(struct expr *e)
 	}
 	else if (e->kind == EXPR_FXN)
 	{
+		//printf("%d", e->args->kind);
 		fprintf(stdout, "%s(", e->name);
 		stmt_print(e->args, 0);
 		fprintf(stdout, ")");
@@ -157,15 +228,29 @@ void expr_print(struct expr *e)
 	// TODO make sure array accesses like arr[x][y][z] work
 	else if (e->kind == EXPR_ARR)
 	{
-		fprintf(stdout, "%s[", e->name);
-		expr_print(e->left);
-		fprintf(stdout, "]");
+		if (e->name)
+		{
+			fprintf(stdout, "%s[", e->name);
+			expr_print(e->left);
+			fprintf(stdout, "]");
+		}
+		else
+		{
+			expr_print(e->left);
+		}
+
 		// if it is a multi dimensional array access
 		if (e->right)
 		{
-			fprintf(stdout, "[");
+		/*	printf("\nright: %d\n", e->right->kind);
+			if (e->left) {
+				printf("left: %d\n", e->left->kind);
+			}*/
+			if (!e->name)
+				fprintf(stdout, "[");
 			expr_print(e->right);
-			fprintf(stdout, "]");
+			if (!e->name)
+				fprintf(stdout, "]");
 		}
 	}
 	else if (e->kind == EXPR_ASN)

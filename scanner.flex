@@ -59,7 +59,7 @@
 \-\-																								{ return TOKEN_POST_DEC; }
 \-																									{ return TOKEN_MINUS; }
 \'([ !#-&\(\)*-\[\]-~]|\\[abefnrtv\\\'\"]|\\0x[A-Fa-f0-9]{2})\'				{ return TOKEN_CHAR_LITERAL; }
-\"[ -~]*\"																						{ return TOKEN_STRING_LITERAL; }
+\"([ !#-&\(\)*-\[\]-~]|\\[abefnrtv\\\'\"]|\\0x[A-Fa-f0-9]{2})*\"				{ return TOKEN_STRING_LITERAL; }
 
 .																									{ return -2; }
 %%

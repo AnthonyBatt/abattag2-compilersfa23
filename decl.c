@@ -15,7 +15,13 @@ struct decl *decl_create(char *name, struct type *type, struct expr *value, stru
 
 void decl_print(struct decl *d, int indent)
 {
-	fprintf(stdout, "%s:", d->name);
+	// set the indent
+	char tab[BUFSIZ];
+	int i;
+	for (i = 0; i < indent; i ++)		tab[i] = 32;
+	tab[i] = 0;
+
+	fprintf(stdout, "%s%s:", tab, d->name);
 	type_print(d->type);
 	// standard types
 	if (d->value)
@@ -28,10 +34,10 @@ void decl_print(struct decl *d, int indent)
 	else if(d->code)
 	{
 		if 		(d->type->kind == TYPE_ARRAY)		fprintf(stdout, " = {");
-		else if 	(d->type->kind == TYPE_FUNCTION) fprintf(stdout, " =\n{\n");
-		stmt_print(d->code, indent);
+		else if 	(d->type->kind == TYPE_FUNCTION) fprintf(stdout, " =\n%s{\n", tab);
+		stmt_print(d->code, indent + 3);
 		if 		(d->type->kind == TYPE_ARRAY)		fprintf(stdout, "};\n");
-		else if 	(d->type->kind == TYPE_FUNCTION) fprintf(stdout, "}\n");
+		else if 	(d->type->kind == TYPE_FUNCTION) fprintf(stdout, "%s}\n", tab);
 	}
 	// no intialization
 	else

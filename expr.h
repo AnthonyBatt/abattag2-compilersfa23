@@ -1,6 +1,7 @@
 #ifndef EXPR_H
 #define EXPR_H
 
+#include "encoder.h"
 #include "stmt.h"
 #include "symbol.h"
 #include <stdlib.h>
@@ -60,7 +61,7 @@ struct expr * expr_create_name( const char *n );
 struct expr * expr_create_integer_literal( int c );
 struct expr * expr_create_float_literal( float c );
 struct expr * expr_create_boolean_literal( int c );
-struct expr * expr_create_char_literal( char c );
+struct expr * expr_create_char_literal( int c );
 struct expr * expr_create_string_literal( const char *str );
 struct expr * expr_create_function_call( const char *n, struct stmt *a );
 struct expr * expr_create_array_access( const char *n, struct expr *i, struct expr *j );

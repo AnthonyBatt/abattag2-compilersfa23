@@ -47,6 +47,8 @@ test: bminor runtest_encoder.sh runtest_scanner.sh
 	./runtest_scanner.sh
 	@echo "Parser Tests:"
 	./runtest_parser.sh
+	@echo "Printer Tests:"
+	./runtest_printer.sh
 
 clean: 
 	rm -rf *.o

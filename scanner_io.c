@@ -5,7 +5,7 @@
 #include "encoder.h"
 #include "scanner.h"
 
-#define ENUM_OFFSET 259
+#define ENUM_OFFSET 258
 
 extern FILE *yyin;
 extern int yylex();
@@ -15,7 +15,7 @@ int scan(FILE *fp)
 {
 	yyin = fp;
 
-	char token_arr[49][255] =
+	char token_arr[50][255] =
 	{
 		"TOKEN_ARRAY",
 		"TOKEN_VOID",
@@ -35,6 +35,7 @@ int scan(FILE *fp)
 		"TOKEN_RETURN",
 		"TOKEN_AUTO",
 
+		"TOKEN_EOF",
 		"TOKEN_COMMA",
 		"TOKEN_SEMICOLON",
 		"TOKEN_COLON",
@@ -165,7 +166,7 @@ int scan(FILE *fp)
 					else
 					{
 						fprintf(stderr, "invalid hexdigits given, valid hexdigits are 0-9, a-f, and A-F, given digits were: %c and %c\n", digit1, digit2);
-						return 0;
+						return 1;
 					}
 				}
 				// invalid escape char 

@@ -311,3 +311,237 @@ int string_encode(const unsigned char *s, unsigned char *es)
 
 	return 1;
 }
+
+int char_decode(const unsigned char *es)
+{			
+			char c = es[1];
+			// escape characters sub if chain
+			if (c == 92)
+			{
+				unsigned char c2 = es[2];
+				// if chain for c2
+				// \a
+				if (c2 == 97)
+				{
+					c = 7;
+				}
+				// \b
+				else if (c2 == 98)
+				{
+					c = 8;
+				}
+				// \e
+				else if (c2 == 101)
+				{
+					c = 27;
+				}
+				// \f
+				else if (c2 == 102)
+				{
+					c = 12;
+				}
+				// \n
+				else if (c2 == 110)
+				{
+					c = 10;
+				}
+				// \r
+				else if (c2 == 114)
+				{
+					c = 13;
+				}
+				// \t
+				else if (c2 == 116)
+				{
+					c = 9;
+				}
+				// \v
+				else if (c2 == 118)
+				{
+					c = 11;
+				}
+				// /* \\ */
+				else if (c2 == 92)
+				{
+					c = 92;
+				}
+				// \'
+				else if (c2 == 39)
+				{
+					c = 39;
+				}
+				// \"
+				else if (c2 == 34)
+				{
+					c = 34;
+				}
+				// \0
+				else if (c2 == 48)
+				{
+					// this could be hex digit stuff
+					// \0x
+					if (es[3] != 120)
+					{
+						fprintf(stderr, "invalid attempt at using hexadecimal replacement, please format as such:\n\t\\0xHH where HH is a valid hexdigit combo (0-9a-fA-F)\n");
+						return 1;
+					}
+					// valid hexdigits are 48-57, 65-70, and 97-102
+					unsigned char digit1 = es[4];
+					unsigned char digit2 = es[5];
+					if (	 ((digit1 >= 48 && digit1 <= 57) || (digit1 >= 65 && digit1 <= 70) || (digit1 >= 97 && digit1 <= 102))
+						 && ((digit2 >= 48 && digit2 <= 57) || (digit2 >= 65 && digit2 <= 70) || (digit2 >= 97 && digit2 <= 102))	 )
+					{
+						// convert to decimal, these can be outside the printable range
+						unsigned char hex[3] = {es[4], es[5], 0};
+						int dec = strtol((char *)hex, NULL, 16) & 0x000000ff;
+						c = dec;
+					}
+					else
+					{
+						fprintf(stderr, "invalid hexdigits given, valid hexdigits are 0-9, a-f, and A-F, given digits were: %c and %c\n", digit1, digit2);
+						return 1;
+					}
+				}
+				// invalid escape char 
+				else
+				{
+					fprintf(stderr, "invalid escape character: %c, if you meant to just print \\ type \\\\\n", c2);
+					return 1;
+				}
+			}
+	return c;
+}
+
+int char_encode(int c, unsigned char *es)
+{
+	int i = 0;
+	int j = 0;
+
+
+	es[j] = 39;
+	j++;
+	
+	// edge case for the empty string: need to check this if before entering the loop	
+	// 	if it is "" won't enter the while loop and a closing quote and null won't be added
+	if (c == 0)
+	{
+		es[j] = 39;
+		j++;
+		es[j] = 0;
+		j++;
+	}
+
+	while(c)
+	{	
+		// the end of the string
+		if (c == 0)
+		{
+			es[j] = 39;
+			j++;
+			es[j] = 0;
+			j++;
+		}
+		// \\    //
+		else if (c == 92)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 92;
+		}
+		// \"
+		else if (c == 34)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 34;
+		}
+		// \'
+		else if (c == 39)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 39;
+		}
+		// \a
+		else if (c == 7)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 97;
+		}
+		// \b
+		else if (c == 8)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 98;
+		}
+		// \e
+		else if (c == 27)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 101;
+		}
+		// \f
+		else if (c == 12)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 102;
+		}
+		// \n
+		else if (c == 10)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 110;
+		}
+		// \r
+		else if (c == 13)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 114;
+		}
+		// \t
+		else if (c == 9)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 116;
+		}
+		// \v
+		else if (c == 11)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 118;
+		}
+		// \0xHH
+		else if (c > 126 || c < 32)
+		{
+			es[j] = 92;
+			j++;
+			es[j] = 48; // 0
+			j++;
+			es[j] = 120;// x
+			j++;
+			// we need to make two hexdigits out of the value 
+			unsigned char hex[3];
+			sprintf((char *)hex, "%.2x", c);
+			//printf("%s\n", hex);
+			es[j] = hex[0];
+			j++;
+			es[j] = hex[1];
+		}
+		// it is a printable non special character
+		else es[j] = c;
+
+		// increment place in the strings
+		i++;
+		j++;
+	}
+
+	return 0;
+}

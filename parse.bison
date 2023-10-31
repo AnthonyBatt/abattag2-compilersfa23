@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "encoder.h"
 #include "decl.h"
 #include "stmt.h"
 #include "expr.h"
@@ -149,10 +150,10 @@ post	:	atom TOKEN_POST_INC										{ $$ = expr_create(EXPR_INC, $1, 0); }
 		|	atom															{ $$ = $1; }
 		;
 
-// atomic thingies													// #TODO check these work and what do bout fx/arr
+// atomic thingies													
 atom	:	TOKEN_FLOAT_LITERAL										{ $$ = expr_create_float_literal(atof(yytext)); }
 		|	TOKEN_INTEGER_LITERAL									{ $$ = expr_create_integer_literal(atoi(yytext)); }
-		|	TOKEN_CHAR_LITERAL										{ $$ = expr_create_char_literal(yytext[1]); }
+		|	TOKEN_CHAR_LITERAL										{ $$ = expr_create_char_literal(char_decode((const unsigned char *)yytext)); }
 		|	TOKEN_STRING_LITERAL										{ $$ = expr_create_string_literal(yytext); }
 		|	TOKEN_TRUE_LITERAL										{ $$ = expr_create_boolean_literal(1); }
 		|	TOKEN_FALSE_LITERAL										{ $$ = expr_create_boolean_literal(0); }
@@ -175,7 +176,7 @@ pals	:	parm															{ $$ = $1; }
 		|	parm TOKEN_COMMA pals									{ $1->next = $3; $$ = $1; }			
 		;
 
-// parameter															// # TODO how to isolate the ID
+// parameter														
 parm	:	vari TOKEN_COLON paty									{ $$ = param_list_create((char *)$1->name, $3, 0); }
 		;
 
@@ -194,10 +195,10 @@ oxpl	:	xpls															{ $$ = $1; }
 		;
 
 // expression list													
-xpls	:	asin															{ $$ = stmt_create(STMT_EXPR_LS, 0, 0, $1, 0, 0, 0, 0); }
-		|	asin TOKEN_COMMA xpls									{ $$ = stmt_create(STMT_EXPR_LS, 0, 0, $1, 0, 0, 0, $3); }
-		|	bxpl															{ $$ = $1; }
-		|	bxpl TOKEN_COMMA xpls									{ $1->next = $3; $$ = $1; }
+xpls	:	asin															{ $$ = stmt_create(STMT_EXPR_LS, 0, 0, $1, 0, 0, 0, 0, 0, 0); }
+		|	asin TOKEN_COMMA xpls									{ $$ = stmt_create(STMT_EXPR_LS, 0, 0, $1, 0, 0, 0, 0, $3, 0); }
+		|	bxpl															{ $1->braces = 1; $$ = $1; }
+		|	bxpl TOKEN_COMMA xpls									{ $1->braces = 2; $1->next = $3; $$ = $1; }
 		;
 
 // braced statement list
@@ -220,24 +221,24 @@ stmt	:	opst															{ $$ = $1; }
 		;
 
 // open statement
-opst	:	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst	 					  { $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5,  0, 0); }
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE opst  					  { $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5,  0, 0); }
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE opst  { $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7, 0); }
-		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE opst 	{ $$ = stmt_create(STMT_FOR, 0, $3, $5, $7, $9, 0, 0); }
+opst	:	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst	 					  { $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5,  0, 0, 0, 0); }
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE opst  					  { $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5,  0, 0, 0, 0); }
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE opst  { $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7, 0, 0, 0); }
+		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE opst 	{ $$ = stmt_create(STMT_FOR, 0, $3, $5, $7, $9, 0, 0, 0, 0); }
 		;
 
 // closed statement
 clst	:	smst 																																{ $$ = $1; }
-		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE clst  										{ $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7, 0); }
-		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE clst 	{ $$ = stmt_create(STMT_FOR, 0, $3, $5, $7, $9, 0, 0); } 
+		|	TOKEN_IF TOKEN_PAREN_OPEN asin TOKEN_PAREN_CLOSE clst TOKEN_ELSE clst  										{ $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7, 0, 0, 0); }
+		|	TOKEN_FOR TOKEN_PAREN_OPEN oasi TOKEN_SEMICOLON oasi TOKEN_SEMICOLON oasi TOKEN_PAREN_CLOSE clst 	{ $$ = stmt_create(STMT_FOR, 0, $3, $5, $7, $9, 0, 0, 0, 0); } 
 		;
 
 // simple statement
 smst	:	bstl															{ $$ = $1; }
-		|	decl 															{ $$ = stmt_create(STMT_DECL, $1, 0, 0, 0, 0, 0, 0); }
-		|	TOKEN_RETURN oasi TOKEN_SEMICOLON 					{ $$ = stmt_create(STMT_RETURN, 0, 0, $2, 0, 0, 0, 0); }
-		|	TOKEN_PRINT oxpl TOKEN_SEMICOLON 					{ $$ = stmt_create(STMT_PRINT, 0, 0, 0, 0, $2, 0, 0);	}	
-		|	asin TOKEN_SEMICOLON										{ $$ = stmt_create(STMT_EXPR, 0, 0, $1, 0, 0, 0, 0); } 
+		|	decl 															{ $$ = stmt_create(STMT_DECL, $1, 0, 0, 0, 0, 0, 0, 0, 0); }
+		|	TOKEN_RETURN oasi TOKEN_SEMICOLON 					{ $$ = stmt_create(STMT_RETURN, 0, 0, $2, 0, 0, 0, 0, 0, 0); }
+		|	TOKEN_PRINT oxpl TOKEN_SEMICOLON 					{ $$ = stmt_create(STMT_PRINT, 0, 0, 0, 0, $2, 0, 0, 0, 0);	}
+		|	asin TOKEN_SEMICOLON										{ $$ = stmt_create(STMT_EXPR, 0, 0, $1, 0, 0, 0, 0, 0, 0); } 
 		;
 
 // optional assignment
@@ -250,7 +251,7 @@ dcls	:	decl dcls													{ $1->next = $2; $$ = $1; }
 		|	/* epsilon */												{ $$ = 0; }
 		;
 
-// declaration													// #TODO how to isolate ID
+// declaration													
 decl  : 	vari TOKEN_COLON type init TOKEN_SEMICOLON		{ $$ = decl_create((char *)$1->name, $3, $4, 0, 0); }	
 		|	vari TOKEN_COLON arty arii TOKEN_SEMICOLON		{ $$ = decl_create((char *)$1->name, $3, 0, $4, 0); }
 		|	vari TOKEN_COLON fxty fxii								{ $$ = decl_create((char *)$1->name, $3, 0, $4, 0); }
