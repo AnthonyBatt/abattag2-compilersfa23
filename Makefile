@@ -56,3 +56,4 @@ clean:
 	rm -rf ./tests/encode/*.out
 	rm -rf ./tests/scan/*.out
 	rm -rf ./tests/parse/*.out
+	rm -rf ./tests/printer/*.out
