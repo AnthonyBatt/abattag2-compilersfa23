@@ -14,7 +14,7 @@ struct symbol {
 	symbol_t kind;
 	struct type *type;
 	char *name;
-	int which;
+	int which; // starts counting at 0
 };
 
 struct symbol * symbol_create( symbol_t kind, struct type *type, char *name );

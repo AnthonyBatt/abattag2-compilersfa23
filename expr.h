@@ -67,5 +67,6 @@ struct expr * expr_create_function_call( const char *n, struct stmt *a );
 struct expr * expr_create_array_access( const char *n, struct expr *i, struct expr *j );
 
 void expr_print( struct expr *e );
+void expr_resolve(struct expr *e);
 
 #endif

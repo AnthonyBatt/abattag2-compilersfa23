@@ -117,3 +117,63 @@ void stmt_print(struct stmt *s, int indent)
 		stmt_print(s->next, indent);
 	}
 }
+
+void stmt_resolve(struct stmt *s)
+{
+	if (!s) return;
+
+	if (s->kind == STMT_DECL)
+	{
+		decl_resolve(s->decl);
+	}
+	else if (s->kind == STMT_EXPR)
+	{
+		expr_resolve(s->expr);
+	}
+	else if (s->kind == STMT_EXPR_LS)
+	{
+		expr_resolve(s->expr);
+		if (s->next_elem)
+		{
+			stmt_resolve(s->next_elem);
+		}
+	}
+	else if (s->kind == STMT_IF_ELSE)
+	{
+		expr_resolve(s->expr);
+
+		scope_enter();
+		stmt_resolve(s->body);
+		scope_exit();
+		
+		if (s->else_body)
+		{
+			scope_enter();
+			stmt_resolve(s->else_body);
+			scope_exit();
+		}
+	}
+	else if (s->kind == STMT_FOR)
+	{
+		expr_resolve(s->init_expr);
+		expr_resolve(s->expr);
+		expr_resolve(s->next_expr);
+
+		scope_enter();
+		stmt_resolve(s->body);
+		scope_exit();
+	}
+	else if (s->kind == STMT_PRINT)
+	{
+		stmt_resolve(s->body);
+	}
+	else if (s->kind == STMT_RETURN)
+	{
+		expr_resolve(s->expr);
+	}
+
+	if (s->next)
+	{
+		stmt_resolve(s->next);
+	}
+}

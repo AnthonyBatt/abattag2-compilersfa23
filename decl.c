@@ -51,3 +51,43 @@ void decl_print(struct decl *d, int indent)
 		decl_print(d->next, indent);
 	}
 }
+
+void decl_resolve(struct decl *d)
+{
+	symbol_t kind = scope_level() > 1 ? SYMBOL_LOCAL : SYMBOL_GLOBAL;
+
+	d->symbol = symbol_create(kind, d->type, d->name);
+	if (scope_lookup_curr(d->name))
+	{
+		fprintf(stderr, "%s was already declared in this scope\n", d->name);
+		return;
+	}
+
+	if (d->value)
+	{
+		expr_resolve(d->value);
+	}
+
+	scope_bind(d->name, d->symbol);
+
+	if (d->code)
+	{
+		// if it is an array, because I was dumb and implemented array initializations as stmt blocks
+		if (d->code->kind == STMT_EXPR_LS && !d->type->params)
+		{
+			stmt_resolve(d->code);
+		}
+		else
+		{
+			scope_enter();
+			param_list_resolve(d->type->params);
+			stmt_resolve(d->code);
+			scope_exit();
+		}
+	}
+	
+	if (d->next)
+	{
+		decl_resolve(d->next);
+	}
+}

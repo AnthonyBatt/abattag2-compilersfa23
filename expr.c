@@ -9,46 +9,6 @@ struct expr *expr_create(expr_t kind, struct expr *left, struct expr *right)
 	e->left = left;
 	e->right = right;
 
-/*					TODO: ask matt or evan or someone if we need to track values as we go
-	if (...)
-	{
-	
-	}
-	else if (...)
-	{
-
-	}
-	EXPR_NAME,
-	EXPR_INTEGER_LITERAL,
-	EXPR_FLOAT_LITERAL,
-	EXPR_BOOLEAN_LITERAL,
-	EXPR_CHAR_LITERAL,
-	EXPR_STRING_LITERAL,
-	EXPR_ASN,
-	EXPR_LGO,
-	EXPR_LGA,
-	EXPR_LT,
-	EXPR_LE,
-	EXPR_GT,
-	EXPR_GE,
-	EXPR_EQ,
-	EXPR_NE,
-	EXPR_ADD,
-	EXPR_SUB,
-	EXPR_MUL,
-	EXPR_DIV,
-	EXPR_MOD,
-	EXPR_EXP,
-	EXPR_NEG,
-	EXPR_PLS,
-	EXPR_NOT,
-	EXPR_PIC,
-	EXPR_PDC,
-	EXPR_GRP,
-	EXPR_FXN,
-	EXPR_ARR
-*/
-
 	return e;
 }
 
@@ -373,5 +333,24 @@ void expr_print(struct expr *e)
 		fprintf(stdout, "(");
 		expr_print(e->left);
 		fprintf(stdout, ")");
+	}
+}
+
+void expr_resolve(struct expr *e)
+{
+	if (!e) return;
+
+	if (e->kind==EXPR_NAME)
+	{
+		e->symbol = scope_lookup(e->name);
+		if (!e->symbol)
+		{
+			fprintf(stderr, "%s has yet to be declared in this scope\n", e->name);
+		}
+	}
+	else
+	{
+		expr_resolve(e->left);
+		expr_resolve(e->right);
 	}
 }
