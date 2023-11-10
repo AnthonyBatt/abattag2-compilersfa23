@@ -1,11 +1,14 @@
 #include "hash_table.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define DEFAULT_SIZE 127
 #define DEFAULT_LOAD 0.75
 #define DEFAULT_FUNC hash_string
+
+extern int CURRENT_SCOPE;
 
 struct hash_table *hash_table_create(int bucket_count, hash_func_t func)
 {
@@ -75,11 +78,13 @@ void *hash_table_lookup(struct hash_table *h, const char *key)
 
 	while(e) {
 		if(hash == e->hash && !strcmp(key, e->key)) {
+			//printf("I have found key: %s\n", key);
 			return e->value;
 		}
 		e = e->next;
 	}
 
+	//printf("I have not found key: %s\n", key);
 	return 0;
 }
 

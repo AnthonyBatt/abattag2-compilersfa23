@@ -1,6 +1,8 @@
 #include "expr.h"
 #include <string.h>
 
+extern int rerror;
+
 struct expr *expr_create(expr_t kind, struct expr *left, struct expr *right)
 {
 	struct expr *e = malloc(sizeof(struct expr));
@@ -342,10 +344,17 @@ void expr_resolve(struct expr *e)
 
 	if (e->kind==EXPR_NAME)
 	{
-		e->symbol = scope_lookup(e->name);
+		e->symbol = scope_lookup((char *)e->name);
 		if (!e->symbol)
 		{
-			fprintf(stderr, "%s has yet to be declared in this scope\n", e->name);
+			fprintf(stderr, "resolve error (expression): %s has yet to be declared in this scope\n", e->name);
+			rerror++;
+			return;
+		}
+		else
+		{
+			//scope_bind((char *)e->name, e->symbol);
+			symbol_print(e->symbol);
 		}
 	}
 	else

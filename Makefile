@@ -1,8 +1,8 @@
 CC=		gcc
 CFLAGS=	-Wall -g -lm
 
-bminor: parse.o encoder.o main.o scanner.o scanner_io.o decl.o expr.o param_list.o stmt.o type.o
-	$(CC) $(CFLAGS) encoder.o main.o scanner.o scanner_io.o parse.o decl.o expr.o param_list.o stmt.o type.o -o bminor
+bminor: parse.o encoder.o main.o scanner.o scanner_io.o decl.o expr.o param_list.o stmt.o type.o symbol.o hash_table.o scope.o
+	$(CC) $(CFLAGS) encoder.o main.o scanner.o scanner_io.o parse.o decl.o expr.o param_list.o stmt.o type.o symbol.o hash_table.o scope.o -o bminor
 
 main.o: main.c
 	$(CC) -c $(CFLAGS) main.c -o main.o
@@ -40,6 +40,15 @@ type.o: type.c
 param_list.o: param_list.c
 	$(CC) -c $(CFLAGS) param_list.c -o param_list.o
 
+symbol.o: symbol.c
+	$(CC) -c $(CFLAGS) symbol.c -o symbol.o
+
+hash_table.o: hash_table.c
+	$(CC) -c $(CFLAGS) hash_table.c -o hash_table.o
+
+scope.o: scope.c
+	$(CC) -c $(CFLAGS) scope.c -o scope.o
+
 test: bminor runtest_encoder.sh runtest_scanner.sh
 	@echo "Encoder Tests:"
 	./runtest_encoder.sh
@@ -49,6 +58,8 @@ test: bminor runtest_encoder.sh runtest_scanner.sh
 	./runtest_parser.sh
 	@echo "Printer Tests:"
 	./runtest_printer.sh
+	@echo "Resolver Tests:"
+	./runtest_resolver.sh
 
 clean: 
 	rm -rf *.o
@@ -57,3 +68,4 @@ clean:
 	rm -rf ./tests/scan/*.out
 	rm -rf ./tests/parse/*.out
 	rm -rf ./tests/printer/*.out
+	rm -rf ./tests/resolve/*.out

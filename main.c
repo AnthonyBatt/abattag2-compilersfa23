@@ -18,6 +18,7 @@
 #include "scanner.h"
 #include "decl.h"
 
+int rerror = 0;
 
 extern int yyparse();
 extern FILE *yyin;
@@ -32,9 +33,9 @@ int main(int argc, char *argv[])
 	}
 
 	// if the call isn't to perform encoding let the user know nothing else is supported right now
-	if (strcmp(argv[1], "--encode") && strcmp(argv[1], "--scan") && strcmp(argv[1], "--parse") && strcmp(argv[1], "--print"))
+	if (strcmp(argv[1], "--encode") && strcmp(argv[1], "--scan") && strcmp(argv[1], "--parse") && strcmp(argv[1], "--print") && strcmp(argv[1], "--resolve"))
 	{
-		fprintf(stderr, "Currently no functionality other than --encode, --scan, --parse, or --print is supported\n");
+		fprintf(stderr, "Currently no functionality other than --encode, --scan, --parse, --print, or --resolve is supported\n");
 		return EXIT_FAILURE;
 	}
 
@@ -63,6 +64,13 @@ int main(int argc, char *argv[])
 	if (!(strcmp(argv[1], "--print")) && (argc < 3))
 	{
 		fprintf(stderr, "Not enough command line arguments given, a file name must follow --print\n");
+		return EXIT_FAILURE;
+	}
+
+	// if the call is trying to print and there was no file specified
+	if (!(strcmp(argv[1], "--resolve")) && (argc < 3))
+	{
+		fprintf(stderr, "Not enough command line arguments given, a file name must follow --resolve\n");
 		return EXIT_FAILURE;
 	}
 
@@ -170,7 +178,7 @@ int main(int argc, char *argv[])
 
 // SCANNER STUFF
 // ======================================================
-	if (!(strcmp(argv[1], "--scan")) /* || !(strcmp(argv[1], "--parse"))*/)
+	if (!(strcmp(argv[1], "--scan"))/* || !(strcmp(argv[1], "--parse")) || !(strcmp(argv[1], "--print"))*/)
 	{
 		FILE *fp = fopen(argv[2], "r");
 		if (!fp)
@@ -180,7 +188,7 @@ int main(int argc, char *argv[])
 			goto end;
 		}
 
-		if (scan(fp))
+		if (scan(fp, 0))
 		{
 			fprintf(stderr, "Program exiting, there was a scanning error\n");
 			fclose(fp);
@@ -245,6 +253,43 @@ int main(int argc, char *argv[])
 	}
 // ======================================================
 // END PRINTER STUFF
+
+// RESOLVER STUFF
+// ======================================================
+	if (!(strcmp(argv[1], "--resolve")))
+	{
+		FILE *fp = fopen(argv[2], "r");
+		if (!fp)
+		{
+			fprintf(stderr, "Attempting to open the file descriptor failed: (%s)\n", strerror(errno));
+			ret = 1;
+			goto end;
+		}
+
+		yyin = fp;
+
+		if (yyparse())
+		{
+			fprintf(stderr, "parse error: there was an error parsing the given bminor program\n");
+			fclose(fp);
+			ret = 1;
+			goto end;
+		}
+ 
+		scope_enter();
+		decl_resolve(prog);
+		scope_exit();
+
+		if (rerror)
+		{
+			fprintf(stderr, "%d error(s) appeared while resolving\n", rerror);
+			ret = 1;
+			goto end;
+		}
+	}
+
+// ======================================================
+// END RESOLVER STUFF
 
 end:
 	// if at any point something failed ret will exit as non zero which will indicate failure

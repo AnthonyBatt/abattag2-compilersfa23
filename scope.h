@@ -1,10 +1,6 @@
 #include "symbol.h"
 #include "hash_table.h"
 
-struct hashtable *ht_global;
-int CURRENT_SCOPE = 0;
-
-
 // push hashtable onto stack (function call) increase depth
 void scope_enter(); 
 // pop hashtable from stack (return statement or end of function) decrease depth

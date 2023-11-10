@@ -1,5 +1,7 @@
 #include "decl.h"
 
+extern int rerror;
+
 struct decl *decl_create(char *name, struct type *type, struct expr *value, struct stmt *code, struct decl *next)
 {
 	struct decl *d = malloc(sizeof(struct decl));
@@ -54,13 +56,19 @@ void decl_print(struct decl *d, int indent)
 
 void decl_resolve(struct decl *d)
 {
-	symbol_t kind = scope_level() > 1 ? SYMBOL_LOCAL : SYMBOL_GLOBAL;
+	symbol_t kind = scope_level() > 0 ? SYMBOL_LOCAL : SYMBOL_GLOBAL;
+	//printf("scope level: %d\n", scope_level());
 
 	d->symbol = symbol_create(kind, d->type, d->name);
-	if (scope_lookup_curr(d->name))
+	struct symbol *check;
+	if ((check = scope_lookup_curr(d->name)))
 	{
-		fprintf(stderr, "%s was already declared in this scope\n", d->name);
-		return;
+		if (check->type->kind != TYPE_FUNCTION || d->type->kind != TYPE_FUNCTION)
+		{
+			fprintf(stderr, "resolve error (declaration): %s was already declared in this scope\n", d->name);
+			rerror++;
+			return;
+		}
 	}
 
 	if (d->value)
@@ -69,9 +77,11 @@ void decl_resolve(struct decl *d)
 	}
 
 	scope_bind(d->name, d->symbol);
+	symbol_print(d->symbol);
 
 	if (d->code)
 	{
+		//printf("I have code\n");
 		// if it is an array, because I was dumb and implemented array initializations as stmt blocks
 		if (d->code->kind == STMT_EXPR_LS && !d->type->params)
 		{
@@ -80,8 +90,11 @@ void decl_resolve(struct decl *d)
 		else
 		{
 			scope_enter();
+			//printf("scope level: %d\n", scope_level());
 			param_list_resolve(d->type->params);
+			scope_enter();
 			stmt_resolve(d->code);
+			scope_exit();
 			scope_exit();
 		}
 	}

@@ -1,9 +1,11 @@
 #include "scope.h"
+struct hash_table *ht_global = 0;
+int CURRENT_SCOPE = 0;
 
 void scope_enter()
 {
 	// entering the global scope
-	if (!CURRENT_SCOPE)
+	if (!ht_global)
 	{
 		ht_global = hash_table_create(0, NULL);
 	}
@@ -15,7 +17,12 @@ void scope_enter()
 			if (!curr->next)
 			{
 				CURRENT_SCOPE++;
-				curr->next = hash_table_create(0, NULL);
+				//printf("scope level: %d\n", CURRENT_SCOPE);
+				struct hash_table *new_ht = hash_table_create(0, NULL);
+				//printf("New HT's level: %d\n", new_ht->level);
+				curr->next = new_ht;
+				//printf("CurrNext's level: %d\n", curr->next->level);
+				//printf("Curr's level: %d\n", curr->level);
 				break;
 			}
 		}
@@ -27,8 +34,7 @@ void scope_exit()
 	// exiting the global scope
 	if (!CURRENT_SCOPE)
 	{
-		hash_table_clear(ht_global);
-		hash_table_delete(ht_global);
+		//hash_table_delete(ht_global);
 		ht_global = NULL;
 	}
 	else
@@ -39,9 +45,10 @@ void scope_exit()
 			if (!curr->next->next)
 			{
 				CURRENT_SCOPE--;
-				hash_table_clear(curr->next);
-				hash_table_delete(curr->next);
+				//hash_table_delete(curr->next);
+				//printf("CurrNext's level: %d\n", curr->next->level);
 				curr->next = NULL;
+				//printf("Curr's level: %d\n", curr->level);
 				break;
 			}
 		}
@@ -93,7 +100,16 @@ struct symbol *scope_lookup_curr(char *name)
 		if (!curr->next)
 		{
 			sym = hash_table_lookup(curr, (const char *)name);
-			return sym;
+			/*if (sym) 
+			{
+				printf("I found sym\n");
+				return sym;
+			}
+			else
+			{
+				printf("I can't find sym\n");
+				return 0;
+			}*/
 		}
 	}
 
