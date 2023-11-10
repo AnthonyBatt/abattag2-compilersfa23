@@ -1,0 +1,14 @@
+// referencing a variable before its scope
+a: integer = c;
+
+f: function void () = 
+{
+	print ;
+
+	a: array [1] array [1] array [1] integer = {{{1}}};
+
+	a[0][0][0] = 2;
+
+	c: char = 'c';
+}
+

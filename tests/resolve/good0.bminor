@@ -1,0 +1,10 @@
+f: function void () = 
+{
+	print ;
+
+	a: array [1] array [1] array [1] integer = {{{1}}};
+
+	a[0][0][0] = 2;
+
+	c: char = '\0x74';
+}

@@ -1,0 +1,18 @@
+// using a variable in a different function
+
+x: integer = 5;
+y: integer = 10;
+
+test: function integer();
+
+main: function void ()=
+{
+	z:integer = y * 10 + 15 - test();
+}
+
+test: function integer () =
+{
+	return z;
+}
+	
+

@@ -1,0 +1,5 @@
+// redeclaration of globals is a no no
+
+a: integer;
+a: integer;
+a: boolean;

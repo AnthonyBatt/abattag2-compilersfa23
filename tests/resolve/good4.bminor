@@ -1,0 +1,32 @@
+/* Use character types in various contexts. */
+
+z: void;
+
+charFxn: function char(x: char)=
+{
+	x: char = 'a';
+
+	if(x == 'a')
+	{
+		return z;
+	}
+}
+
+main: function void ()=
+{
+	c: char;
+
+	if('a' == charFxn('c'))
+	{
+		print "unreachable";
+	}
+	if('a' != 'a')
+	{
+		print "unreachable";
+	}
+	if(c == 'a')
+	{
+		print "unreachable";
+	}
+}
+

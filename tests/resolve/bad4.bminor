@@ -1,0 +1,18 @@
+/* Update array with values from function calls. */
+
+x: array [5] integer = {1,2,3,4,5};
+intFxn: function integer ();
+a: boolean;
+
+main: function void () =
+{
+	x[4] = intFxn();
+	x[intFxn()] = 4;
+	a: float;
+	
+}
+intFxn: function integer () =
+{
+	a: float;
+	a: integer;
+}
