@@ -11,7 +11,7 @@ extern FILE *yyin;
 extern int yylex();
 extern char *yytext;
 
-int scan(FILE *fp)
+int scan(FILE *fp, int suppress_output)
 {
 	yyin = fp;
 
@@ -176,7 +176,7 @@ int scan(FILE *fp)
 					return 1;
 				}
 			}
-			printf("%-25s %c\n", token_arr[t-ENUM_OFFSET], c);
+			if (!suppress_output) printf("%-25s %c\n", token_arr[t-ENUM_OFFSET], c);
 		}
 		// it is a string literal
 		else if (t == TOKEN_STRING_LITERAL)
@@ -190,10 +190,10 @@ int scan(FILE *fp)
 			}
 			else
 			{
-				printf("%-25s %s\n", token_arr[t-ENUM_OFFSET], ds);
+				if (!suppress_output) printf("%-25s %s\n", token_arr[t-ENUM_OFFSET], ds);
 			}
 		}
-		else printf("%-25s %s\n", token_arr[t-ENUM_OFFSET], yytext);
+		else if (!suppress_output) printf("%-25s %s\n", token_arr[t-ENUM_OFFSET], yytext);
 	}
 
 	if (t == -2)
