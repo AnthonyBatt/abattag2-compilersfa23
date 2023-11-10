@@ -1,0 +1,10 @@
+my resolver will throw an error for programs like:
+foo: function void() =
+{
+	x: integer;
+	{
+		x: integer;
+	}
+}
+
+It does this because I did not implement statement blocks before and started this too late to do it now, I will go to OH to fix this on monday or tuesday
