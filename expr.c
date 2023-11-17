@@ -348,6 +348,7 @@ void expr_resolve(struct expr *e)
 		if (!e->symbol)
 		{
 			fprintf(stderr, "resolve error (expression): %s has yet to be declared in this scope\n", e->name);
+			e->type = type_create(TYPE_ERROR, 0, 0, 0);
 			rerror++;
 			return;
 		}
@@ -355,6 +356,7 @@ void expr_resolve(struct expr *e)
 		{
 			//scope_bind((char *)e->name, e->symbol);
 			symbol_print(e->symbol);
+			e->type = e->symbol->type;
 		}
 	}
 	else
@@ -362,4 +364,448 @@ void expr_resolve(struct expr *e)
 		expr_resolve(e->left);
 		expr_resolve(e->right);
 	}
+}
+
+struct type *expr_typecheck(struct expr *e)
+{
+	if (!e) return 0;
+
+	struct type *lt = expr_typecheck(e->left);
+	struct type *rt = expr_typecheck(e->right);
+
+	struct type *ret;
+
+	if (e->kind == EXPR_NAME)
+	{
+		ret = e->type;
+	}
+	else if (e->kind == EXPR_INTEGER_LITERAL)
+	{
+		ret = type_create(TYPE_INTEGER, 0, 0, 0);
+	}
+	else if (e->kind == EXPR_CHAR_LITERAL)
+	{
+		ret = type_create(TYPE_CHARACTER, 0, 0, 0);
+	}
+	else if (e->kind == EXPR_BOOLEAN_LITERAL)
+	{
+		ret = type_create(TYPE_BOOLEAN, 0, 0, 0);
+	}
+	else if (e->kind == EXPR_FLOAT_LITERAL)
+	{
+		ret = type_create(TYPE_FLOAT, 0, 0, 0);
+	}
+	else if (e->kind == EXPR_STRING_LITERAL)
+	{
+		ret = type_create(TYPE_STRING, 0, 0, 0);
+	}
+	else if (e->kind == EXPR_FXN)
+	{
+	}
+	else if (e->kind == EXPR_ARR)
+	{
+	}
+	else if (e->kind == EXPR_ASN)
+	{
+		ret = lt;	
+		if (!type_equals(lt, rt))
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error (=): type");
+			type_print(lt);
+			fprintf(stderr, " doesn't match type");
+			type_print(rt);
+			fprintf(stderr, "\n");
+		}
+		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform assignment (=) on type void\n");
+		}
+		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform assignment (=) on type function\n");
+		}
+	}
+	else if (e->kind == EXPR_LGO)
+	{
+		ret = type_create(TYPE_BOOLEAN, 0, 0, 0);
+		if (lt->kind != TYPE_BOOLEAN || rt->kind != TYPE_BOOLEAN)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform logical OR (||) on non boolean types\n");
+		}
+	}
+	else if (e->kind == EXPR_LGA)
+	{
+		ret = type_create(TYPE_BOOLEAN, 0, 0, 0);
+		if (lt->kind != TYPE_BOOLEAN || rt->kind != TYPE_BOOLEAN)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform logical AND (&&) on non boolean types\n");
+		}
+	}
+	else if (e->kind == EXPR_LT)
+	{
+		ret = type_create(TYPE_BOOLEAN, 0, 0, 0);
+		if (!type_equals(lt, rt))
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error (<): type");
+			type_print(lt);
+			fprintf(stderr, " doesn't match type");
+			type_print(rt);
+			fprintf(stderr, "\n");
+		}
+		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform less than (<) on type void\n");
+		}
+		if (lt->kind == TYPE_BOOLEAN || rt->kind == TYPE_BOOLEAN)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform less than (<) on type boolean\n");
+		}
+		if (lt->kind == TYPE_STRING || rt->kind == TYPE_STRING)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform less than (<) on type string\n");
+		}
+		if (lt->kind == TYPE_ARRAY || rt->kind == TYPE_ARRAY)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform less than (<) on type array\n");
+		}
+		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform less than (<) on type function\n");
+		}
+	}
+	else if (e->kind == EXPR_LE)
+	{
+		ret = type_create(TYPE_BOOLEAN, 0, 0, 0);
+		if (!type_equals(lt, rt))
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error (<=): type");
+			type_print(lt);
+			fprintf(stderr, " doesn't match type");
+			type_print(rt);
+			fprintf(stderr, "\n");
+		}
+		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform less than or equal to (<=) on type void\n");
+		}
+		if (lt->kind == TYPE_BOOLEAN || rt->kind == TYPE_BOOLEAN)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform less than or equal to (<=) on type boolean\n");
+		}
+		if (lt->kind == TYPE_STRING || rt->kind == TYPE_STRING)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform less than or equal to (<=) on type string\n");
+		}
+		if (lt->kind == TYPE_ARRAY || rt->kind == TYPE_ARRAY)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform less than or equal to (<=) on type array\n");
+		}
+		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform less than or equal to (<=) on type function\n");
+		}
+	}
+	else if (e->kind == EXPR_GT)
+	{
+		ret = type_create(TYPE_BOOLEAN, 0, 0, 0);
+		if (!type_equals(lt, rt))
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error (>): type");
+			type_print(lt);
+			fprintf(stderr, " doesn't match type");
+			type_print(rt);
+			fprintf(stderr, "\n");
+		}
+		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform greater than (>) on type void\n");
+		}
+		if (lt->kind == TYPE_BOOLEAN || rt->kind == TYPE_BOOLEAN)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform greater than (>) on type boolean\n");
+		}
+		if (lt->kind == TYPE_STRING || rt->kind == TYPE_STRING)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform greater than (>) on type string\n");
+		}
+		if (lt->kind == TYPE_ARRAY || rt->kind == TYPE_ARRAY)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform greater than (>) on type array\n");
+		}
+		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform greater than (>) on type function\n");
+		}
+	}
+	else if (e->kind == EXPR_GE)
+	{
+		ret = type_create(TYPE_BOOLEAN, 0, 0, 0);
+		if (!type_equals(lt, rt))
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error (>=): type");
+			type_print(lt);
+			fprintf(stderr, " doesn't match type");
+			type_print(rt);
+			fprintf(stderr, "\n");
+		}
+		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform greater than or equal to (>=) on type void\n");
+		}
+		if (lt->kind == TYPE_BOOLEAN || rt->kind == TYPE_BOOLEAN)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform greater than or equal to (>=) on type boolean\n");
+		}
+		if (lt->kind == TYPE_STRING || rt->kind == TYPE_STRING)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform greater than or equal to (>=) on type string\n");
+		}
+		if (lt->kind == TYPE_ARRAY || rt->kind == TYPE_ARRAY)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform greater than or equal to (>=) on type array\n");
+		}
+		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform greater than or equal to (>=) on type function\n");
+		}
+	}
+	else if (e->kind == EXPR_EQ)
+	{
+		ret = type_create(TYPE_BOOLEAN, 0, 0, 0);
+		if (!type_equals(lt, rt))
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error (==): type");
+			type_print(lt);
+			fprintf(stderr, " doesn't match type");
+			type_print(rt);
+			fprintf(stderr, "\n");
+		}
+		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot check equality (==) for type void\n");
+		}
+		if (lt->kind == TYPE_ARRAY || rt->kind == TYPE_ARRAY)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot check equality (==) for type array\n");
+		}
+		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot check equality (==) for type function\n");
+		}
+	}
+	else if (e->kind == EXPR_NE)
+	{
+		ret = type_create(TYPE_BOOLEAN, 0, 0, 0);
+		if (!type_equals(lt, rt))
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error (!=): type");
+			type_print(lt);
+			fprintf(stderr, " doesn't match type");
+			type_print(rt);
+			fprintf(stderr, "\n");
+		}
+		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot check inequality (!=) for type void\n");
+		}
+		if (lt->kind == TYPE_ARRAY || rt->kind == TYPE_ARRAY)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot check inequality (!=) for type array\n");
+		}
+		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot check inequality (!=) for type function\n");
+		}
+	}
+	else if (e->kind == EXPR_ADD)
+	{
+		ret = lt;
+		if (!type_equals(lt, rt))
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error (+): type");
+			type_print(lt);
+			fprintf(stderr, " doesn't match type");
+			type_print(rt);
+			fprintf(stderr, "\n");
+		}
+		if (lt->kind != TYPE_INTEGER || rt->kind != TYPE_INTEGER || 
+			 lt->kind != TYPE_FLOAT   || rt->kind != TYPE_FLOAT)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Addition (+) can only be performed on either integer or float types\n");
+		}
+	}
+	else if (e->kind == EXPR_SUB)
+	{
+		ret = lt;	
+		if (!type_equals(lt, rt))
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error (-): type");
+			type_print(lt);
+			fprintf(stderr, " doesn't match type");
+			type_print(rt);
+			fprintf(stderr, "\n");
+		}
+		if (lt->kind != TYPE_INTEGER || rt->kind != TYPE_INTEGER || 
+			 lt->kind != TYPE_FLOAT   || rt->kind != TYPE_FLOAT)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Subtracttion (-) can only be performed on either integer or float types\n");
+		}
+	}
+	else if (e->kind == EXPR_MUL)
+	{
+		ret = lt;	
+		if (!type_equals(lt, rt))
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error (*): type");
+			type_print(lt);
+			fprintf(stderr, " doesn't match type");
+			type_print(rt);
+			fprintf(stderr, "\n");
+		}
+		if (lt->kind != TYPE_INTEGER || rt->kind != TYPE_INTEGER || 
+			 lt->kind != TYPE_FLOAT   || rt->kind != TYPE_FLOAT)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Multiplication (*) can only be performed on either integer or float types\n");
+		}
+	}
+	else if (e->kind == EXPR_DIV)
+	{
+		ret = lt;	
+		if (!type_equals(lt, rt))
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error (/): type");
+			type_print(lt);
+			fprintf(stderr, " doesn't match type");
+			type_print(rt);
+			fprintf(stderr, "\n");
+		}
+		if (lt->kind != TYPE_INTEGER || rt->kind != TYPE_INTEGER || 
+			 lt->kind != TYPE_FLOAT   || rt->kind != TYPE_FLOAT)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Division (/) can only be performed on either integer or float types\n");
+		}
+	}
+	else if (e->kind == EXPR_MOD)
+	{
+		ret = type_create(TYPE_INTEGER, 0, 0, 0);
+		if (lt->kind != TYPE_INTEGER || rt->kind != TYPE_INTEGER)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform modulus (%) on non integer types\n");
+		}
+	}
+	else if (e->kind == EXPR_EXP)
+	{
+		if (!type_equals(lt, rt))
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error (^): type");
+			type_print(lt);
+			fprintf(stderr, " doesn't match type");
+			type_print(rt);
+			fprintf(stderr, "\n");
+		}
+		if (lt->kind != TYPE_INTEGER || rt->kind != TYPE_INTEGER || 
+			 lt->kind != TYPE_FLOAT   || rt->kind != TYPE_FLOAT)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Exponentiation (^) can only be performed on either integer or float types\n");
+		}
+	}
+	else if (e->kind == EXPR_NEG)
+	{
+		ret = lt;	
+		if (lt->kind != TYPE_INTEGER || lt->kind != TYPE_FLOAT)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Negation (-) can only be performed on integer or float types\n");
+		}
+	}
+	else if (e->kind == EXPR_PLS)
+	{
+		ret = lt;	
+		if (lt->kind != TYPE_INTEGER || lt->kind != TYPE_FLOAT)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Posation (+) can only be performed on integer or float types\n");
+		}
+	}
+	else if (e->kind == EXPR_NOT)
+	{
+		ret = type_create(TYPE_BOOLEAN, 0, 0, 0);
+		if (lt->kind != TYPE_BOOLEAN)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform logical NOT (!) on non boolean types\n");
+		}
+	}
+	else if (e->kind == EXPR_INC)
+	{
+		ret = type_create(TYPE_INTEGER, 0, 0, 0);
+		if (lt->kind != TYPE_INTEGER)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform postfix increment (++) on non integer types\n");
+		}
+	}
+	else if (e->kind == EXPR_DEC)
+	{
+		ret = type_create(TYPE_INTEGER, 0, 0, 0);
+		if (lt->kind != TYPE_INTEGER)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Cannot perform postfix decrement (--) on non integer types\n");
+		}
+	}
+	else if (e->kind == EXPR_GRP)
+	{
+		ret = lt;	
+	}
+
+	return ret;
 }

@@ -54,11 +54,16 @@ void type_print(struct type *t)
 		param_list_print(t->params);
 		fprintf(stdout, ")");
 	}
+	else if(t->kind == TYPE_STRING)
+	{
+		fprintf(stdout, " error");
+	}
 }
 
 // TODO maybe come up with a number mapping to refer to for which type error occurred
 int type_equals(struct type *a, struct type *b)
 {
+	if (a->kind == TYPE_ERROR || b->kind == TYPE_ERROR) return 0;
 	if (a->kind == b->kind)
 	{
 		if (a->kind == TYPE_ARRAY)
