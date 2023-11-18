@@ -52,14 +52,21 @@ scope.o: scope.c
 test: bminor runtest_encoder.sh runtest_scanner.sh
 	@echo "Encoder Tests:"
 	./runtest_encoder.sh
+	@echo ""
 	@echo "Scanner Tests:"
 	./runtest_scanner.sh
+	@echo ""
 	@echo "Parser Tests:"
 	./runtest_parser.sh
+	@echo ""
 	@echo "Printer Tests:"
 	./runtest_printer.sh
+	@echo ""
 	@echo "Resolver Tests:"
 	./runtest_resolver.sh
+	@echo ""
+	@echo "Typechecker Tests:"
+	./runtest_typechecker.sh
 
 clean: 
 	rm -rf *.o
@@ -69,3 +76,4 @@ clean:
 	rm -rf ./tests/parse/*.out
 	rm -rf ./tests/printer/*.out
 	rm -rf ./tests/resolve/*.out
+	rm -rf ./tests/typecheck/*.out

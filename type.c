@@ -60,6 +60,54 @@ void type_print(struct type *t)
 	}
 }
 
+void type_print_err(struct type *t)
+{
+	if (t->kind == TYPE_VOID)
+	{
+		fprintf(stderr, " void");
+	}
+	else if(t->kind == TYPE_BOOLEAN)
+	{
+		fprintf(stderr, " boolean");
+	}
+	else if(t->kind == TYPE_CHARACTER)
+	{
+		fprintf(stderr, " char");
+	}
+	else if(t->kind == TYPE_FLOAT)
+	{
+		fprintf(stderr, " float");
+	}
+	else if(t->kind == TYPE_INTEGER)
+	{
+		fprintf(stderr, " integer");
+	}
+	else if(t->kind == TYPE_STRING)
+	{
+		fprintf(stderr, " string");
+	}
+	else if(t->kind == TYPE_ARRAY)
+	{
+		fprintf(stderr, " array ");
+		fprintf(stderr, "[");
+		//expr_print(t->length);         NOT NEEDED FOR ERROR MESSAGE
+		fprintf(stderr, "]");
+		type_print_err(t->subtype);
+	}
+	else if(t->kind == TYPE_FUNCTION)
+	{
+		fprintf(stderr, " function");
+		type_print_err(t->subtype);
+		fprintf(stderr, " (");
+		param_list_print_err(t->params);
+		fprintf(stderr, ")");
+	}
+	else if(t->kind == TYPE_STRING)
+	{
+		fprintf(stderr, " error");
+	}
+}
+
 // TODO maybe come up with a number mapping to refer to for which type error occurred
 int type_equals(struct type *a, struct type *b)
 {
@@ -80,7 +128,7 @@ int type_equals(struct type *a, struct type *b)
 				// check the parameter types are all equal
 				struct param_list *als = a->params;
 				struct param_list *bls = b->params;
-				printf("%d %d\n", !als, !bls);
+				//printf("%d %d\n", !als, !bls);
 				while ((als && bls) && (als->type || bls->type))
 				{
 			//	printf("got here :(\n");
@@ -114,52 +162,3 @@ int type_equals(struct type *a, struct type *b)
 		return 0;
 	}
 }
-
-/*
-// ==================================== START ARRAY LENGTH CHECKING
-			int len_flag = 0;
-			// TODO most of this functionality should maybe be somewhere else
-			// make sure length and kind have been assigned so we dont segfault
-			if (a->length && b->length && a->length->kind && b->length->kind)
-			{
-				// check the size of the array if its length expression is of kind integer literal
-				if (a->length->kind == EXPR_INTEGER_LITERAL && b->length->kind == EXPR_INTEGER_LITERAL)
-				{
-					len_flag = a->length->literal_value == b->length->literal_value;
-				}
-				// make sure symbol and type have been assigned so we dont segfault
-				if (a->length->symbol && b->length->symbol && a->length->symbol->type && b->length->symbol->type)
-				{
-					// check that the variable is an int
-					if (a->length->kind == EXPR_INTEGER_LITERAL && b->length->kind == EXPR_NAME)
-					{
-						return b->length->symbol->type == TYPE_INTEGER;
-					}
-					// check that the variable is an int
-					else if (a->length->kind == EXPR_NAME && b->length->kind == EXPR_INTEGER_LITERAL)
-					{
-						return a->length->symbol->type == TYPE_INTEGER;
-					}
-					// check that both variables are an int
-					else if (a->length->kind == EXPR_NAME && b->length->kind == EXPR_NAME)
-					{
-						return (a->length->symbol->type == TYPE_INTEGER) && (b->length->symbol->type == TYPE_INTEGER);
-					}
-					// one of the two arrays was declared without an integer as its size
-					else
-					{
-						// TODO error message for declaring an array with a non int size
-					}
-				}
-				// TODO delete this later
-				else
-				{
-					printf("array type doesn't have a symbol or its symbol doesnt have a type\n");
-				}
-			// TODO delete this later
-			else
-			{
-				printf("array type doesn't have a length or its length doesnt have a kind\n");
-			}
-// ==================================== END ARRAY LENGTH CHECKING
-*/

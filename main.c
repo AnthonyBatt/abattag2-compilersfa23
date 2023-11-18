@@ -19,6 +19,7 @@
 #include "decl.h"
 
 int rerror = 0;
+int terror = 0;
 
 extern int yyparse();
 extern FILE *yyin;
@@ -330,7 +331,7 @@ int main(int argc, char *argv[])
 			ret = 1;
 			goto end;
 		}
-
+/*
 		struct type *sub3 = type_create(4, 0, 0, 0);
 		struct type *sub4 = type_create(4, 0, 0, 0);
 		struct param_list *s1 = param_list_create("hey", sub3, 0); 
@@ -339,7 +340,14 @@ int main(int argc, char *argv[])
 		struct type *sub2 = type_create(1, 0, 0, 0);
 		struct type *test1 = type_create(7, sub1, s1, 0);
 		struct type *test2 = type_create(7, sub2, s2, 0);
-		printf("type equals: %d\n", type_equals(test1, test2));
+*/
+		decl_typecheck(prog);
+		if (terror)
+		{
+			fprintf(stderr, "%d error(s) appeared while typechecking\n", terror);
+			ret = 1;
+			goto end;
+		}
 	}
 
 // ======================================================

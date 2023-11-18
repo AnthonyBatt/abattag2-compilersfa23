@@ -26,6 +26,19 @@ void param_list_print(struct param_list *a)
 	}
 }
 
+void param_list_print_err(struct param_list *a)
+{
+	if (!a) return;
+	fprintf(stderr, "%s:", a->name);
+	type_print_err(a->type);
+	
+	if (a->next)
+	{
+		fprintf(stderr, ", ");
+		param_list_print_err(a->next);
+	}
+}
+
 void param_list_resolve(struct param_list *a)
 {
 	if (!a) return;

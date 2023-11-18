@@ -2,6 +2,7 @@
 #include <string.h>
 
 extern int rerror;
+extern int terror;
 
 struct expr *expr_create(expr_t kind, struct expr *left, struct expr *right)
 {
@@ -399,11 +400,52 @@ struct type *expr_typecheck(struct expr *e)
 	{
 		ret = type_create(TYPE_STRING, 0, 0, 0);
 	}
+	// TODO implement function and array
 	else if (e->kind == EXPR_FXN)
 	{
+		printf("\n\n I misjudged my time and could not implement function calls due to an uncaught error in a previous part\n\n\n");
+/*
+		if (!e->type)
+		{
+			printf("functions will fuck you :)\n");
+			return 0;
+		}
+		// when we resolve or print or something maybe pass in the function expr to assign it a type
+		// functions do not have a left or right
+		ret = e->type->subtype;
+		// subtype cannot be function or array
+*/
+		ret = type_create(TYPE_ERROR, 0, 0, 0);
 	}
 	else if (e->kind == EXPR_ARR)
 	{
+		if (lt->kind != TYPE_INTEGER)
+		{
+			ret = type_create(TYPE_ERROR, 0, 0, 0);
+			fprintf(stderr, "type error: Array indexes must be integers, you gave");
+			type_print_err(lt);
+			fprintf(stderr, "\n");
+			terror++;
+		}
+		printf("\n\n I misjudged my time and could not fully implement array accesses due to an uncaught error in a previous part\n\n\n");
+		//type_print(lt);
+		//type_print(rt);
+	/*
+		if (!e->type)
+		{
+			printf("arrays will fuck you :)\n");
+			return 0;
+		}
+
+		struct type *curr = e->type;
+		while (curr->subtype)
+		{
+			curr = curr->subtype;
+		}
+
+		ret = curr;
+	*/
+		ret = lt;
 	}
 	else if (e->kind == EXPR_ASN)
 	{
@@ -412,20 +454,23 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error (=): type");
-			type_print(lt);
+			type_print_err(lt);
 			fprintf(stderr, " doesn't match type");
-			type_print(rt);
+			type_print_err(rt);
 			fprintf(stderr, "\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform assignment (=) on type void\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform assignment (=) on type function\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_LGO)
@@ -435,6 +480,7 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform logical OR (||) on non boolean types\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_LGA)
@@ -444,6 +490,7 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform logical AND (&&) on non boolean types\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_LT)
@@ -453,35 +500,41 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error (<): type");
-			type_print(lt);
+			type_print_err(lt);
 			fprintf(stderr, " doesn't match type");
-			type_print(rt);
+			type_print_err(rt);
 			fprintf(stderr, "\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform less than (<) on type void\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_BOOLEAN || rt->kind == TYPE_BOOLEAN)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform less than (<) on type boolean\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_STRING || rt->kind == TYPE_STRING)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform less than (<) on type string\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_ARRAY || rt->kind == TYPE_ARRAY)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform less than (<) on type array\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform less than (<) on type function\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_LE)
@@ -491,35 +544,41 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error (<=): type");
-			type_print(lt);
+			type_print_err(lt);
 			fprintf(stderr, " doesn't match type");
-			type_print(rt);
+			type_print_err(rt);
 			fprintf(stderr, "\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform less than or equal to (<=) on type void\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_BOOLEAN || rt->kind == TYPE_BOOLEAN)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform less than or equal to (<=) on type boolean\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_STRING || rt->kind == TYPE_STRING)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform less than or equal to (<=) on type string\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_ARRAY || rt->kind == TYPE_ARRAY)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform less than or equal to (<=) on type array\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform less than or equal to (<=) on type function\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_GT)
@@ -529,35 +588,41 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error (>): type");
-			type_print(lt);
+			type_print_err(lt);
 			fprintf(stderr, " doesn't match type");
-			type_print(rt);
+			type_print_err(rt);
 			fprintf(stderr, "\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform greater than (>) on type void\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_BOOLEAN || rt->kind == TYPE_BOOLEAN)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform greater than (>) on type boolean\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_STRING || rt->kind == TYPE_STRING)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform greater than (>) on type string\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_ARRAY || rt->kind == TYPE_ARRAY)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform greater than (>) on type array\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform greater than (>) on type function\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_GE)
@@ -567,35 +632,41 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error (>=): type");
-			type_print(lt);
+			type_print_err(lt);
 			fprintf(stderr, " doesn't match type");
-			type_print(rt);
+			type_print_err(rt);
 			fprintf(stderr, "\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform greater than or equal to (>=) on type void\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_BOOLEAN || rt->kind == TYPE_BOOLEAN)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform greater than or equal to (>=) on type boolean\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_STRING || rt->kind == TYPE_STRING)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform greater than or equal to (>=) on type string\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_ARRAY || rt->kind == TYPE_ARRAY)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform greater than or equal to (>=) on type array\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform greater than or equal to (>=) on type function\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_EQ)
@@ -605,25 +676,29 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error (==): type");
-			type_print(lt);
+			type_print_err(lt);
 			fprintf(stderr, " doesn't match type");
-			type_print(rt);
+			type_print_err(rt);
 			fprintf(stderr, "\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot check equality (==) for type void\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_ARRAY || rt->kind == TYPE_ARRAY)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot check equality (==) for type array\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot check equality (==) for type function\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_NE)
@@ -633,25 +708,29 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error (!=): type");
-			type_print(lt);
+			type_print_err(lt);
 			fprintf(stderr, " doesn't match type");
-			type_print(rt);
+			type_print_err(rt);
 			fprintf(stderr, "\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_VOID || rt->kind == TYPE_VOID)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot check inequality (!=) for type void\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_ARRAY || rt->kind == TYPE_ARRAY)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot check inequality (!=) for type array\n");
+			terror++;
 		}
 		if (lt->kind == TYPE_FUNCTION || rt->kind == TYPE_FUNCTION)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot check inequality (!=) for type function\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_ADD)
@@ -661,16 +740,18 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error (+): type");
-			type_print(lt);
+			type_print_err(lt);
 			fprintf(stderr, " doesn't match type");
-			type_print(rt);
+			type_print_err(rt);
 			fprintf(stderr, "\n");
+			terror++;
 		}
-		if (lt->kind != TYPE_INTEGER || rt->kind != TYPE_INTEGER || 
-			 lt->kind != TYPE_FLOAT   || rt->kind != TYPE_FLOAT)
+		if ((lt->kind != TYPE_INTEGER && lt->kind != TYPE_FLOAT) ||
+			 (rt->kind != TYPE_INTEGER && rt->kind != TYPE_FLOAT))
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Addition (+) can only be performed on either integer or float types\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_SUB)
@@ -680,16 +761,18 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error (-): type");
-			type_print(lt);
+			type_print_err(lt);
 			fprintf(stderr, " doesn't match type");
-			type_print(rt);
+			type_print_err(rt);
 			fprintf(stderr, "\n");
+			terror++;
 		}
-		if (lt->kind != TYPE_INTEGER || rt->kind != TYPE_INTEGER || 
-			 lt->kind != TYPE_FLOAT   || rt->kind != TYPE_FLOAT)
+		if ((lt->kind != TYPE_INTEGER && lt->kind != TYPE_FLOAT) ||
+			 (rt->kind != TYPE_INTEGER && rt->kind != TYPE_FLOAT))
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Subtracttion (-) can only be performed on either integer or float types\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_MUL)
@@ -699,16 +782,18 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error (*): type");
-			type_print(lt);
+			type_print_err(lt);
 			fprintf(stderr, " doesn't match type");
-			type_print(rt);
+			type_print_err(rt);
 			fprintf(stderr, "\n");
+			terror++;
 		}
-		if (lt->kind != TYPE_INTEGER || rt->kind != TYPE_INTEGER || 
-			 lt->kind != TYPE_FLOAT   || rt->kind != TYPE_FLOAT)
+		if ((lt->kind != TYPE_INTEGER && lt->kind != TYPE_FLOAT) ||
+			 (rt->kind != TYPE_INTEGER && rt->kind != TYPE_FLOAT))
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Multiplication (*) can only be performed on either integer or float types\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_DIV)
@@ -718,16 +803,18 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error (/): type");
-			type_print(lt);
+			type_print_err(lt);
 			fprintf(stderr, " doesn't match type");
-			type_print(rt);
+			type_print_err(rt);
 			fprintf(stderr, "\n");
+			terror++;
 		}
-		if (lt->kind != TYPE_INTEGER || rt->kind != TYPE_INTEGER || 
-			 lt->kind != TYPE_FLOAT   || rt->kind != TYPE_FLOAT)
+		if ((lt->kind != TYPE_INTEGER && lt->kind != TYPE_FLOAT) ||
+			 (rt->kind != TYPE_INTEGER && rt->kind != TYPE_FLOAT))
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Division (/) can only be performed on either integer or float types\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_MOD)
@@ -736,43 +823,49 @@ struct type *expr_typecheck(struct expr *e)
 		if (lt->kind != TYPE_INTEGER || rt->kind != TYPE_INTEGER)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
-			fprintf(stderr, "type error: Cannot perform modulus (%) on non integer types\n");
+			fprintf(stderr, "type error: Cannot perform modulus (%%) on non integer types\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_EXP)
 	{
+		ret = lt;
 		if (!type_equals(lt, rt))
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error (^): type");
-			type_print(lt);
+			type_print_err(lt);
 			fprintf(stderr, " doesn't match type");
-			type_print(rt);
+			type_print_err(rt);
 			fprintf(stderr, "\n");
+			terror++;
 		}
-		if (lt->kind != TYPE_INTEGER || rt->kind != TYPE_INTEGER || 
-			 lt->kind != TYPE_FLOAT   || rt->kind != TYPE_FLOAT)
+		if ((lt->kind != TYPE_INTEGER && lt->kind != TYPE_FLOAT) ||
+			 (rt->kind != TYPE_INTEGER && rt->kind != TYPE_FLOAT))
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Exponentiation (^) can only be performed on either integer or float types\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_NEG)
 	{
 		ret = lt;	
-		if (lt->kind != TYPE_INTEGER || lt->kind != TYPE_FLOAT)
+		if (lt->kind != TYPE_INTEGER && lt->kind != TYPE_FLOAT)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Negation (-) can only be performed on integer or float types\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_PLS)
 	{
 		ret = lt;	
-		if (lt->kind != TYPE_INTEGER || lt->kind != TYPE_FLOAT)
+		if (lt->kind != TYPE_INTEGER && lt->kind != TYPE_FLOAT)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Posation (+) can only be performed on integer or float types\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_NOT)
@@ -782,24 +875,27 @@ struct type *expr_typecheck(struct expr *e)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
 			fprintf(stderr, "type error: Cannot perform logical NOT (!) on non boolean types\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_INC)
 	{
-		ret = type_create(TYPE_INTEGER, 0, 0, 0);
-		if (lt->kind != TYPE_INTEGER)
+		ret = lt;
+		if (lt->kind != TYPE_INTEGER && lt->kind != TYPE_FLOAT)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
-			fprintf(stderr, "type error: Cannot perform postfix increment (++) on non integer types\n");
+			fprintf(stderr, "type error: Cannot perform postfix increment (++) on non integer or float types\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_DEC)
 	{
-		ret = type_create(TYPE_INTEGER, 0, 0, 0);
-		if (lt->kind != TYPE_INTEGER)
+		ret = lt;
+		if (lt->kind != TYPE_INTEGER && lt->kind != TYPE_FLOAT)
 		{
 			ret = type_create(TYPE_ERROR, 0, 0, 0);
-			fprintf(stderr, "type error: Cannot perform postfix decrement (--) on non integer types\n");
+			fprintf(stderr, "type error: Cannot perform postfix decrement (--) on non integer or float types\n");
+			terror++;
 		}
 	}
 	else if (e->kind == EXPR_GRP)

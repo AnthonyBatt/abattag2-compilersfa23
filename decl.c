@@ -1,6 +1,7 @@
 #include "decl.h"
 
 extern int rerror;
+extern int terror;
 
 struct decl *decl_create(char *name, struct type *type, struct expr *value, struct stmt *code, struct decl *next)
 {
@@ -69,6 +70,20 @@ void decl_resolve(struct decl *d)
 			rerror++;
 			return;
 		}
+		// both are functions
+		else
+		{
+			if (!type_equals(check->type, d->type))
+			{
+				fprintf(stderr, "type error: functions and their prototypes must have matching return types and parameters\n");
+				fprintf(stderr, "Prototype,");
+				type_print_err(check->type);
+				fprintf(stderr, ", doesn't match function,");
+				type_print_err(d->type);
+				fprintf(stderr, "\n");
+				terror++;
+			};
+		}
 	}
 
 	if (d->value)
@@ -81,7 +96,6 @@ void decl_resolve(struct decl *d)
 
 	if (d->code)
 	{
-		//printf("I have code\n");
 		// if it is an array, because I was dumb and implemented array initializations as stmt blocks
 		if (d->code->kind == STMT_EXPR_LS && !d->type->params)
 		{
@@ -90,7 +104,6 @@ void decl_resolve(struct decl *d)
 		else
 		{
 			scope_enter();
-			//printf("scope level: %d\n", scope_level());
 			param_list_resolve(d->type->params);
 			scope_enter();
 			stmt_resolve(d->code);
@@ -102,5 +115,88 @@ void decl_resolve(struct decl *d)
 	if (d->next)
 	{
 		decl_resolve(d->next);
+	}
+}
+
+// check global declaration restrictions and stuff here
+void decl_typecheck(struct decl *d)
+{
+	struct type *t = 0;
+	struct type *arr_t = 0;
+
+	if (d->value)
+	{
+		t = expr_typecheck(d->value);
+		if (!type_equals(t, d->symbol->type))
+		{
+			fprintf(stderr, "type error (%s): Declarations must match their initialization\n", d->name);
+			fprintf(stderr, "Initializor type");
+			type_print_err(t);
+			fprintf(stderr, " doesn't match declaration type");
+			type_print_err(d->symbol->type);
+			fprintf(stderr, "\n");
+			terror++;
+		}
+		if (d->symbol->kind == SYMBOL_GLOBAL)
+		{
+			// if it is not a constant value
+			if (d->value->kind < EXPR_INTEGER_LITERAL || d->value->kind > EXPR_STRING_LITERAL)
+			{
+				fprintf(stderr, "type error (%s): globals must be initialized with a constant\n", d->name);
+				terror++;
+			}
+		}
+	}
+
+	// TODO move this to resolve so that I can lookup variables and check their types
+	if (d->type->kind == TYPE_ARRAY)
+	{
+		//printf("checking array %s\n", d->name);
+		if (d->symbol->kind == SYMBOL_LOCAL && d->code)
+		{
+			fprintf(stderr, "type error (%s): local arrays cannot be initialized\n", d->name);
+			terror++;
+		}
+		if (d->symbol->kind == SYMBOL_GLOBAL && d->type->length->kind != EXPR_INTEGER_LITERAL)
+		{
+			fprintf(stderr, "type error (%s): global arrays must have constant integer size\n", d->name);
+			terror++;
+		}
+		struct type *arr_len_t = expr_typecheck(d->type->length);
+		if (arr_len_t && arr_len_t->kind != TYPE_INTEGER)
+		{
+			fprintf(stderr, "type error (%s): all arrays must have integer size\n", d->name);
+			terror++;
+		}
+		struct type *curr = d->type;
+		while (curr->subtype)
+		{
+			curr = curr->subtype;
+		}
+		arr_t = curr;
+		if (curr->kind == TYPE_FUNCTION || curr->kind == TYPE_VOID)
+		{
+			fprintf(stderr, "type error (%s): arrays cannot hold functions or void\n", d->name);
+			terror++;
+		}
+	}
+
+	if (d->code)
+	{
+		if (d->type->kind == TYPE_FUNCTION)
+		{
+			t = d->type->subtype;
+			if (t->kind == TYPE_ARRAY || t->kind == TYPE_FUNCTION)
+			{
+				fprintf(stderr, "type error (%s): Functions that return arrays or other functions are not supported\n", d->name);
+				terror++;
+			}
+		}
+		stmt_typecheck(d->code, t, arr_t);
+	}
+
+	if (d->next)
+	{
+		decl_typecheck(d->next);
 	}
 }

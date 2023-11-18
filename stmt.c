@@ -1,5 +1,7 @@
 #include "stmt.h"
 
+extern int terror;
+
 struct stmt *stmt_create(stmt_t kind, struct decl *decl, struct expr *init_expr, struct expr *expr, struct expr *next_expr, struct stmt *body, struct stmt *else_body, struct stmt *next, struct stmt *next_elem, int braces)
 {
 	struct stmt *s = malloc(sizeof(struct stmt));
@@ -175,5 +177,97 @@ void stmt_resolve(struct stmt *s)
 	if (s->next)
 	{
 		stmt_resolve(s->next);
+	}
+}
+
+void stmt_typecheck(struct stmt *s, struct type *ret_t, struct type *arr_t)
+{
+	if (!s) return;
+
+	struct type *t;
+
+	if (s->kind == STMT_DECL)
+	{
+		decl_typecheck(s->decl);
+	}
+	else if (s->kind == STMT_EXPR)
+	{
+		t = expr_typecheck(s->expr);
+	}
+	// TODO GOTTA DO FUNCTION AND ARRAY SHIT HERE
+	else if (s->kind == STMT_EXPR_LS)
+	{
+		t = expr_typecheck(s->expr);
+		if (arr_t && !type_equals(t, arr_t))
+		{
+			fprintf(stderr, "type error: array initializations must match their array's type\n");
+			terror++;
+		}
+		if (s->next_elem)
+		{
+			stmt_typecheck(s->next_elem, ret_t, arr_t);
+		}
+	}
+	else if (s->kind == STMT_IF_ELSE)
+	{
+		t = expr_typecheck(s->expr);
+		if (t->kind != TYPE_BOOLEAN)
+		{
+			fprintf(stderr, "type error: cannot evaluate if for non boolean types\n");
+			terror++;
+		}
+
+		stmt_typecheck(s->body, ret_t, arr_t);
+		
+		if (s->else_body)
+		{
+			stmt_typecheck(s->else_body, ret_t, arr_t);
+		}
+	}
+	else if (s->kind == STMT_FOR)
+	{
+		t = expr_typecheck(s->init_expr);
+		if (t->kind != TYPE_INTEGER)
+		{
+			fprintf(stderr, "type error: cannot evaluate init expression in for loops for non integer types\n");
+			terror++;
+		}
+		t = expr_typecheck(s->expr);
+		if (t->kind != TYPE_BOOLEAN)
+		{
+			fprintf(stderr, "type error: cannot evaluate stopping condition in for loops for non boolean types\n");
+			terror++;
+		}
+		t = expr_typecheck(s->next_expr);
+		if (t->kind != TYPE_BOOLEAN)
+		{
+			fprintf(stderr, "type error: cannot evaluate next expression in for loops for non integer types\n");
+			terror++;
+		}
+
+		stmt_typecheck(s->body, ret_t, arr_t);
+	}
+	// TODO what do here?
+	else if (s->kind == STMT_PRINT)
+	{
+		stmt_typecheck(s->body, ret_t, arr_t);
+	}
+	else if (s->kind == STMT_RETURN)
+	{
+		t = expr_typecheck(s->expr);
+		if (!type_equals(t, ret_t))
+		{
+			fprintf(stderr, "type error: the type of the value returned,");
+			type_print_err(t);
+			fprintf(stderr, ", doesn't equal the function's return type,");
+			type_print_err(ret_t);
+			fprintf(stderr, "\n");
+			terror++;
+		}
+	}
+
+	if (s->next)
+	{
+		stmt_typecheck(s->next, ret_t, arr_t);
 	}
 }
