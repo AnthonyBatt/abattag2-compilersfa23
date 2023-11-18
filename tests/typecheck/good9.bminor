@@ -1,0 +1,5 @@
+arr6: array [6] boolean = {true, false, false, false, true, false};
+arr5: array [5] float = {3.4, 4.5, 2.3, 1.2, 5.6};
+arr4: array [4] integer = {1, 2, 3, 4};
+arr3: array [3] char = {'a', 'b', 'c'};
+arr2: array [2] string = {"yippe", "cola"};

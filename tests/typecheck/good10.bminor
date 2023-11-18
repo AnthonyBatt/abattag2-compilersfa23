@@ -1,0 +1,22 @@
+name: string = "Anthony Battaglia";
+a: array [3] string = {"6\'2", "165", "21"};
+drafted: boolean = false;
+
+main: function string () = 
+{
+	if (drafted)
+	{
+		return "already drafted";
+	}
+
+	print "Height: ", a[0], "\nWeight: ", a[1], "\nAge: ", a[2];
+
+	if (name == "Anthony Battaglia")
+	{
+		return "The Chicago Bears will select Anthony Battaglia with their 6th round pick!\n";
+	}
+	else
+	{
+		return "The Chicago Bears will not select Anthony Battaglia with their 6th round pick!\n";
+	}
+}
