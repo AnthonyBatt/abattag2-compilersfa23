@@ -1,8 +1,8 @@
 CC=		gcc
 CFLAGS=	-Wall -g -lm
 
-bminor: parse.o encoder.o main.o scanner.o scanner_io.o decl.o expr.o param_list.o stmt.o type.o symbol.o hash_table.o scope.o
-	$(CC) $(CFLAGS) encoder.o main.o scanner.o scanner_io.o parse.o decl.o expr.o param_list.o stmt.o type.o symbol.o hash_table.o scope.o -o bminor
+bminor: parse.o encoder.o main.o scanner.o scanner_io.o decl.o expr.o param_list.o stmt.o type.o symbol.o hash_table.o scope.o scratch.o label.o
+	$(CC) $(CFLAGS) encoder.o main.o scanner.o scanner_io.o parse.o decl.o expr.o param_list.o stmt.o type.o symbol.o hash_table.o scope.o scratch.o label.o -o bminor
 
 main.o: main.c
 	$(CC) -c $(CFLAGS) main.c -o main.o
@@ -48,6 +48,12 @@ hash_table.o: hash_table.c
 
 scope.o: scope.c
 	$(CC) -c $(CFLAGS) scope.c -o scope.o
+
+scratch.o: scratch.c
+	$(CC) -c $(CFLAGS) scratch.c -o scratch.o
+
+label.o: label.c
+	$(CC) -c $(CFLAGS) label.c -o label.o
 
 test: bminor runtest_encoder.sh runtest_scanner.sh
 	@echo "Encoder Tests:"

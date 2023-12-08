@@ -34,9 +34,9 @@ int main(int argc, char *argv[])
 	}
 
 	// if the call isn't to perform encoding let the user know nothing else is supported right now
-	if (strcmp(argv[1], "--encode") && strcmp(argv[1], "--scan") && strcmp(argv[1], "--parse") && strcmp(argv[1], "--print") && strcmp(argv[1], "--resolve") && strcmp(argv[1], "--typecheck"))
+	if (strcmp(argv[1], "--encode") && strcmp(argv[1], "--scan") && strcmp(argv[1], "--parse") && strcmp(argv[1], "--print") && strcmp(argv[1], "--resolve") && strcmp(argv[1], "--typecheck") && strcmp(argv[1], "--codegen"))
 	{
-		fprintf(stderr, "Currently no functionality other than --encode, --scan, --parse, --print, --resolve, or --typecheck is supported\n");
+		fprintf(stderr, "Currently no functionality other than --encode, --scan, --parse, --print, --resolve, --typecheck, or --codegen is supported\n");
 		return EXIT_FAILURE;
 	}
 
@@ -331,16 +331,7 @@ int main(int argc, char *argv[])
 			ret = 1;
 			goto end;
 		}
-/*
-		struct type *sub3 = type_create(4, 0, 0, 0);
-		struct type *sub4 = type_create(4, 0, 0, 0);
-		struct param_list *s1 = param_list_create("hey", sub3, 0); 
-		struct param_list *s2 = param_list_create("hey", sub4, 0); 
-		struct type *sub1 = type_create(1, 0, 0, 0);
-		struct type *sub2 = type_create(1, 0, 0, 0);
-		struct type *test1 = type_create(7, sub1, s1, 0);
-		struct type *test2 = type_create(7, sub2, s2, 0);
-*/
+
 		decl_typecheck(prog);
 		if (terror)
 		{
@@ -352,6 +343,55 @@ int main(int argc, char *argv[])
 
 // ======================================================
 // END TYPE CHECKER STUFF
+
+// CODEGEN STUFF
+// ======================================================
+	if (!(strcmp(argv[1], "--codegen")))
+	{
+		FILE *fp = fopen(argv[2], "r");
+		if (!fp)
+		{
+			fprintf(stderr, "Attempting to open the file descriptor failed: (%s)\n", strerror(errno));
+			ret = 1;
+			goto end;
+		}
+
+		yyin = fp;
+
+		if (yyparse())
+		{
+			fprintf(stderr, "parse error: there was an error parsing the given bminor program\n");
+			fclose(fp);
+			ret = 1;
+			goto end;
+		}
+ 
+		scope_enter();
+		decl_resolve(prog);
+		scope_exit();
+
+		if (rerror)
+		{
+			fprintf(stderr, "%d error(s) appeared while resolving\n", rerror);
+			ret = 1;
+			goto end;
+		}
+
+		decl_typecheck(prog);
+		if (terror)
+		{
+			fprintf(stderr, "%d error(s) appeared while typechecking\n", terror);
+			ret = 1;
+			goto end;
+		}
+
+		fprintf(stdout, ".file \t\"%s\"\n", argv[2]);
+		fprintf(stdout, ".data\n");
+		decl_codegen(prog);
+	}
+
+// ======================================================
+// END CODEGEN STUFF
 
 end:
 	// if at any point something failed ret will exit as non zero which will indicate failure

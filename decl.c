@@ -200,3 +200,46 @@ void decl_typecheck(struct decl *d)
 		decl_typecheck(d->next);
 	}
 }
+
+void decl_codegen(struct decl *d)
+{
+	if (d->symbol->kind != SYMBOL_GLOBAL)
+	{
+		fprintf(stderr, "Non global declarations are not implemented\n");
+	}
+
+	if (d->value)
+	{
+		if (d->value->kind == EXPR_INTEGER_LITERAL || 
+			 d->value->kind == EXPR_BOOLEAN_LITERAL || 
+			 d->value->kind == EXPR_CHAR_LITERAL
+			)
+		{
+			printf("%s:\t.quad %d\n", d->name, d->value->literal_value); 
+		}
+		else if (d->value->kind == EXPR_STRING_LITERAL)
+		{
+			printf("%s:\t.string %s\n", d->name, d->value->string_literal); 
+		}
+	}
+
+	if (d->code)
+	{
+		// only will accept the creation of the main function
+		if (strcmp(d->name, "main") || d->type->kind != TYPE_FUNCTION)
+		{
+			fprintf(stderr, "Only the main function is supported at this time (also no arrays)\n");
+			return;
+		}
+		// no local variables or parameters will be allowed
+		printf(".text\n.global main\n");
+		printf("%s:\n", d->name);
+
+		stmt_codegen(d->code);
+	}
+	
+	if (d->next)
+	{
+		decl_codegen(d->next);
+	}
+}

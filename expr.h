@@ -4,6 +4,7 @@
 #include "encoder.h"
 #include "stmt.h"
 #include "symbol.h"
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -54,6 +55,7 @@ struct expr {
 	struct stmt *args;
 	struct symbol *symbol;
 	struct type *type;
+	int reg;
 };
 
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right );
@@ -70,5 +72,6 @@ struct expr * expr_create_array_access( const char *n, struct expr *i, struct ex
 void expr_print( struct expr *e );
 void expr_resolve(struct expr *e);
 struct type *expr_typecheck(struct expr *e);
+void expr_codegen(struct expr *e);
 
 #endif

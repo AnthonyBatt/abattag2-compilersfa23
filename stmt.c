@@ -271,3 +271,54 @@ void stmt_typecheck(struct stmt *s, struct type *ret_t, struct type *arr_t)
 		stmt_typecheck(s->next, ret_t, arr_t);
 	}
 }
+
+void stmt_codegen(struct stmt *s)
+{
+	if (!s) return;
+
+	if (s->kind == STMT_DECL)
+	{
+		//decl_codegen(s->decl);
+		//since only global variables exist, there is no need for this
+		return;
+	}
+	else if (s->kind == STMT_EXPR)
+	{
+		expr_codegen(s->expr);
+		scratch_free(s->expr->reg);
+	}
+	else if (s->kind == STMT_EXPR_LS)
+	{
+		expr_codegen(s->expr);
+		scratch_free(s->expr->reg);
+		if (s->next_elem)
+		{
+			stmt_codegen(s->next_elem);
+		}
+	}
+	else if (s->kind == STMT_IF_ELSE)
+	{
+		return;
+	}
+	else if (s->kind == STMT_FOR)
+	{
+		return;
+	}
+	else if (s->kind == STMT_PRINT)
+	{
+		return;
+	}
+	else if (s->kind == STMT_RETURN)
+	{
+		expr_codegen(s->expr);
+		scratch_free(s->expr->reg);
+
+		printf("\tMOVQ\t%s, %%rax\n", scratch_name(s->expr->reg)); 
+		printf("\tRET\n");
+	}
+
+	if (s->next)
+	{
+		stmt_codegen(s->next);
+	}
+}

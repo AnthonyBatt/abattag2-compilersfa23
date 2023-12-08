@@ -27,3 +27,12 @@ void symbol_print(struct symbol *sym)
 		fprintf(stdout, "%s resolves to local %d\n", sym->name, sym->which);
 	}
 }
+
+const char *symbol_codegen(struct symbol *s)
+{
+	// as part of the function type, may need to add tracking of function parameters to the function type
+	// either that or just always store at certain positions even if you are storing nothing
+
+
+	return NULL;
+}

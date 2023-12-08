@@ -905,3 +905,174 @@ struct type *expr_typecheck(struct expr *e)
 
 	return ret;
 }
+
+void expr_codegen(struct expr *e)
+{
+	if (!e) return;
+
+ 	// because I am only implementing global variables, I dont need symbol_codegen
+	if (e->kind == EXPR_NAME)
+	{
+		e->reg = scratch_alloc();
+		printf("\tMOVQ\t%s, %s\n", e->name, scratch_name(e->reg));
+	}
+	else if (e->kind == EXPR_INTEGER_LITERAL)
+	{
+		e->reg = scratch_alloc();
+		printf("\tMOVQ\t$%d, %s\n", e->literal_value, scratch_name(e->reg));
+	}
+	else if (e->kind == EXPR_CHAR_LITERAL)
+	{
+		e->reg = scratch_alloc();
+		printf("\tMOVQ\t$%d, %s\n", e->literal_value, scratch_name(e->reg));
+	}
+	else if (e->kind == EXPR_BOOLEAN_LITERAL)
+	{
+		e->reg = scratch_alloc();
+		printf("\tMOVQ\t$%d, %s\n", e->literal_value, scratch_name(e->reg));
+	}
+	else if (e->kind == EXPR_FLOAT_LITERAL)
+	{
+		fprintf(stderr, "Floating point not supported\n");
+	}
+	else if (e->kind == EXPR_STRING_LITERAL)
+	{
+		fprintf(stderr, "String literals used locally are not implemented\n");
+	}
+	else if (e->kind == EXPR_FXN)
+	{
+		fprintf(stderr, "Function calls are not implemented\n");
+	}
+	else if (e->kind == EXPR_ARR)
+	{
+		fprintf(stderr, "Array accesses are not implemented\n");
+	}
+	else if (e->kind == EXPR_ASN)
+	{
+		expr_codegen(e->right);
+	
+		printf("\tMOVQ\t%s, %s\n", scratch_name(e->right->reg), e->left->name);
+		e->reg = e->right->reg;
+	}
+	else if (e->kind == EXPR_LGO)
+	{
+		expr_codegen(e->left);
+		expr_codegen(e->right);
+
+		printf("\tORQ\t%s, %s\n", scratch_name(e->left->reg), scratch_name(e->right->reg));
+		e->reg = e->right->reg;
+		scratch_free(e->left->reg);
+	}
+/*
+	else if (e->kind == EXPR_LGA)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "&&");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_LT)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "<");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_LE)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "<=");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_GT)
+	{
+		expr_print(e->left);
+		fprintf(stdout, ">");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_GE)
+	{
+		expr_print(e->left);
+		fprintf(stdout, ">=");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_EQ)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "==");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_NE)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "!=");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_ADD)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "+");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_SUB)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "-");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_MUL)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "*");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_DIV)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "/");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_MOD)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "%%");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_EXP)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "^");
+		expr_print(e->right);
+	}
+	else if (e->kind == EXPR_NEG)
+	{
+		fprintf(stdout, "-");
+		expr_print(e->left);
+	}
+	else if (e->kind == EXPR_PLS)
+	{
+		fprintf(stdout, "+");
+		expr_print(e->left);
+	}
+	else if (e->kind == EXPR_NOT)
+	{
+		fprintf(stdout, "!");
+		expr_print(e->left);
+	}
+	else if (e->kind == EXPR_INC)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "++");
+	}
+	else if (e->kind == EXPR_DEC)
+	{
+		expr_print(e->left);
+		fprintf(stdout, "--");
+	}
+	else if (e->kind == EXPR_GRP)
+	{
+		fprintf(stdout, "(");
+		expr_print(e->left);
+		fprintf(stdout, ")");
+	}
+*/
+	return;
+}
