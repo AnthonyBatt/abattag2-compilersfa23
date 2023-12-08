@@ -272,7 +272,7 @@ void stmt_typecheck(struct stmt *s, struct type *ret_t, struct type *arr_t)
 	}
 }
 
-void stmt_codegen(struct stmt *s)
+void stmt_codegen(struct stmt *s, FILE *fp)
 {
 	if (!s) return;
 
@@ -284,16 +284,16 @@ void stmt_codegen(struct stmt *s)
 	}
 	else if (s->kind == STMT_EXPR)
 	{
-		expr_codegen(s->expr);
+		expr_codegen(s->expr, fp);
 		scratch_free(s->expr->reg);
 	}
 	else if (s->kind == STMT_EXPR_LS)
 	{
-		expr_codegen(s->expr);
+		expr_codegen(s->expr, fp);
 		scratch_free(s->expr->reg);
 		if (s->next_elem)
 		{
-			stmt_codegen(s->next_elem);
+			stmt_codegen(s->next_elem, fp);
 		}
 	}
 	else if (s->kind == STMT_IF_ELSE)
@@ -310,15 +310,15 @@ void stmt_codegen(struct stmt *s)
 	}
 	else if (s->kind == STMT_RETURN)
 	{
-		expr_codegen(s->expr);
+		expr_codegen(s->expr, fp);
 		scratch_free(s->expr->reg);
 
-		printf("\tMOVQ\t%s, %%rax\n", scratch_name(s->expr->reg)); 
-		printf("\tRET\n");
+		fprintf(fp, "\tMOVQ\t%s, %%rax\n", scratch_name(s->expr->reg)); 
+		fprintf(fp, "\tRET\n");
 	}
 
 	if (s->next)
 	{
-		stmt_codegen(s->next);
+		stmt_codegen(s->next, fp);
 	}
 }

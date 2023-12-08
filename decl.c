@@ -201,7 +201,7 @@ void decl_typecheck(struct decl *d)
 	}
 }
 
-void decl_codegen(struct decl *d)
+void decl_codegen(struct decl *d, FILE *fp)
 {
 	if (d->symbol->kind != SYMBOL_GLOBAL)
 	{
@@ -215,11 +215,11 @@ void decl_codegen(struct decl *d)
 			 d->value->kind == EXPR_CHAR_LITERAL
 			)
 		{
-			printf("%s:\t.quad %d\n", d->name, d->value->literal_value); 
+			fprintf(fp, "%s:\t.quad %d\n", d->name, d->value->literal_value); 
 		}
 		else if (d->value->kind == EXPR_STRING_LITERAL)
 		{
-			printf("%s:\t.string %s\n", d->name, d->value->string_literal); 
+			fprintf(fp, "%s:\t.string %s\n", d->name, d->value->string_literal); 
 		}
 	}
 
@@ -232,14 +232,14 @@ void decl_codegen(struct decl *d)
 			return;
 		}
 		// no local variables or parameters will be allowed
-		printf(".text\n.global main\n");
-		printf("%s:\n", d->name);
+		fprintf(fp, ".text\n.global main\n");
+		fprintf(fp, "%s:\n", d->name);
 
-		stmt_codegen(d->code);
+		stmt_codegen(d->code, fp);
 	}
 	
 	if (d->next)
 	{
-		decl_codegen(d->next);
+		decl_codegen(d->next, fp);
 	}
 }

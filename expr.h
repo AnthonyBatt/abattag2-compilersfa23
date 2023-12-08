@@ -72,6 +72,6 @@ struct expr * expr_create_array_access( const char *n, struct expr *i, struct ex
 void expr_print( struct expr *e );
 void expr_resolve(struct expr *e);
 struct type *expr_typecheck(struct expr *e);
-void expr_codegen(struct expr *e);
+void expr_codegen(struct expr *e, FILE *fp);
 
 #endif

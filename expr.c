@@ -404,17 +404,6 @@ struct type *expr_typecheck(struct expr *e)
 	else if (e->kind == EXPR_FXN)
 	{
 		printf("\n\n I misjudged my time and could not implement function calls due to an uncaught error in a previous part\n\n\n");
-/*
-		if (!e->type)
-		{
-			printf("functions will fuck you :)\n");
-			return 0;
-		}
-		// when we resolve or print or something maybe pass in the function expr to assign it a type
-		// functions do not have a left or right
-		ret = e->type->subtype;
-		// subtype cannot be function or array
-*/
 		ret = type_create(TYPE_ERROR, 0, 0, 0);
 	}
 	else if (e->kind == EXPR_ARR)
@@ -428,23 +417,6 @@ struct type *expr_typecheck(struct expr *e)
 			terror++;
 		}
 		printf("\n\n I misjudged my time and could not fully implement array accesses due to an uncaught error in a previous part\n\n\n");
-		//type_print(lt);
-		//type_print(rt);
-	/*
-		if (!e->type)
-		{
-			printf("arrays will fuck you :)\n");
-			return 0;
-		}
-
-		struct type *curr = e->type;
-		while (curr->subtype)
-		{
-			curr = curr->subtype;
-		}
-
-		ret = curr;
-	*/
 		ret = lt;
 	}
 	else if (e->kind == EXPR_ASN)
@@ -906,7 +878,7 @@ struct type *expr_typecheck(struct expr *e)
 	return ret;
 }
 
-void expr_codegen(struct expr *e)
+void expr_codegen(struct expr *e, FILE *fp)
 {
 	if (!e) return;
 
@@ -914,22 +886,22 @@ void expr_codegen(struct expr *e)
 	if (e->kind == EXPR_NAME)
 	{
 		e->reg = scratch_alloc();
-		printf("\tMOVQ\t%s, %s\n", e->name, scratch_name(e->reg));
+		fprintf(fp, "\tMOVQ\t%s, %s\n", e->name, scratch_name(e->reg));
 	}
 	else if (e->kind == EXPR_INTEGER_LITERAL)
 	{
 		e->reg = scratch_alloc();
-		printf("\tMOVQ\t$%d, %s\n", e->literal_value, scratch_name(e->reg));
+		fprintf(fp, "\tMOVQ\t$%d, %s\n", e->literal_value, scratch_name(e->reg));
 	}
 	else if (e->kind == EXPR_CHAR_LITERAL)
 	{
 		e->reg = scratch_alloc();
-		printf("\tMOVQ\t$%d, %s\n", e->literal_value, scratch_name(e->reg));
+		fprintf(fp, "\tMOVQ\t$%d, %s\n", e->literal_value, scratch_name(e->reg));
 	}
 	else if (e->kind == EXPR_BOOLEAN_LITERAL)
 	{
 		e->reg = scratch_alloc();
-		printf("\tMOVQ\t$%d, %s\n", e->literal_value, scratch_name(e->reg));
+		fprintf(fp, "\tMOVQ\t$%d, %s\n", e->literal_value, scratch_name(e->reg));
 	}
 	else if (e->kind == EXPR_FLOAT_LITERAL)
 	{
@@ -949,130 +921,197 @@ void expr_codegen(struct expr *e)
 	}
 	else if (e->kind == EXPR_ASN)
 	{
-		expr_codegen(e->right);
+		expr_codegen(e->right, fp);
 	
-		printf("\tMOVQ\t%s, %s\n", scratch_name(e->right->reg), e->left->name);
-		e->reg = e->right->reg;
+		fprintf(fp, "\tMOVQ\t%s, %s\n", scratch_name(e->right->reg), e->left->name);
+		e->reg = e->left->reg;
 	}
 	else if (e->kind == EXPR_LGO)
 	{
-		expr_codegen(e->left);
-		expr_codegen(e->right);
+		expr_codegen(e->left, fp);
+		expr_codegen(e->right, fp);
 
-		printf("\tORQ\t%s, %s\n", scratch_name(e->left->reg), scratch_name(e->right->reg));
+		fprintf(fp, "\tORQ\t%s, %s\n", scratch_name(e->left->reg), scratch_name(e->right->reg));
 		e->reg = e->right->reg;
 		scratch_free(e->left->reg);
 	}
-/*
 	else if (e->kind == EXPR_LGA)
 	{
-		expr_print(e->left);
-		fprintf(stdout, "&&");
-		expr_print(e->right);
+		expr_codegen(e->left, fp);
+		expr_codegen(e->right, fp);
+
+		fprintf(fp, "\tANDQ\t%s, %s\n", scratch_name(e->left->reg), scratch_name(e->right->reg));
+		e->reg = e->right->reg;
+		scratch_free(e->left->reg);
 	}
 	else if (e->kind == EXPR_LT)
 	{
-		expr_print(e->left);
-		fprintf(stdout, "<");
-		expr_print(e->right);
+		/*
+		expr_codegen(e->left);
+		expr_codegen(e->right);
+
+		e->reg = scratch_alloc();
+		printf("\tCMP\t%s, %s\n", scratch_name(e->left->reg), scratch_name(e->right->reg));
+		printf("\tMOVQ\tCF, %s\n", scratch_name(e->reg));
+		printf("\tANDQ\tZF, %s\n", scratch_name(e->reg));
+		*/
+		fprintf(stderr, "Comparison operations were attempted, see pseudocode for attempt\n");
 	}
 	else if (e->kind == EXPR_LE)
 	{
-		expr_print(e->left);
-		fprintf(stdout, "<=");
-		expr_print(e->right);
+		/*
+		expr_codegen(e->left);
+		expr_codegen(e->right);
+
+		e->reg = scratch_alloc();
+		printf("\tCMP\t%s, %s\n", scratch_name(e->left->reg), scratch_name(e->right->reg));
+		printf("\tMOVQ\tCF, %s\n", scratch_name(e->reg));
+		*/
+		fprintf(stderr, "Comparison operations were attempted, see pseudocode for attempt\n");
 	}
 	else if (e->kind == EXPR_GT)
 	{
-		expr_print(e->left);
-		fprintf(stdout, ">");
-		expr_print(e->right);
+		/*
+		expr_codegen(e->left);
+		expr_codegen(e->right);
+
+		e->reg = scratch_alloc();
+		printf("\tCMP\t%s, %s\n", scratch_name(e->left->reg), scratch_name(e->right->reg));
+		printf("\tMOVQ\tCF, %s\n", scratch_name(e->reg));
+		printf("\tNOTQ\t%s\n", scratch_name(e->reg));
+		*/
+		fprintf(stderr, "Comparison operations were attempted, see pseudocode for attempt\n");
 	}
 	else if (e->kind == EXPR_GE)
 	{
-		expr_print(e->left);
-		fprintf(stdout, ">=");
-		expr_print(e->right);
+		/*
+		expr_codegen(e->left);
+		expr_codegen(e->right);
+
+		e->reg = scratch_alloc();
+		printf("\tCMP\t%s, %s\n", scratch_name(e->left->reg), scratch_name(e->right->reg));
+		printf("\tMOVQ\tCF, %s\n", scratch_name(e->reg));
+		printf("\tANDQ\tZF, %s\n", scratch_name(e->reg));
+		printf("\tNOTQ\t%s\n", scratch_name(e->reg));
+		*/
+		fprintf(stderr, "Comparison operations were attempted, see pseudocode for attempt\n");
 	}
 	else if (e->kind == EXPR_EQ)
 	{
-		expr_print(e->left);
-		fprintf(stdout, "==");
-		expr_print(e->right);
+		/*
+		expr_codegen(e->left);
+		expr_codegen(e->right);
+
+		e->reg = scratch_alloc();
+		printf("\tCMP\t%s, %s\n", scratch_name(e->left->reg), scratch_name(e->right->reg));
+		printf("\tMOVQ\tZF, %s\n", scratch_name(e->reg));
+		*/
+		fprintf(stderr, "Comparison operations were attempted, see pseudocode for attempt\n");
 	}
 	else if (e->kind == EXPR_NE)
 	{
-		expr_print(e->left);
-		fprintf(stdout, "!=");
-		expr_print(e->right);
+		/*
+		expr_codegen(e->left);
+		expr_codegen(e->right);
+
+		e->reg = scratch_alloc();
+		printf("\tCMP\t%s, %s\n", scratch_name(e->left->reg), scratch_name(e->right->reg));
+		printf("\tMOVQ\tZF, %s\n", scratch_name(e->reg));
+		printf("\tNOTQ\t%s\n", scratch_name(e->reg));
+		*/
+		fprintf(stderr, "Comparison operations were attempted, see pseudocode for attempt\n");
 	}
 	else if (e->kind == EXPR_ADD)
 	{
-		expr_print(e->left);
-		fprintf(stdout, "+");
-		expr_print(e->right);
+		expr_codegen(e->left, fp);
+		expr_codegen(e->right, fp);
+
+		fprintf(fp, "\tADDQ\t%s, %s\n", scratch_name(e->left->reg), scratch_name(e->right->reg));
+		e->reg = e->right->reg;
+		scratch_free(e->left->reg);
 	}
 	else if (e->kind == EXPR_SUB)
 	{
-		expr_print(e->left);
-		fprintf(stdout, "-");
-		expr_print(e->right);
+		expr_codegen(e->left, fp);
+		expr_codegen(e->right, fp);
+
+		fprintf(fp, "\tSUBQ\t%s, %s\n", scratch_name(e->right->reg), scratch_name(e->left->reg));
+		e->reg = e->left->reg;
+		scratch_free(e->right->reg);
 	}
 	else if (e->kind == EXPR_MUL)
 	{
-		expr_print(e->left);
-		fprintf(stdout, "*");
-		expr_print(e->right);
+		expr_codegen(e->left, fp);
+		expr_codegen(e->right, fp);
+
+		e->reg = scratch_alloc();
+		fprintf(fp, "\tMOVQ\t%s, %%rax\n", scratch_name(e->right->reg));
+		fprintf(fp, "\tIMULQ\t%s\n", scratch_name(e->left->reg));
+		fprintf(fp, "\tMOVQ\t%%rax, %s\n", scratch_name(e->reg));
 	}
 	else if (e->kind == EXPR_DIV)
 	{
-		expr_print(e->left);
-		fprintf(stdout, "/");
-		expr_print(e->right);
+		expr_codegen(e->left, fp);
+		expr_codegen(e->right, fp);
+
+		e->reg = scratch_alloc();
+		fprintf(fp, "\tMOVQ\t%s, %%rax\n", scratch_name(e->left->reg));
+		fprintf(fp, "\tCQTO\n");
+		fprintf(fp, "\tIDIVQ\t%s\n", scratch_name(e->right->reg));
+		fprintf(fp, "\tMOVQ\t%%rax, %s\n", scratch_name(e->reg));
 	}
 	else if (e->kind == EXPR_MOD)
 	{
-		expr_print(e->left);
-		fprintf(stdout, "%%");
-		expr_print(e->right);
+		expr_codegen(e->left, fp);
+		expr_codegen(e->right, fp);
+
+		e->reg = scratch_alloc();
+		fprintf(fp, "\tMOVQ\t%s, %%rax\n", scratch_name(e->left->reg));
+		fprintf(fp, "\tCQTO\n");
+		fprintf(fp, "\tIDIVQ\t%s\n", scratch_name(e->right->reg));
+		fprintf(fp, "\tMOVQ\t%%rax, %s\n", scratch_name(e->reg));
 	}
 	else if (e->kind == EXPR_EXP)
 	{
-		expr_print(e->left);
-		fprintf(stdout, "^");
-		expr_print(e->right);
+		fprintf(stderr, "Exponentiation is not implemented\n");
 	}
 	else if (e->kind == EXPR_NEG)
 	{
-		fprintf(stdout, "-");
-		expr_print(e->left);
+		expr_codegen(e->left, fp);
+
+		fprintf(fp, "\tNEGQ\t%s\n", scratch_name(e->left->reg));
+		e->reg = e->left->reg;
 	}
+	/* I dont think we need this
 	else if (e->kind == EXPR_PLS)
 	{
-		fprintf(stdout, "+");
-		expr_print(e->left);
 	}
+	*/
 	else if (e->kind == EXPR_NOT)
 	{
-		fprintf(stdout, "!");
-		expr_print(e->left);
+		expr_codegen(e->left, fp);
+
+		fprintf(fp, "\tNOTQ\t%s\n", scratch_name(e->left->reg));
+		e->reg = e->left->reg;
 	}
 	else if (e->kind == EXPR_INC)
 	{
-		expr_print(e->left);
-		fprintf(stdout, "++");
+		expr_codegen(e->left, fp);
+
+		fprintf(fp, "\tINCQ\t%s\n", scratch_name(e->left->reg));
+		e->reg = e->left->reg;
 	}
 	else if (e->kind == EXPR_DEC)
 	{
-		expr_print(e->left);
-		fprintf(stdout, "--");
+		expr_codegen(e->left, fp);
+
+		fprintf(fp, "\tDECQ\t%s\n", scratch_name(e->left->reg));
+		e->reg = e->left->reg;
 	}
 	else if (e->kind == EXPR_GRP)
 	{
-		fprintf(stdout, "(");
-		expr_print(e->left);
-		fprintf(stdout, ")");
+		expr_codegen(e->left, fp);
+		e->reg = e->left->reg;
 	}
-*/
 	return;
 }

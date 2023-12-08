@@ -385,9 +385,17 @@ int main(int argc, char *argv[])
 			goto end;
 		}
 
-		fprintf(stdout, ".file \t\"%s\"\n", argv[2]);
-		fprintf(stdout, ".data\n");
-		decl_codegen(prog);
+		FILE *fp1 = fopen(argv[3], "w");
+		if (!fp)
+		{
+			fprintf(stderr, "Attempting to open the file descriptor failed: (%s)\n", strerror(errno));
+			ret = 1;
+			goto end;
+		}
+
+		fprintf(fp1, ".file \t\"%s\"\n", argv[2]);
+		fprintf(fp1, ".data\n");
+		decl_codegen(prog, fp1);
 	}
 
 // ======================================================
