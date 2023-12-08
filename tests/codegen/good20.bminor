@@ -1,0 +1,5 @@
+// tests complex expression using mult, div, and mod
+main:function integer ()=
+{
+	return -5 * (7 % 3 + 8) / -9;
+}

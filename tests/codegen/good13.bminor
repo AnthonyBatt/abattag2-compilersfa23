@@ -1,0 +1,5 @@
+// tests OR 
+main:function boolean ()=
+{
+	return true || false;
+}

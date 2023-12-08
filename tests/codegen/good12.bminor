@@ -1,0 +1,7 @@
+// decrement
+x:integer=5;
+main:function integer ()=
+{
+	x--;
+	return x;
+}

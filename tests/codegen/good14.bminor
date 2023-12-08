@@ -1,0 +1,5 @@
+// tests AND
+main:function boolean ()=
+{
+	return true && false;
+}

@@ -1,0 +1,8 @@
+// Adds another global variable
+x:integer=5;
+y:integer = 2;
+
+main:function integer ()=
+{
+	return x * y;
+}

@@ -1,0 +1,8 @@
+// Uses a complex expression
+x:integer=5;
+y:integer = 2;
+
+main:function integer () =
+{
+	return (x + 10) * y - x*4;
+}

@@ -1,0 +1,11 @@
+// Uses a complex expression, with negatives
+x:integer= 5;
+y:integer = 2;
+
+main:function integer () =
+{
+	x = x - 22;
+	y = x + 7*y;
+
+	return y - x;
+}

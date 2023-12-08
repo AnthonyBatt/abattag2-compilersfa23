@@ -1,0 +1,7 @@
+// tests string global creation
+str:string = "hello";
+
+main:function integer () =
+{
+	return 0;
+}

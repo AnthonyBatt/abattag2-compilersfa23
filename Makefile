@@ -73,6 +73,9 @@ test: bminor runtest_encoder.sh runtest_scanner.sh
 	@echo ""
 	@echo "Typechecker Tests:"
 	./runtest_typechecker.sh
+	@echo ""
+	@echo "Code Generator Tests:"
+	./runtest_codegenerator.sh
 
 clean: 
 	rm -rf *.o
@@ -83,3 +86,5 @@ clean:
 	rm -rf ./tests/printer/*.out
 	rm -rf ./tests/resolve/*.out
 	rm -rf ./tests/typecheck/*.out
+	rm -rf ./tests/codegen/*.out
+	rm -rf ./tests/codegen/*.s

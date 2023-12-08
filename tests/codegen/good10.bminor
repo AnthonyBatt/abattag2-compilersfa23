@@ -1,0 +1,7 @@
+// tests character returning
+i:char= 'i';
+
+main:function char () =
+{
+	return i; 
+}

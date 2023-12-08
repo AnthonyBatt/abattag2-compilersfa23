@@ -385,6 +385,13 @@ int main(int argc, char *argv[])
 			goto end;
 		}
 
+		if (argc < 4)
+		{
+			fprintf(stderr, "codegen requires an output file\n");
+			ret = 1;
+			goto end;
+		}
+
 		FILE *fp1 = fopen(argv[3], "w");
 		if (!fp)
 		{

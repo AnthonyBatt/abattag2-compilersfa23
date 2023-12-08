@@ -1,0 +1,5 @@
+// tests NOT
+main:function boolean ()=
+{
+	return !true;
+}

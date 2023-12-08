@@ -1,0 +1,8 @@
+// tests modulus
+x:integer= 5;
+y:integer = 2;
+
+main:function integer () =
+{
+	return x % 2;
+}
